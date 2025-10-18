@@ -1,0 +1,24 @@
+{
+	"compilerOptions": {
+		"composite": true,
+		"target": "es2022",
+		"lib": ["es2022", "dom"],
+		"moduleDetection": "force",
+		"module": "NodeNext",
+		"resolveJsonModule": true,
+		"allowJs": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"exactOptionalPropertyTypes": true,
+		"noImplicitOverride": true,
+		"noUncheckedIndexedAccess": true,
+		"outDir": "dist",
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+		"skipLibCheck": true
+	},
+	"include": ["src/**/*.ts", "internal/inline-steps.ts"],
+	"exclude": ["node_modules", "dist", "coverage", "**/*.test.ts"]
+}

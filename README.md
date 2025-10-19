@@ -215,6 +215,119 @@ const byAgeAscNullsLast = Order.by<User, number | null>((u) => u.age, {
 
 ---
 
+## `ts-order/comparator` helpers
+
+The comparator subpackage offers standalone utilities you can use directly with native array sorting, or alongside `Order` when you need fine-grained control.
+
+```ts
+import {
+	boolean,
+	by,
+	compare,
+	date,
+	localeString,
+	nansFirst,
+	nansLast,
+	nullsFirst,
+	nullsLast,
+	number,
+	order,
+	reverse,
+	when,
+} from 'ts-order/comparator';
+```
+
+#### `compare<T>(a: T, b: T): number`
+
+Natural three-way comparator that relies on `<`/`>` checks. Also exported as `string`.
+
+```ts
+['b', 'a', 'c'].sort(compare); // ['a', 'b', 'c']
+```
+
+#### `reverse<T>(comparator: (a: T, b: T) => number): Comparator<T>`
+
+Wrap a comparator so larger values come first.
+
+```ts
+const newestFirst = reverse(date);
+events.sort(newestFirst);
+```
+
+#### `nullsFirst` and `nullsLast`
+
+Decorate a comparator to move `null`/`undefined` values to the beginning or end of the ordering.
+
+```ts
+const byScoreSafely = nullsLast(number);
+scores.sort(byScoreSafely); // [1, 2, null]
+```
+
+#### `nansFirst` and `nansLast`
+
+Handle `NaN` explicitly while delegating other values to the base comparator.
+
+```ts
+const safeNumbers = nansFirst(number);
+[Number.NaN, 2, 1].sort(safeNumbers); // [NaN, 1, 2]
+```
+
+#### `number`, `boolean`, `date`, `localeString`
+
+Ready-to-use comparators for common primitives. `localeString` uses `Intl.Collator` under the hood.
+
+```ts
+users.sort((a, b) => localeString(a.lastName, b.lastName));
+flags.sort(boolean); // `false` values first
+```
+
+#### `by<T, K>(key: (value: T) => K, options?: KeyOptions<K, T>): Comparator<T>`
+
+Project values before comparing them. Accepts `direction`, `compare`, and `predicate` just like `Order.by`.
+
+```ts
+const byLabel = by((item: { label: string; active: boolean }) => item.label, {
+	predicate: (item) => item.active,
+});
+items.sort(byLabel);
+```
+
+#### `order<T>(...comparators: Comparator<T>[]): Comparator<T>`
+
+Chain comparators from most to least significant.
+
+```ts
+const comparator = order(
+	by((u: User) => u.lastName),
+	by((u) => u.firstName),
+);
+users.sort(comparator);
+```
+
+#### `map<T, U>(mapper: (value: T) => U, comparator?: Comparator<U>): Comparator<T>`
+
+Adapt a comparator to operate on mapped values.
+
+```ts
+const sortByScore = map(
+	(item: { nested: { score: number } }) => item.nested.score,
+);
+items.sort(sortByScore);
+```
+
+#### `when<T>(predicate: (value: T) => boolean, comparator: Comparator<T>): Comparator<T>`
+
+Run a comparator only when both values pass a guard.
+
+```ts
+const evenNumbersFirst = order(
+	when((value: number) => value % 2 === 0, number),
+	number,
+);
+```
+
+---
+
 ## License
 
 MIT (see `LICENSE`).

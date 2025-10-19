@@ -2,8 +2,6 @@
 
 import type { Direction, KeyOptions } from './types.js';
 
-export type { Direction, KeyOptions };
-
 /** Direction sign for the given order step. 1 for "asc", -1 for "desc" */
 type DirectionSign = 1 | -1;
 

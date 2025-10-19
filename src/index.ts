@@ -1,1 +1,2 @@
-export { type Direction, type KeyOptions, Order } from './order.js';
+export { Order } from './order.js';
+export type { Comparator, Direction, KeyOptions } from './types.js';

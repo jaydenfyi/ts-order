@@ -1,6 +1,19 @@
 import type { Comparator, KeyOptions } from '../types.js';
 
 /**
+ * Convenience alias for `-1`, indicating that `a` should come before `b` inside a comparator function.
+ */
+export const A_BEFORE_B = -1;
+/**
+ * Convenience alias for `1`, indicating that `a` should come after `b` inside a comparator function.
+ */
+export const A_AFTER_B = 1;
+/**
+ * Convenience alias for `0` indicating that `a` is equal to `b` inside a comparator function.
+ */
+export const EQUAL = 0;
+
+/**
  * Inverts the result of a comparator so that higher values come first.
  *
  * @example

@@ -4,7 +4,7 @@ A tiny, type-safe sorting toolkit for JavaScript/TypeScript that gives you **dec
 
 ---
 
-## Highlights
+## Features
 
 - Declarative key-based sorting
 - Composable chaining with `.by()`, `.map()`, `.when()`
@@ -12,7 +12,6 @@ A tiny, type-safe sorting toolkit for JavaScript/TypeScript that gives you **dec
 - Type-safe with full inference
 - DSU-optimized for costly key computations
 - Zero dependencies
-- Works in Node.js and modern browsers
 
 ---
 

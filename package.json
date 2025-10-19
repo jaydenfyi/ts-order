@@ -1,7 +1,7 @@
 {
 	"name": "ts-order",
 	"type": "module",
-	"version": "0.0.1-alpha.2",
+	"version": "0.0.1",
 	"description": "Type-safe Order utility for delarative, composable, and immutable multi-key ordering logic",
 	"author": {
 		"name": "jaydenfyi",

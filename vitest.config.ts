@@ -5,6 +5,9 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	test: {
 		include: ['src/**/*.test.ts', 'internal/**/*.test.ts'],
+		benchmark: {
+			compare: './benchmarks/bench.json',
+		},
 	},
 	// TODO: figure out better strategy for enabling codegen only for experimental dir
 	// plugins: [CodegenPlugin.vite(codegenPluginOptions)],

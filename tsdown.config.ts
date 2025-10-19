@@ -4,7 +4,7 @@ import {
 	inlineCompareSteps,
 	inlineSortSteps,
 } from './internal/inline-steps.ts';
-import { CodegenPlugin } from './internal/unplugin/codegen.unplugin.ts';
+// import { CodegenPlugin } from './internal/unplugin/codegen.unplugin.ts';
 
 export const codegenPluginOptions = {
 	generators: {
@@ -13,7 +13,7 @@ export const codegenPluginOptions = {
 	},
 } as const;
 
-export const codegenPlugin = CodegenPlugin.rolldown(codegenPluginOptions);
+// const codegenPlugin = CodegenPlugin.rolldown(codegenPluginOptions);
 
 export const configOptions: UserConfig = [
 	{
@@ -22,12 +22,12 @@ export const configOptions: UserConfig = [
 			'comparator/index': 'src/comparator/index.ts',
 		},
 	},
-	{
-		entry: {
-			'experimental/optimized': 'src/experimental/optimized.ts',
-		},
-		plugins: [codegenPlugin],
-	},
+	// {
+	// 	entry: {
+	// 		'experimental/optimized': 'src/experimental/optimized.ts',
+	// 	},
+	// 	plugins: [codegenPlugin],
+	// },
 ];
 
 export default defineConfig(configOptions);

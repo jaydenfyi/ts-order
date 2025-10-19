@@ -1,31 +1,16 @@
 /* eslint-disable unicorn/no-new-array */
 
-export type Direction = 'asc' | 'desc';
+import type { Direction, KeyOptions } from './types.js';
+
+export type { Direction, KeyOptions };
+
 /** Direction sign for the given order step. 1 for "asc", -1 for "desc" */
 type DirectionSign = 1 | -1;
 
-export type KeyOptions<K, T = unknown> = {
-	/**
-	 * Direction for this step. Default "asc".
-	 * Semantics: "asc" → cmp(a,b); "desc" → cmp(b,a).
-	 */
-	direction?: Direction;
-
-	/**
-	 * Comparator for this key's values.
-	 * If omitted, engines use the spec-native default (ARC; see §4.2).
-	 */
-	compare?: (a: K, b: K) => number;
-	/**
-	 * Optional predicate that must be satisfied by both values for this step to run.
-	 */
-	predicate?: (value: T) => boolean;
-};
-
 type OrderStep<T> = {
 	key: (t: T) => unknown;
-	direction: DirectionSign; // 1 for asc, -1 for desc
-	compare?: ((a: unknown, b: unknown) => number) | undefined; // optional per-step comparator
+	direction: DirectionSign;
+	compare?: ((a: unknown, b: unknown) => number) | undefined;
 	predicate?: ((value: T) => boolean) | undefined;
 };
 

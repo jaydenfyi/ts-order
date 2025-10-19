@@ -20,10 +20,6 @@
 			"import": "./dist/comparator/index.js",
 			"require": "./dist/comparator/index.cjs"
 		},
-		"./experimental/optimized": {
-			"import": "./dist/experimental/optimized.js",
-			"require": "./dist/experimental/optimized.cjs"
-		},
 		"./package.json": "./package.json"
 	},
 	"main": "./dist/index.cjs",
@@ -38,6 +34,8 @@
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
 		"bench": "vitest bench",
+		"bench:snapshot": "vitest bench --outputJson=./benchmarks/bench.json",
+		"bench:compare": "vitest bench --compare ./benchmarks/bench.json",
 		"size": "size-limit",
 		"prettier": "prettier --write .",
 		"lint": "eslint . --ext .ts",

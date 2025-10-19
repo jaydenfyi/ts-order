@@ -1,6 +1,11 @@
-import { Order } from 'ts-order';
-import { bench, describe } from 'vitest';
-import { by, order } from './comparator/index.js';
+import { describe, bench as vitestBench } from 'vitest';
+import { by, order } from '../src/comparator/index.js';
+import { Order } from '../src/order.js';
+
+const bench = (...args: Parameters<typeof vitestBench>) => {
+	// eslint-disable-next-line test/consistent-test-it
+	return vitestBench(args[0], args[1], { time: 1000, ...args[2] });
+};
 
 // ----- Domain -----
 type Role = 'admin' | 'manager' | 'staff' | 'guest';

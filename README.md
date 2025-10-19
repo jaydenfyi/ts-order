@@ -54,7 +54,7 @@ const byActiveAndName = new Order<User>()
 	.by((u) => u.firstName)
 	.by((u) => u.id); // tiebreaker stable sort on id
 
-// Use order's .sort() method for DSU (decorate-sort-undecorate) optimized sorting
+// Use order's .sort() method for DSU (decorate-sort-undecorate) optimized sorting (ensure's keys are computed only once per step)
 const sorted = byActiveAndName.sort(users);
 
 // Or use the comparator directly with native Array.prototype.sort
@@ -152,18 +152,16 @@ const byIdThenAddress = new Order<Customer>()
 Wrap an order with a guard so every step only runs when both values pass the predicate. This is handy for enabling blocks of steps conditionally or combining with per-step predicates.
 
 ```ts
-const base = new Order<User>().by((u) => u.region);
-
-const scoreBlock = Order.by<User, number>((u) => u.score, {
-	direction: 'desc',
-	predicate: (u) => u.score != null,
-});
-
-const euOnly = base.when((u) => u.region === 'eu', scoreBlock);
-
-// In this comparator:
-// - The base region step always runs.
-// - `scoreBlock` runs only when BOTH values have a score AND belong to the EU.
+const byRegion = new Order<User>()
+	.by((u) => u.region)
+	// EU region users get their own Order logic
+	.when(
+		(u) => u.region === 'eu',
+		Order.by((u) => u.score, {
+			direction: 'desc',
+		}),
+	)
+	.by((u) => u.id); // tiebreak id sort for all users
 ```
 
 #### `get compare(): (a: T, b: T) => number`
@@ -217,156 +215,6 @@ const byAgeAscNullsLast = Order.by<User, number | null>((u) => u.age, {
 
 ---
 
-## Recipes
-
-### Palette / custom order
-
-```ts
-const palette = [
-	'red',
-	'orange',
-	'yellow',
-	'green',
-	'blue',
-	'indigo',
-	'violet',
-] as const;
-const paletteRank = new Map(pallete.map((v, i) => [v, i]));
-
-const byPalette = new Order<{ color: string }>().by((x) =>
-	paletteRank.get(x.color),
-);
-```
-
-### Multi-key with final tiebreaker
-
-```ts
-const byRoleRankThenNameThenId = new Order<User>()
-	.by((u) => roleRank(u.role))
-	.by((u) => u.lastName)
-	.by((u) => u.firstName)
-	.by((u) => u.id);
-```
-
-### Nested map (lift an order into a parent type)
-
-```ts
-const byCityPostcode = new Order<Address>()
-	.by((a) => a.city)
-	.by((a) => a.postcode);
-
-const byCustomer = Order.map<Customer, Address>(
-	(c) => c.address,
-	byCityPostcode,
-);
-```
-
-### Reverse everything
-
-```ts
-const newestFirst = Order.by<User, Date>((u) => u.createdAt).reverse();
-```
-
-### Use as a drop-in comparator
-
-```ts
-arr.sort(Order.by<Item, number>((i) => i.score, { direction: 'desc' }).compare);
-```
-
----
-
-## TypeScript notes
-
-- All methods are fully typed and infer `T` and step key types.
-- `Order.by<T, K>(selector)` lets you specify `K` when inference needs help (e.g., unions with `null`).
-- `.compare` matches the native `(a: T, b: T) => number` signature.
-
----
-
-## Package & builds
-
-- Ships ESM and CJS builds with type declarations.
-- No runtime dependencies.
-
-> If you need a leaner or a more aggressively inlined variant, consider publishing separate entry points (e.g., `ts-order/optimized`).
-
----
-
-## FAQ
-
-**Is the sort stable?**
-The implementation relies on the engine’s stable `Array.prototype.sort`. Equal items (comparator returns `0`) keep their original relative order.
-
-**How do I handle `null`/`undefined`?**
-Use a custom comparator that orders them first/last, or map them in the selector to a sentinel value.
-
-**Can I compose orders across nested objects?**
-Yes—use `Order.map(outer, sub)` to lift an order for a nested type into the parent.
-
----
-
-## Roadmap / ideas
-
-- Comparator helpers (e.g., `nullsFirst`, `nullsLast`, locale-aware string helpers).
-- Additional conditional / masking utilities for step enablement.
-- Optional pre-baked orders for common domains (dates, palettes, locales).
-
----
-
-## Contributing
-
-1. Fork & clone the repo
-2. Install deps and run tests/benchmarks
-3. Open a PR describing your change and performance impact if relevant
-
-Please include reproducible benchmarks when changing hot paths.
-
----
-
 ## License
 
 MIT (see `LICENSE`).
-
----
-
-## Appendix: Full API surface (current)
-
-```ts
-export class Order<T> {
-	constructor();
-	constructor(source: Order<T> | null | undefined);
-	constructor(sources: Iterable<Order<T> | null | undefined>);
-
-	static by<T, K>(
-		selector: (item: T) => K,
-		options?: {
-			direction?: 'asc' | 'desc';
-			compare?: (a: K, b: K) => number;
-			predicate?: (value: T) => boolean;
-		},
-	): Order<T>;
-
-	by<K>(
-		selector: (item: T) => K,
-		options?: {
-			direction?: 'asc' | 'desc';
-			compare?: (a: K, b: K) => number;
-			predicate?: (value: T) => boolean;
-		},
-	): Order<T>;
-
-	static reverse<T>(input: Order<T>): Order<T>;
-	reverse(): Order<T>;
-
-	static map<T, K>(outer: (t: T) => K, sub: Order<K>): Order<T>;
-	map<K>(outer: (t: T) => K, sub: Order<K>): Order<T>;
-
-	static when<T>(predicate: (value: T) => boolean, order: Order<T>): Order<T>;
-	when(predicate: (value: T) => boolean, order: Order<T>): Order<T>;
-
-	get compare(): (a: T, b: T) => number;
-
-	static sort<T>(array: readonly T[], order: Order<T>): T[];
-	sort(array: readonly T[]): T[];
-}
-```

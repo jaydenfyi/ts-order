@@ -202,6 +202,32 @@ describe(by, () => {
 		expect(comparator(a, b)).toBeLessThan(0);
 		expect(custom).toHaveBeenCalledWith('hi', 'there');
 	});
+
+	it('only compares values when both satisfy the predicate', () => {
+		type Item = { label: string; active: boolean };
+		const key = vi.fn((item: Item) => item.label);
+		const base = vi.fn((a: string, b: string) => a.localeCompare(b));
+		const predicate = vi.fn((item: Item) => item.active);
+
+		const comparator = by(key, { compare: base, predicate });
+
+		const active = { label: 'able', active: true };
+		const inactive = { label: 'baker', active: false };
+		const otherActive = { label: 'charlie', active: true };
+
+		expect(comparator(active, inactive)).toBe(0);
+		expect(predicate).toHaveBeenNthCalledWith(1, active);
+		expect(predicate).toHaveBeenNthCalledWith(2, inactive);
+		expect(key).not.toHaveBeenCalled();
+		expect(base).not.toHaveBeenCalled();
+
+		expect(comparator(active, otherActive)).toBeLessThan(0);
+		expect(predicate).toHaveBeenNthCalledWith(3, active);
+		expect(predicate).toHaveBeenNthCalledWith(4, otherActive);
+		expect(key).toHaveBeenCalledTimes(2);
+		expect(base).toHaveBeenCalledTimes(1);
+		expect(base).toHaveBeenLastCalledWith('able', 'charlie');
+	});
 });
 
 describe(order, () => {

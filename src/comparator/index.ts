@@ -1,22 +1,4 @@
-/**
- * Sort direction flag used by comparator helpers.
- *
- * @example
- * ```ts
- * const direction: Direction = 'asc';
- * ```
- */
-export type Direction = 'asc' | 'desc';
-
-/**
- * Generic comparator signature that can be used with Array.prototype.sort.
- *
- * @example
- * ```ts
- * const localeSort: Comparator<string> = (a, b) => a.localeCompare(b);
- * ```
- */
-export type Comparator<T> = (a: T, b: T) => number;
+import type { Comparator, KeyOptions } from '../types.js';
 
 /**
  * Inverts the result of a comparator so that higher values come first.
@@ -199,11 +181,6 @@ export function date(a: Date, b: Date) {
 	return aTime - bTime;
 }
 
-type ByOptions<K> = {
-	compare?: Comparator<K>;
-	direction?: Direction | undefined;
-};
-
 /**
  * Builds a comparator by projecting values through `key` before comparing.
  *
@@ -215,13 +192,21 @@ type ByOptions<K> = {
  */
 export function by<T, K>(
 	key: (v: T) => K,
-	options?: ByOptions<K>,
+	options?: KeyOptions<K, T>,
 ): Comparator<T> {
 	const compareFn = options?.compare ?? compare;
 	const direction = options?.direction ?? 'asc';
+	const predicate = options?.predicate;
 	const compareFnWithDirection =
 		direction === 'asc' ? compareFn : reverse(compareFn);
-	return (a, b) => compareFnWithDirection(key(a), key(b));
+	if (!predicate) {
+		return (a, b) => compareFnWithDirection(key(a), key(b));
+	}
+
+	return (a, b) => {
+		if (!predicate(a) || !predicate(b)) return 0;
+		return compareFnWithDirection(key(a), key(b));
+	};
 }
 
 /**

@@ -6,10 +6,13 @@ A tiny, type-safe sorting toolkit for JavaScript/TypeScript that gives you **dec
 
 ## Highlights
 
-- **Immutable**: Every method returns a new `Order` — no mutation, ever.
-- **Composable**: Chain `.by()` steps to express complex multi-key sorts.
-- **Predictable**: Each step can set `direction: 'asc' | 'desc'` and an optional `compare` function.
-- **Type‑safe**: Written in TypeScript with precise generics.
+- Declarative key-based sorting
+- Composable chaining with `.by()`, `.map()`, `.when()`
+- Immutable API: methods return a new `Order`
+- Type-safe with full inference
+- DSU-optimized for costly key computations
+- Zero dependencies
+- Works in Node.js and modern browsers
 
 ---
 
@@ -330,4 +333,4 @@ const evenNumbersFirst = order(
 
 ## License
 
-MIT (see `LICENSE`).
+MIT

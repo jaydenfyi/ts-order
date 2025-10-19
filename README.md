@@ -72,7 +72,7 @@ users.sort(byActiveAndName.compare);
 Create a new order with a single sort step.
 
 ```ts
-const byAgeDesc = Order.by<User, number | null>((u) => u.age, {
+const byAgeDesc = Order.by((u: User) => u.age, {
 	direction: 'desc',
 	// Custom comparator example: treat nulls as the smallest
 	compare: (a, b) =>
@@ -83,7 +83,7 @@ const byAgeDesc = Order.by<User, number | null>((u) => u.age, {
 Optionally pass `predicate` to run the step only when both values satisfy the guard.
 
 ```ts
-const activeUsersFirst = Order.by<User, boolean>((u) => u.isActive, {
+const activeUsersFirst = Order.by((u: User) => u.isActive, {
 	direction: 'desc',
 	predicate: (u) => u.isActive,
 });
@@ -117,7 +117,7 @@ const byActiveThenRegion = new Order<User>()
 Flip all step directions.
 
 ```ts
-const newestFirst = Order.by<User, Date>((u) => u.createdAt).reverse();
+const newestFirst = Order.by((u: User) => u.createdAt).reverse();
 ```
 
 #### `static map<T, K>(outer: (t: T) => K, sub: Order<K>): Order<T>` and `map<K>(outer, sub)`
@@ -134,9 +134,7 @@ interface Customer {
 	address: Address;
 }
 
-const byAddress = Order.by<Address, string>((a) => a.city).by(
-	(a) => a.postcode,
-);
+const byAddress = Order.by((a: Address) => a.city).by((a) => a.postcode);
 
 const byCustomerAddress = Order.map<Customer, Address>(
 	(c) => c.address,
@@ -171,9 +169,7 @@ const byRegion = new Order<User>()
 Retrieve a native comparator compatible with `Array.prototype.sort`.
 
 ```ts
-items.sort(
-	Order.by<Item, number>((i) => i.score, { direction: 'desc' }).compare,
-);
+items.sort(Order.by((i: Item) => i.score, { direction: 'desc' }).compare);
 ```
 
 #### `static sort<T>(array: readonly T[], order: Order<T>): T[]` and `sort(array)`
@@ -197,7 +193,7 @@ const out2 = byName.sort(users);
 **Date example**
 
 ```ts
-const byExpiryAsc = Order.by<Item, Date>((i) => i.expiresAt, {
+const byExpiryAsc = Order.by((i: Item) => i.expiresAt, {
 	compare: (a, b) => a.getTime() - b.getTime(),
 });
 ```
@@ -210,7 +206,7 @@ function nullsLast<T>(cmp: (a: T, b: T) => number) {
 		a == null && b == null ? 0 : a == null ? 1 : b == null ? -1 : cmp(a, b);
 }
 
-const byAgeAscNullsLast = Order.by<User, number | null>((u) => u.age, {
+const byAgeAscNullsLast = Order.by((u: User) => u.age, {
 	compare: nullsLast((a, b) => a - b),
 });
 ```
@@ -299,8 +295,8 @@ items.sort(byLabel);
 Chain comparators from most to least significant.
 
 ```ts
-const comparator = order(
-	by((u: User) => u.lastName),
+const comparator = order<User>(
+	by((u) => u.lastName),
 	by((u) => u.firstName),
 );
 users.sort(comparator);
@@ -322,8 +318,8 @@ items.sort(sortByScore);
 Run a comparator only when both values pass a guard.
 
 ```ts
-const evenNumbersFirst = order(
-	when((value: number) => value % 2 === 0, number),
+const evenNumbersFirst = order<number>(
+	when((value) => value % 2 === 0, number),
 	number,
 );
 ```

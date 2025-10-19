@@ -43,6 +43,9 @@
 		"lint": "eslint . --ext .ts",
 		"lint:fix": "eslint . --ext .ts --fix"
 	},
+	"dependencies": {
+		"ts-order": "^0.0.1-alpha.0"
+	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^6.0.0",
 		"@types/node": "^24.8.1",
@@ -52,7 +55,6 @@
 		"magic-string": "^0.30.19",
 		"prettier": "^3.6.2",
 		"rolldown": "^1.0.0-beta.43",
-		"ts-order": "file:../ts-order",
 		"tsdown": "^0.15.7",
 		"typescript": "^5.9.3",
 		"unplugin": "^2.3.10",

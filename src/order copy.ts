@@ -4,7 +4,7 @@ export type Direction = 'asc' | 'desc';
 /** Direction sign for the given order step. 1 for "asc", -1 for "desc" */
 type DirectionSign = 1 | -1;
 
-export type KeyOptions<K, T = unknown> = {
+export type KeyOptions<K> = {
 	/**
 	 * Direction for this step. Default "asc".
 	 * Semantics: "asc" → cmp(a,b); "desc" → cmp(b,a).
@@ -16,10 +16,6 @@ export type KeyOptions<K, T = unknown> = {
 	 * If omitted, engines use the spec-native default (ARC; see §4.2).
 	 */
 	compare?: (a: K, b: K) => number;
-	/**
-	 * Optional predicate that must be satisfied by both values for this step to run.
-	 */
-	predicate?: (value: T) => boolean;
 };
 
 type OrderStep<T> = {
@@ -76,7 +72,7 @@ export class Order<T> {
 
 	static by<T, K>(
 		selectorFn: (item: T) => K,
-		options?: KeyOptions<K, T>,
+		options?: { direction?: Direction; compare?: (a: K, b: K) => number },
 	): Order<T> {
 		const order = new Order<T>();
 		const direction = directionSignByDirection[options?.direction ?? 'asc'];
@@ -86,25 +82,23 @@ export class Order<T> {
 				key: selectorFn as (t: T) => unknown,
 				direction,
 				compare,
-				predicate: options?.predicate,
+				predicate: undefined,
 			},
 		]);
 
 		return order;
 	}
 
-	by<K>(selectorFn: (item: T) => K, options?: KeyOptions<K, T>): Order<T> {
+	by<K>(
+		selectorFn: (item: T) => K,
+		options?: { direction?: Direction; compare?: (a: K, b: K) => number },
+	): Order<T> {
 		const nextOrder = new Order<T>();
 		const direction = directionSignByDirection[options?.direction ?? 'asc'];
 		const compare = options?.compare as (a: unknown, b: unknown) => number;
 		nextOrder._assignSteps([
 			...this._steps,
-			{
-				key: selectorFn,
-				direction,
-				compare,
-				predicate: options?.predicate,
-			},
+			{ key: selectorFn, direction, compare, predicate: undefined },
 		]);
 
 		return nextOrder;
@@ -175,13 +169,9 @@ export class Order<T> {
 		return nextOrder;
 	}
 
-	when(predicate: (value: T) => boolean, order: Order<T>): Order<T> {
-		const guarded = Order.when(predicate, order);
-		if (this._steps.length === 0) return guarded;
-		if (guarded._steps.length === 0) return new Order<T>(this);
-		const nextOrder = new Order<T>();
-		nextOrder._assignSteps([...this._steps, ...guarded._steps]);
-		return nextOrder;
+	when(predicate: (value: T) => boolean): Order<T> {
+		if (this._steps.length === 0) return new Order<T>();
+		return Order.when(predicate, this);
 	}
 
 	get compare(): (a: T, b: T) => number {
@@ -223,9 +213,8 @@ export class Order<T> {
 
 		// ---------- Always DSU: precompute keys for every step ----------
 		const keysPerStep: unknown[][] = new Array(numberOfSteps);
-		const predicateMatchesPerStep: (boolean[] | undefined)[] = new Array(
-			numberOfSteps,
-		);
+		const predicateMatchesPerStep: (boolean[] | undefined)[] =
+			new Array(numberOfSteps);
 		for (let j = 0; j < numberOfSteps; j++) {
 			const step = steps[j]!;
 			const keys = new Array(arrayLength);

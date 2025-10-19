@@ -1,10 +1,43 @@
+/**
+ * Sort direction flag used by comparator helpers.
+ *
+ * @example
+ * ```ts
+ * const direction: Direction = 'asc';
+ * ```
+ */
 export type Direction = 'asc' | 'desc';
+
+/**
+ * Generic comparator signature that can be used with Array.prototype.sort.
+ *
+ * @example
+ * ```ts
+ * const localeSort: Comparator<string> = (a, b) => a.localeCompare(b);
+ * ```
+ */
 export type Comparator<T> = (a: T, b: T) => number;
 
+/**
+ * Inverts the result of a comparator so that higher values come first.
+ *
+ * @example
+ * ```ts
+ * ['c', 'a', 'b'].sort(reverse(string)); // ['c', 'b', 'a']
+ * ```
+ */
 export function reverse<T>(compareFn: Comparator<T>): Comparator<T> {
 	return (a, b) => compareFn(b, a);
 }
 
+/**
+ * Wraps a comparator so `null` and `undefined` sort before defined values.
+ *
+ * @example
+ * ```ts
+ * [null, 'b', 'a'].sort(nullsFirst(string)); // [null, 'a', 'b']
+ * ```
+ */
 export function nullsFirst<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T | null | undefined> {
@@ -16,6 +49,14 @@ export function nullsFirst<T>(
 	};
 }
 
+/**
+ * Wraps a comparator so `null` and `undefined` sort after defined values.
+ *
+ * @example
+ * ```ts
+ * ['b', null, 'a'].sort(nullsLast(string)); // ['a', 'b', null]
+ * ```
+ */
 export function nullsLast<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T | null | undefined> {
@@ -27,6 +68,15 @@ export function nullsLast<T>(
 	};
 }
 
+/**
+ * Wraps a comparator so `NaN` numbers sort before other values.
+ *
+ * @example
+ * ```ts
+ * const safe = nansFirst(number);
+ * [NaN, 2, 1].sort(safe); // [NaN, 1, 2]
+ * ```
+ */
 export function nansFirst<T>(compareFn: Comparator<T>): Comparator<T> {
 	return (a, b) => {
 		const isANaN = typeof a === 'number' && Number.isNaN(a);
@@ -38,6 +88,15 @@ export function nansFirst<T>(compareFn: Comparator<T>): Comparator<T> {
 	};
 }
 
+/**
+ * Wraps a comparator so `NaN` numbers sort after other values.
+ *
+ * @example
+ * ```ts
+ * const safe = nansLast(number);
+ * [2, NaN, 1].sort(safe); // [1, 2, NaN]
+ * ```
+ */
 export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
 	return (a, b) => {
 		const isANaN = typeof a === 'number' && Number.isNaN(a);
@@ -49,14 +108,52 @@ export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
 	};
 }
 
+/**
+ * Basic comparator using JavaScript relational operators.
+ *
+ * @example
+ * ```ts
+ * ['b', 'a', 'c'].sort(compare); // ['a', 'b', 'c']
+ * ```
+ */
 export function compare<T>(a: T, b: T): number {
 	if (a < b) return -1;
 	if (a > b) return 1;
 	return 0;
 }
 
+/**
+ * String comparator alias for `compare`.
+ *
+ * @example
+ * ```ts
+ * ['b', 'a', 'c'].sort(string); // ['a', 'b', 'c']
+ * ```
+ */
 export { compare as string };
 
+const collator = new Intl.Collator();
+
+/**
+ * Locale-aware string comparator using `Intl.Collator`.
+ *
+ * @example
+ * ```ts
+ * ['ä', 'a', 'z'].sort(localeString); // ['a', 'ä', 'z'] in de-DE locale
+ * ```
+ */
+export function localeString(a: string, b: string): number {
+	return collator.compare(a, b);
+}
+
+/**
+ * Numeric comparator that places `NaN` before finite numbers.
+ *
+ * @example
+ * ```ts
+ * [3, NaN, 1].sort(number); // [NaN, 1, 3]
+ * ```
+ */
 export function number(a: number, b: number) {
 	const isANaN = Number.isNaN(a);
 	const isBNaN = Number.isNaN(b);
@@ -68,10 +165,26 @@ export function number(a: number, b: number) {
 	return a - b;
 }
 
+/**
+ * Boolean comparator treating `false` as 0 and `true` as 1.
+ *
+ * @example
+ * ```ts
+ * [true, false].sort(boolean); // [false, true]
+ * ```
+ */
 export function boolean(a: boolean, b: boolean) {
 	return Number(a) - Number(b);
 }
 
+/**
+ * Date comparator that falls back to placing invalid dates first.
+ *
+ * @example
+ * ```ts
+ * [new Date('2020'), new Date('2010')].sort(date); // [2010, 2020]
+ * ```
+ */
 export function date(a: Date, b: Date) {
 	const aTime = a.getTime();
 	const bTime = b.getTime();
@@ -91,14 +204,38 @@ type ByOptions<K> = {
 	direction?: Direction | undefined;
 };
 
-export function by<T, K>(key: (v: T) => K, arg?: ByOptions<K>): Comparator<T> {
-	const compareFn = arg?.compare ?? compare;
-	const direction = arg?.direction ?? 'asc';
+/**
+ * Builds a comparator by projecting values through `key` before comparing.
+ *
+ * @example
+ * ```ts
+ * const byAge = by((user: { age: number }) => user.age);
+ * users.sort(byAge);
+ * ```
+ */
+export function by<T, K>(
+	key: (v: T) => K,
+	options?: ByOptions<K>,
+): Comparator<T> {
+	const compareFn = options?.compare ?? compare;
+	const direction = options?.direction ?? 'asc';
 	const compareFnWithDirection =
 		direction === 'asc' ? compareFn : reverse(compareFn);
 	return (a, b) => compareFnWithDirection(key(a), key(b));
 }
 
+/**
+ * Chains comparators, returning the first non-zero comparison result.
+ *
+ * @example
+ * ```ts
+ * const sortUsers = order(
+ *   by((u: { last: string }) => u.last),
+ *   by((u) => u.first),
+ * );
+ * users.sort(sortUsers);
+ * ```
+ */
 export function order<T>(...comparators: Comparator<T>[]): Comparator<T> {
 	return (a, b) => {
 		for (let i = 0; i < comparators.length; i++) {
@@ -110,6 +247,15 @@ export function order<T>(...comparators: Comparator<T>[]): Comparator<T> {
 	};
 }
 
+/**
+ * Adapts a comparator to work on mapped values.
+ *
+ * @example
+ * ```ts
+ * const sortLengths = map((value: string) => value.length);
+ * ['aa', 'b'].sort(sortLengths); // ['b', 'aa']
+ * ```
+ */
 export function map<T, U>(
 	map: (value: T) => U,
 	compareFn: Comparator<U> = compare,
@@ -117,6 +263,18 @@ export function map<T, U>(
 	return (a, b) => compareFn(map(a), map(b));
 }
 
+/**
+ * Runs a comparator only when both values satisfy a predicate.
+ *
+ * @example
+ * ```ts
+ * const adultsFirst = when(
+ *   (person: { age: number }) => person.age >= 18,
+ *   reverse(compare),
+ * );
+ * people.sort(adultsFirst);
+ * ```
+ */
 export function when<T>(
 	predicate: (v: T) => boolean,
 	compareFn: Comparator<T>,

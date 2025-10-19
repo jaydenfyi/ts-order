@@ -189,6 +189,23 @@ describe('Order.compare', () => {
 		expect(order.compare(first, first)).toBe(0);
 	});
 
+	it('respects predicate options on individual steps', () => {
+		type Item = { score: number | null; fallback: number };
+		const keyed = vi.fn((item: Item) => item.score!);
+		const fallback = vi.fn((item: Item) => item.fallback);
+		const order = Order.by<Item, number>(keyed, {
+			predicate: (item) => item.score != null,
+		}).by(fallback);
+
+		const missing = { score: null, fallback: 0 };
+		const present = { score: 10, fallback: 1 };
+
+		const result = order.compare(missing, present);
+
+		expect(result).toBeLessThan(0);
+		expect(keyed).not.toHaveBeenCalled();
+		expect(fallback).toHaveBeenCalledTimes(2);
+	});
 	it('does not mutate the original order when chaining with by()', () => {
 		type Item = { primary: number; secondary: number };
 		const base = Order.by<Item, number>((item) => item.primary);
@@ -473,6 +490,35 @@ describe('Order.sort', () => {
 		expect(first).toHaveBeenCalledTimes(items.length);
 		expect(second).toHaveBeenCalledTimes(items.length);
 	});
+
+	it('applies per-step predicates without disturbing stability', () => {
+		type Item = { id: number; score: number | null };
+		const key = vi.fn((item: Item) => item.score!);
+		const order = Order.by<Item, number>(key, {
+			predicate: (item) => item.score != null,
+		});
+		const items: Item[] = [
+			{ id: 1, score: null },
+			{ id: 2, score: 10 },
+			{ id: 3, score: 5 },
+			{ id: 4, score: null },
+		];
+
+		expect(order.compare(items[2]!, items[1]!)).toBeLessThan(0);
+		key.mockClear();
+		const result = Order.sort(items, order);
+
+		expect(key).toHaveBeenCalledTimes(2);
+		expect(result.map((item) => item.id)).toEqual([1, 3, 2, 4]);
+		expect(result.filter((item) => item.score == null)).toStrictEqual([
+			items[0],
+			items[3],
+		]);
+		expect(result.filter((item) => item.score != null)).toStrictEqual([
+			items[2],
+			items[1],
+		]);
+	});
 });
 
 describe('Order#sort', () => {
@@ -489,5 +535,66 @@ describe('Order#sort', () => {
 		expect(items).toEqual([3, 1, 2]);
 
 		spy.mockRestore();
+	});
+});
+
+describe('Order.when', () => {
+	it('conjoins step predicates with the guard predicate via static helper', () => {
+		type Item = { score: number; enabled: boolean; region: 'eu' | 'us' };
+		const key = vi.fn((item: Item) => item.score);
+		const guarded = Order.when(
+			(item) => item.region === 'eu',
+			Order.by<Item, number>(key, {
+				predicate: (item) => item.enabled,
+			}),
+		);
+
+		const euOne = { score: 1, enabled: true, region: 'eu' } as const;
+		const euTwo = { score: 2, enabled: true, region: 'eu' } as const;
+		const us = { score: 0, enabled: true, region: 'us' } as const;
+		const euDisabled = { score: 5, enabled: false, region: 'eu' } as const;
+
+		key.mockClear();
+		expect(guarded.compare(euOne, euTwo)).toBeLessThan(0);
+		expect(key).toHaveBeenCalledTimes(2);
+
+		key.mockClear();
+		expect(guarded.compare(euOne, us)).toBe(0);
+		expect(key).not.toHaveBeenCalled();
+
+		key.mockClear();
+		expect(guarded.compare(euOne, euDisabled)).toBe(0);
+		expect(key).not.toHaveBeenCalled();
+	});
+
+	it('appends a guarded order via the instance helper', () => {
+		type Item = {
+			region: 'eu' | 'us';
+			score: number;
+			enabled: boolean;
+		};
+		const base = Order.by<Item, string>((item) => item.region);
+		const key = vi.fn((item: Item) => item.score);
+		const block = Order.by<Item, number>(key, {
+			predicate: (item) => item.enabled,
+		});
+		const combined = base.when((item) => item.region === 'eu', block);
+
+		const euOne = { region: 'eu', score: 1, enabled: true } as const;
+		const euTwo = { region: 'eu', score: 2, enabled: true } as const;
+		const us = { region: 'us', score: 0, enabled: true } as const;
+		const euDisabled = { region: 'eu', score: 5, enabled: false } as const;
+
+		key.mockClear();
+		expect(combined.compare(euOne, euTwo)).toBeLessThan(0);
+		expect(key).toHaveBeenCalledTimes(2);
+
+		key.mockClear();
+		expect(combined.compare(euOne, us)).toBeLessThan(0);
+		expect(key).not.toHaveBeenCalled();
+
+		key.mockClear();
+		expect(combined.compare(euOne, euDisabled)).toBe(0);
+		expect(key).not.toHaveBeenCalled();
 	});
 });

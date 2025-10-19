@@ -36,6 +36,7 @@ import { Order } from 'ts-order';
 
 interface User {
 	id: number;
+	isActive: boolean;
 	firstName: string;
 	lastName: string;
 	age: number | null;
@@ -46,24 +47,25 @@ const users: User[] = [
 	/* ... */
 ];
 
-// Sort by lastName ASC, then firstName ASC, then id ASC (tiebreaker)
-const byName = new Order<User>()
+// Sort by isActive DESC, lastName ASC, then firstName ASC, then id ASC (tiebreaker)
+const byActiveAndName = new Order<User>()
+	.by((u) => u.isActive, { direction: 'desc' }) // active users first
 	.by((u) => u.lastName)
 	.by((u) => u.firstName)
-	.by((u) => u.id);
+	.by((u) => u.id); // tiebreaker stable sort on id
 
-const sorted = byName.sort(users);
+// Use order's .sort() method for DSU (decorate-sort-undecorate) optimized sorting
+const sorted = byActiveAndName.sort(users);
 
-// Or use the comparator directly with native .sort()
-const compareByName = byName.compare;
-users.sort(compareByName);
+// Or use the comparator directly with native Array.prototype.sort
+users.sort(byActiveAndName.compare);
 ```
 
 ## API
 
 ### `class Order<T>`
 
-#### `static by<T, K>(selector: (t: T) => K, options?: { direction?: 'asc' | 'desc'; compare?: (a: K, b: K) => number }): Order<T>`
+#### `static by<T, K>(selector: (t: T) => K, options?: { direction?: 'asc' | 'desc'; compare?: (a: K, b: K) => number; predicate?: (value: T) => boolean }): Order<T>`
 
 Create a new order with a single sort step.
 
@@ -76,7 +78,16 @@ const byAgeDesc = Order.by<User, number | null>((u) => u.age, {
 });
 ```
 
-#### `by<K>(selector: (t: T) => K, options?: { direction?: 'asc' | 'desc'; compare?: (a: K, b: K) => number }): Order<T>`
+Optionally pass `predicate` to run the step only when both values satisfy the guard.
+
+```ts
+const activeUsersFirst = Order.by<User, boolean>((u) => u.isActive, {
+	direction: 'desc',
+	predicate: (u) => u.isActive,
+});
+```
+
+#### `by<K>(selector: (t: T) => K, options?: { direction?: 'asc' | 'desc'; compare?: (a: K, b: K) => number; predicate?: (value: T) => boolean }): Order<T>`
 
 Return a **new** order with an additional sort step appended.
 
@@ -84,6 +95,19 @@ Return a **new** order with an additional sort step appended.
 const byCreatedThenId = new Order<User>()
 	.by((u) => u.createdAt)
 	.by((u) => u.id);
+```
+
+Step-level predicates can be chained the same way:
+
+```ts
+const byActiveThenRegion = new Order<User>()
+	.by((u) => u.isActive, {
+		direction: 'desc',
+		predicate: (u) => u.isActive,
+	})
+	.by((u) => u.region, {
+		predicate: (u) => u.isActive,
+	});
 ```
 
 #### `static reverse<T>(order: Order<T>): Order<T>` and `reverse(): Order<T>`
@@ -121,6 +145,25 @@ const byCustomerAddress = Order.map<Customer, Address>(
 const byIdThenAddress = new Order<Customer>()
 	.by((c) => c.id)
 	.map((c) => c.address, byAddress);
+```
+
+#### `static when<T>(predicate: (value: T) => boolean, order: Order<T>): Order<T>` and `when(predicate, order)`
+
+Wrap an order with a guard so every step only runs when both values pass the predicate. This is handy for enabling blocks of steps conditionally or combining with per-step predicates.
+
+```ts
+const base = new Order<User>().by((u) => u.region);
+
+const scoreBlock = Order.by<User, number>((u) => u.score, {
+	direction: 'desc',
+	predicate: (u) => u.score != null,
+});
+
+const euOnly = base.when((u) => u.region === 'eu', scoreBlock);
+
+// In this comparator:
+// - The base region step always runs.
+// - `scoreBlock` runs only when BOTH values have a score AND belong to the EU.
 ```
 
 #### `get compare(): (a: T, b: T) => number`
@@ -299,6 +342,7 @@ export class Order<T> {
 		options?: {
 			direction?: 'asc' | 'desc';
 			compare?: (a: K, b: K) => number;
+			predicate?: (value: T) => boolean;
 		},
 	): Order<T>;
 
@@ -307,6 +351,7 @@ export class Order<T> {
 		options?: {
 			direction?: 'asc' | 'desc';
 			compare?: (a: K, b: K) => number;
+			predicate?: (value: T) => boolean;
 		},
 	): Order<T>;
 
@@ -315,6 +360,9 @@ export class Order<T> {
 
 	static map<T, K>(outer: (t: T) => K, sub: Order<K>): Order<T>;
 	map<K>(outer: (t: T) => K, sub: Order<K>): Order<T>;
+
+	static when<T>(predicate: (value: T) => boolean, order: Order<T>): Order<T>;
+	when(predicate: (value: T) => boolean, order: Order<T>): Order<T>;
 
 	get compare(): (a: T, b: T) => number;
 

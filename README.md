@@ -68,7 +68,7 @@ users.sort(byActiveAndName.compare);
 Create a new order with a single sort step. Defaults to an ascending direction and natural three-way comparison (i.e. `a < b`, `a > b`).
 
 ```ts
-const byAgeDesc = Order.by((u: User) => u.age);
+const byAgeAsc = Order.by((u: User) => u.age);
 ```
 
 You can optionally provide a custom `compare` and `direction` property.

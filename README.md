@@ -2,8 +2,6 @@
 
 A tiny ([968 B](https://bundlejs.com/?q=ts-order)), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
 
----
-
 ## Features
 
 - Declarative key-based sorting
@@ -12,8 +10,6 @@ A tiny ([968 B](https://bundlejs.com/?q=ts-order)), type-safe sorting utility fo
 - Type-safe with full inference
 - DSU-optimized for costly key computations
 - Zero dependencies
-
----
 
 ## Installation
 
@@ -292,8 +288,6 @@ const evenNumbersFirst = order<number>(
 	number,
 );
 ```
-
----
 
 ## License
 

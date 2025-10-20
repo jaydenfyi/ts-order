@@ -1,5 +1,12 @@
 # ts-order
 
+## 0.0.5
+
+### Patch Changes
+
+- Simplify README.md
+- 5a71186: README and TSDoc comment tweaks
+
 ## 0.0.4
 
 ### Patch Changes

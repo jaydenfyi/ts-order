@@ -1,6 +1,6 @@
 # 🔢 ts-order
 
-A tiny (968 B), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
+A tiny ([968 B](https://bundlejs.com/?q=ts-order)), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
 
 ---
 
@@ -67,20 +67,35 @@ users.sort(byActiveAndName.compare);
 
 ### `class Order<T>`
 
-#### `static by<T, K>(selector: (t: T) => K, options?: { direction?: 'asc' | 'desc'; compare?: (a: K, b: K) => number; predicate?: (value: T) => boolean }): Order<T>`
+#### `static by<T, K>(selector: (t: T) => K, options?: { direction?: 'asc' | 'desc'; compare?: (a: K, b: K) => number; predicate?: (value: T) => boolean }): Order<T>` and `by<K>(selector, options)`
 
-Create a new order with a single sort step.
+Create a new order with a single sort step. Defaults to an ascending direction and natural three-way comparison (i.e. `a < b`, `a > b`).
 
 ```ts
-const byAgeDesc = Order.by((u: User) => u.age, {
+const byAgeDesc = Order.by((u: User) => u.age);
+```
+
+You can optionally provide a custom `compare` and `direction` property.
+Note: The `compare` property expects a comparator that sorts in an ascending direction; the `direction` property will flip the compare result when set to `'desc'`.
+
+```ts
+import { nullsLast } from 'ts-order/comparator';
+
+const byNameDesc = Order.by((u: User) => u.name, {
 	direction: 'desc',
-	// Custom comparator example: treat nulls as the smallest
-	compare: (a, b) =>
-		a == null && b == null ? 0 : a == null ? -1 : b == null ? 1 : a - b,
+	compare: (a, b) => a.localeCompare(b),
+});
+
+const byExpiryAsc = Order.by((i: Item) => i.expiresAt, {
+	compare: (a, b) => a.getTime() - b.getTime(),
+});
+
+const byAgeAscNullsLast = Order.by((u: User) => u.age, {
+	compare: nullsLast((a, b) => a - b),
 });
 ```
 
-Optionally pass `predicate` to run the step only when both values satisfy the guard.
+You may also optionally pass `predicate` to run a step only when both values satisfy the guard function.
 
 ```ts
 const activeUsersFirst = Order.by((u: User) => u.isActive, {
@@ -89,27 +104,12 @@ const activeUsersFirst = Order.by((u: User) => u.isActive, {
 });
 ```
 
-#### `by<K>(selector: (t: T) => K, options?: { direction?: 'asc' | 'desc'; compare?: (a: K, b: K) => number; predicate?: (value: T) => boolean }): Order<T>`
-
-Return a **new** order with an additional sort step appended.
+Every Order instance also exposes a chainable `.by()` method to append additional sort steps.
 
 ```ts
 const byCreatedThenId = new Order<User>()
 	.by((u) => u.createdAt)
 	.by((u) => u.id);
-```
-
-Step-level predicates can be chained the same way:
-
-```ts
-const byActiveThenRegion = new Order<User>()
-	.by((u) => u.isActive, {
-		direction: 'desc',
-		predicate: (u) => u.isActive,
-	})
-	.by((u) => u.region, {
-		predicate: (u) => u.isActive,
-	});
 ```
 
 #### `static reverse<T>(order: Order<T>): Order<T>` and `reverse(): Order<T>`
@@ -174,7 +174,9 @@ items.sort(Order.by((i: Item) => i.score, { direction: 'desc' }).compare);
 
 #### `static sort<T>(array: readonly T[], order: Order<T>): T[]` and `sort(array)`
 
-Sort an array and return a **new** array. If sorting by costly computed values, `Order.sort()` precomputes keys once per step.
+Sort an array and return a **new** array.
+
+This method implements the Schwartzian Transform or DSU (decorate-sort-undecorate) technique, which ensures that each key selector is only invoked once per element per step. For larger arrays or costly key computations, this can yield significant performance improvements over repeatedly calling the selector during comparisons.
 
 ```ts
 const out = Order.sort(users, byName);
@@ -184,38 +186,9 @@ const out2 = byName.sort(users);
 
 ---
 
-## Comparators & direction
+## `ts-order/comparator` subpackage
 
-- If you **do not** provide `compare`, the **default** is a basic three-way compare.
-- Provide a custom comparator when values need special treatment (dates, locale, null/undefined, palettes, etc.).
-- `direction` applies **after** comparison: positive results flip based on `'asc' | 'desc'`.
-
-**Date example**
-
-```ts
-const byExpiryAsc = Order.by((i: Item) => i.expiresAt, {
-	compare: (a, b) => a.getTime() - b.getTime(),
-});
-```
-
-**Nulls last example**
-
-```ts
-function nullsLast<T>(cmp: (a: T, b: T) => number) {
-	return (a: T | null | undefined, b: T | null | undefined) =>
-		a == null && b == null ? 0 : a == null ? 1 : b == null ? -1 : cmp(a, b);
-}
-
-const byAgeAscNullsLast = Order.by((u: User) => u.age, {
-	compare: nullsLast((a, b) => a - b),
-});
-```
-
----
-
-## `ts-order/comparator` helpers
-
-The comparator subpackage offers standalone utilities you can use directly with native array sorting, or alongside `Order` when you need fine-grained control.
+The comparator subpackage offers a collection of standalone utilities you can use directly with native array sorting, or alongside `Order` when you need fine-grained control.
 
 ```ts
 import {
@@ -231,6 +204,7 @@ import {
 	number,
 	order,
 	reverse,
+	string,
 	when,
 } from 'ts-order/comparator';
 ```
@@ -245,11 +219,10 @@ Natural three-way comparator that relies on `<`/`>` checks. Also exported as `st
 
 #### `reverse<T>(comparator: (a: T, b: T) => number): Comparator<T>`
 
-Wrap a comparator so larger values come first.
+Flip the direction of a comparator.
 
 ```ts
-const newestFirst = reverse(date);
-events.sort(newestFirst);
+events.sort(reverse(date)); // most recent first
 ```
 
 #### `nullsFirst` and `nullsLast`
@@ -257,8 +230,7 @@ events.sort(newestFirst);
 Decorate a comparator to move `null`/`undefined` values to the beginning or end of the ordering.
 
 ```ts
-const byScoreSafely = nullsLast(number);
-scores.sort(byScoreSafely); // [1, 2, null]
+scores.sort(nullsLast(number)); // [1, 2, null]
 ```
 
 #### `nansFirst` and `nansLast`
@@ -266,8 +238,7 @@ scores.sort(byScoreSafely); // [1, 2, null]
 Handle `NaN` explicitly while delegating other values to the base comparator.
 
 ```ts
-const safeNumbers = nansFirst(number);
-[Number.NaN, 2, 1].sort(safeNumbers); // [NaN, 1, 2]
+[Number.NaN, 2, 1].sort(nansLast(number)); // [1, 2, NaN]
 ```
 
 #### `number`, `boolean`, `date`, `localeString`
@@ -307,10 +278,8 @@ users.sort(comparator);
 Adapt a comparator to operate on mapped values.
 
 ```ts
-const sortByScore = map(
-	(item: { nested: { score: number } }) => item.nested.score,
-);
-items.sort(sortByScore);
+// Sort items by their nested score property
+items.sort(map((item) => item.nested.score));
 ```
 
 #### `when<T>(predicate: (value: T) => boolean, comparator: Comparator<T>): Comparator<T>`

@@ -5,6 +5,7 @@ import type { Direction, KeyOptions } from './types.js';
 /** Direction sign for the given order step. 1 for "asc", -1 for "desc" */
 type DirectionSign = 1 | -1;
 
+/** Internal representation of a single order step. */
 type OrderStep<T> = {
 	key: (t: T) => unknown;
 	direction: DirectionSign;
@@ -17,12 +18,44 @@ const directionSignByDirection = {
 	desc: -1,
 } as const satisfies Record<Direction, DirectionSign>;
 
+/**
+ * Builder for immutable multi-step ordering rules.
+ *
+ * Create an `Order`, chain `.by()` calls to describe each step, then use
+ * `.compare` with `Array.prototype.sort` or call `.sort()` for DSU-style sorting
+ * that evaluates keys only once per step.
+ *
+ * @example
+ * ```ts
+ * const byStatusThenName = new Order<User>()
+ * 	.by((u) => u.isActive, { direction: 'desc' })
+ * 	.by((u) => u.lastName)
+ * 	.by((u) => u.firstName);
+ *
+ * users.sort(byStatusThenName.compare);
+ * ```
+ */
 export class Order<T> {
 	private _steps: OrderStep<T>[] = [];
 
+	/**
+	 * Create a new order. When a source or iterable of sources is provided, the
+	 * new order copies every step from the input.
+	 *
+	 * @example
+	 * ```ts
+	 * // Create an empty order and append steps to it:
+	 * const base = new Order<User>();
+	 * const byScore = base.by((u) => u.score);
+	 *
+	 * // Or combine multiple orders together:
+	 * const byScoreThenId = new Order([base, Order.by((u: User) => u.id)]);
+	 * ```
+	 */
 	constructor();
 	constructor(source: Order<T> | null | undefined);
 	constructor(sources: Iterable<Order<T> | null | undefined>);
+
 	constructor(
 		sourceOrSources?:
 			| Order<T>
@@ -51,6 +84,16 @@ export class Order<T> {
 		}
 	}
 
+	/**
+	 * Create a new order with a single sort step.
+	 *
+	 * @example
+	 * ```ts
+	 * const byCreatedAt = Order.by((u: User) => u.createdAt, {
+	 * 	direction: 'desc',
+	 * });
+	 * ```
+	 */
 	static by<T, K>(
 		selectorFn: (item: T) => K,
 		options?: KeyOptions<K, T>,
@@ -70,6 +113,16 @@ export class Order<T> {
 		return order;
 	}
 
+	/**
+	 * Append a sort step and return a new order instance.
+	 *
+	 * @example
+	 * ```ts
+	 * const byCreatedThenId = new Order<User>()
+	 * 	.by((u) => u.createdAt)
+	 * 	.by((u) => u.id);
+	 * ```
+	 */
 	by<K>(selectorFn: (item: T) => K, options?: KeyOptions<K, T>): Order<T> {
 		const nextOrder = new Order<T>();
 		const direction = directionSignByDirection[options?.direction ?? 'asc'];
@@ -87,6 +140,14 @@ export class Order<T> {
 		return nextOrder;
 	}
 
+	/**
+	 * Flip the direction of every step in an order.
+	 *
+	 * @example
+	 * ```ts
+	 * const newestFirst = Order.reverse(Order.by((u: User) => u.createdAt));
+	 * ```
+	 */
 	static reverse<T>(input: Order<T>): Order<T> {
 		if (input._steps.length === 0) return new Order<T>();
 		const reversedOrder = new Order<T>();
@@ -102,10 +163,37 @@ export class Order<T> {
 		return reversedOrder;
 	}
 
+	/**
+	 * Flip the direction of every step in this order.
+	 *
+	 * @example
+	 * ```ts
+	 * const newestFirst = Order.by((u: User) => u.createdAt).reverse();
+	 * ```
+	 */
 	reverse(): Order<T> {
 		return Order.reverse(this);
 	}
 
+	/**
+	 * Lifts an order defined for a derived or nested value into the parent domain.
+	 * The provided mapping function extracts the inner value, and the given order
+	 * is applied to that value when comparing parent items.
+	 *
+	 * @example
+	 * ```ts
+	 * interface Address {
+	 * 	city: string;
+	 * 	postcode: string;
+	 * }
+	 * interface Customer {
+	 * 	id: number;
+	 * 	address: Address;
+	 * }
+	 * const byAddress = Order.by((a: Address) => a.city).by((a) => a.postcode);
+	 * const byCustomerAddress = Order.map((c: Customer) => c.address, byAddress);
+	 * ```
+	 */
 	static map<T, K>(outer: (t: T) => K, sub: Order<K>): Order<T> {
 		if (sub._steps.length === 0) return new Order<T>();
 		const mappedOrder = new Order<T>();
@@ -123,6 +211,19 @@ export class Order<T> {
 		return mappedOrder;
 	}
 
+	/**
+	 * Appends additional sort steps that only apply when both compared items satisfy the given predicate.
+	 * If either item fails the predicate, the appended steps are skipped and sorting continues
+	 * with the next step in the current `Order`.
+	 *
+	 * @example
+	 * ```ts
+	 * const euPriority = Order.when(
+	 * 	(u: User) => u.region === 'eu',
+	 * 	Order.by((u: User) => u.score, { direction: 'desc' }),
+	 * );
+	 * ```
+	 */
 	static when<T>(
 		predicate: (value: T) => boolean,
 		input: Order<T>,
@@ -143,6 +244,26 @@ export class Order<T> {
 		return guardedOrder;
 	}
 
+	/**
+	 * Lifts an order defined for a derived or nested value into the parent domain.
+	 * The provided mapping function extracts the inner value, and the given order
+	 * is applied to that value when comparing parent items.
+	 *
+	 * @example
+	 * ```ts
+	 * interface Address {
+	 * 	city: string;
+	 * 	postcode: string;
+	 * }
+	 * interface Customer {
+	 * 	id: number;
+	 * 	address: Address;
+	 * }
+	 * const byIdThenAddress = new Order<Customer>()
+	 * 	.by((c) => c.id)
+	 * 	.map((c) => c.address, byAddress);
+	 * ```
+	 */
 	map<K>(outer: (t: T) => K, sub: Order<K>): Order<T> {
 		if (this._steps.length === 0) return Order.map(outer, sub);
 		const mappedOrder = Order.map(outer, sub);
@@ -152,6 +273,23 @@ export class Order<T> {
 		return nextOrder;
 	}
 
+	/**
+	 * Appends additional sort steps that only apply when both compared items satisfy the given predicate.
+	 * If either item fails the predicate, the appended steps are skipped and sorting continues
+	 * with the next step in the current `Order`.
+	 *
+	 * @example
+	 * ```ts
+	 * const byRegion = new Order<User>()
+	 * 	.by((u) => u.region)
+	 * 	.when(
+	 * 		(u) => u.region === 'eu',
+	 * 		Order.by((u) => u.score, { direction: 'desc' }),
+	 * 	)
+	 * 	// Append a final tiebreaker (runs for all items)
+	 *	.by((u) => u.id);
+	 * ```
+	 */
 	when(predicate: (value: T) => boolean, order: Order<T>): Order<T> {
 		const guarded = Order.when(predicate, order);
 		if (this._steps.length === 0) return guarded;
@@ -161,6 +299,14 @@ export class Order<T> {
 		return nextOrder;
 	}
 
+	/**
+	 * Retrieve a comparator compatible with `Array.prototype.sort`.
+	 *
+	 * @example
+	 * ```ts
+	 * users.sort(Order.by((u: User) => u.id).compare);
+	 * ```
+	 */
 	get compare(): (a: T, b: T) => number {
 		const steps = this._steps;
 		const numberOfSteps = steps.length;
@@ -189,6 +335,20 @@ export class Order<T> {
 		};
 	}
 
+	/**
+	 * Sort an array with the provided order and return a new array.
+	 *
+	 * This method implements the Schwartzian Transform or DSU
+	 * (decorate-sort-undecorate) technique, which ensures that each key
+	 * selector is only invoked once per element per step. For larger arrays or
+	 * costly key computations, this can yield significant performance
+	 * improvements over repeatedly calling the selector during comparisons.
+	 *
+	 * @example
+	 * ```ts
+	 * const out = Order.sort(users, Order.by((u: User) => u.lastName));
+	 * ```
+	 */
 	static sort<T>(array: readonly T[], order: Order<T>): T[] {
 		const steps = order._steps;
 		const arrayLength = array.length;
@@ -266,10 +426,25 @@ export class Order<T> {
 		return out;
 	}
 
+	/**
+	 * Sort an array with the provided order and return a new array.
+	 *
+	 * This method implements the Schwartzian Transform or DSU
+	 * (decorate-sort-undecorate) technique, which ensures that each key
+	 * selector is only invoked once per element per step. For larger arrays or
+	 * costly key computations, this can yield significant performance
+	 * improvements over repeatedly calling the selector during comparisons.
+	 *
+	 * @example
+	 * ```ts
+	 * const sorted = Order.by((u: User) => u.lastName).sort(users);
+	 * ```
+	 */
 	sort(array: readonly T[]): T[] {
 		return Order.sort(array, this);
 	}
 
+	/** Replace the internal step list with provided steps. */
 	private _assignSteps(steps: OrderStep<T>[]): void {
 		this._steps = steps;
 	}

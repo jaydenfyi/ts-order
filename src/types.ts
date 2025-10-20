@@ -20,15 +20,17 @@ export type Comparator<T> = (a: T, b: T) => number;
 
 export type KeyOptions<K, T = unknown> = {
 	/**
-	 * Direction for this step. Default "asc".
+	 * Direction for this step.
+	 *
+	 * @defaultValue "asc"
 	 */
 	direction?: Direction;
 
 	/**
-	 * Custom comparator for this key's values.
+	 * Custom comparator for this key's values. Defaults a three-way comparison when not provided.
 	 * @example
 	 * ```ts
-	 * const comparator = Order.by<Item, string>((item) => item.name, {
+	 * const comparator = Order.by((item: Item) => item.name, {
 	 *   compare: (a, b) => a.localeCompare(b),
 	 * });
 	 * ```
@@ -38,10 +40,10 @@ export type KeyOptions<K, T = unknown> = {
 	 * Optional predicate that must be satisfied by both values for this step to run.
 	 * @example
 	 * ```ts
-	 * const comparator = Order.by<Item, number>((item) => item.score, {
+	 * const comparator = Order.by((item: Item) => item.score, {
 	 *   predicate: (item) => item.isActive,
 	 * });
-	 * `
+	 * ```
 	 */
 	predicate?: (value: T) => boolean;
 };

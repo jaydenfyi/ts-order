@@ -68,8 +68,7 @@ export function nullsLast<T>(
  *
  * @example
  * ```ts
- * const safe = nansFirst(number);
- * [NaN, 2, 1].sort(safe); // [NaN, 1, 2]
+ * [NaN, 2, 1].sort(nansFirst(number)); // [NaN, 1, 2]
  * ```
  */
 export function nansFirst<T>(compareFn: Comparator<T>): Comparator<T> {
@@ -88,8 +87,7 @@ export function nansFirst<T>(compareFn: Comparator<T>): Comparator<T> {
  *
  * @example
  * ```ts
- * const safe = nansLast(number);
- * [2, NaN, 1].sort(safe); // [1, 2, NaN]
+ * [2, NaN, 1].sort(nansLast(number)); // [1, 2, NaN]
  * ```
  */
 export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
@@ -104,7 +102,7 @@ export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
 }
 
 /**
- * Basic comparator using JavaScript relational operators.
+ * Basic three-way comparator using JavaScript relational operators (i.e. `a < b`, `a > b`).
  *
  * @example
  * ```ts
@@ -197,8 +195,8 @@ export function date(a: Date, b: Date) {
  *
  * @example
  * ```ts
- * const byAge = by((user: { age: number }) => user.age);
- * users.sort(byAge);
+ * // sorts users by age ascending
+ * users.sort(by(user => user.age));
  * ```
  */
 export function by<T, K>(
@@ -225,11 +223,13 @@ export function by<T, K>(
  *
  * @example
  * ```ts
- * const sortUsers = order(
- *   by((u: { last: string }) => u.last),
- *   by((u) => u.first),
+ * // Sort users by last name, then first name
+ * users.sort(
+ *   order(
+ *     by((u) => u.last),
+ *     by((u) => u.first),
+ *   ),
  * );
- * users.sort(sortUsers);
  * ```
  */
 export function order<T>(...comparators: Comparator<T>[]): Comparator<T> {
@@ -248,8 +248,8 @@ export function order<T>(...comparators: Comparator<T>[]): Comparator<T> {
  *
  * @example
  * ```ts
- * const sortLengths = map((value: string) => value.length);
- * ['aa', 'b'].sort(sortLengths); // ['b', 'aa']
+ * // Sort strings by their length
+ * ['aa', 'b'].sort(map((value: string) => value.length)); // ['b', 'aa']
  * ```
  */
 export function map<T, U>(
@@ -264,11 +264,12 @@ export function map<T, U>(
  *
  * @example
  * ```ts
- * const adultsFirst = when(
- *   (person: { age: number }) => person.age >= 18,
- *   reverse(compare),
+ * people.sort(
+ *   when(
+ *     (person) => person.age >= 18,
+ *     by((person) => person.age),
+ *   ),
  * );
- * people.sort(adultsFirst);
  * ```
  */
 export function when<T>(

@@ -45,12 +45,6 @@ export class Order<T> {
 			}
 			return;
 		}
-		if (
-			!sourceOrSources ||
-			(sourceOrSources as Order<T>)._steps.length === 0
-		) {
-			return;
-		}
 
 		for (let i = 0; i < (sourceOrSources as Order<T>)._steps.length; i++) {
 			this._steps.push((sourceOrSources as Order<T>)._steps[i]!);

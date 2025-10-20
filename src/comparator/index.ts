@@ -127,8 +127,6 @@ export function compare<T>(a: T, b: T): number {
  */
 export { compare as string };
 
-const collator = new Intl.Collator();
-
 /**
  * Locale-aware string comparator using `Intl.Collator`.
  *
@@ -138,7 +136,7 @@ const collator = new Intl.Collator();
  * ```
  */
 export function localeString(a: string, b: string): number {
-	return collator.compare(a, b);
+	return a.localeCompare(b);
 }
 
 /**

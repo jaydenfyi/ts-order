@@ -308,6 +308,16 @@ Natural three-way comparator that relies on `<`/`>` checks. Also exported as `st
 
 #### `nullsFirst` and `nullsLast`
 
+<details>
+<summary>Signature</summary>
+
+```ts
+function nullsFirst<T>(compareFn: Comparator<T>): Comparator<T | null | undefined>;
+function nullsLast<T>(compareFn: Comparator<T>): Comparator<T | null | undefined>;
+```
+
+</details>
+
 Decorate a comparator to move `null`/`undefined` values to the beginning or end of the ordering.
 
 ```ts
@@ -316,6 +326,16 @@ scores.sort(nullsLast(number)); // [1, 2, null]
 
 #### `nansFirst` and `nansLast`
 
+<details>
+<summary>Signature</summary>
+
+```ts
+function nansFirst<T>(compareFn: Comparator<T>): Comparator<T>;
+function nansLast<T>(compareFn: Comparator<T>): Comparator<T>;
+```
+
+</details>
+
 Handle `NaN` explicitly while delegating other values to the base comparator.
 
 ```ts
@@ -323,6 +343,18 @@ Handle `NaN` explicitly while delegating other values to the base comparator.
 ```
 
 #### `number`, `boolean`, `date`, `localeString`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+function number(a: number, b: number): number;
+function boolean(a: boolean, b: boolean): number;
+function date(a: Date, b: Date): number;
+function localeString(a: string, b: string): number;
+```
+
+</details>
 
 Ready-to-use comparators for common primitives. `localeString` uses `Intl.Collator` under the hood.
 

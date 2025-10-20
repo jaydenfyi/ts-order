@@ -1,7 +1,7 @@
 {
 	"name": "ts-order",
 	"type": "module",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Type-safe Order utility for delarative, composable, and immutable multi-key ordering logic",
 	"author": {
 		"name": "jaydenfyi",
@@ -40,10 +40,14 @@
 		"size": "size-limit",
 		"prettier": "prettier --write .",
 		"lint": "eslint . --ext .ts",
-		"lint:fix": "eslint . --ext .ts --fix"
+		"lint:fix": "eslint . --ext .ts --fix",
+		"changeset": "changeset",
+		"version-packages": "changeset version",
+		"release": "bun run build && changeset publish"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^6.0.0",
+		"@changesets/cli": "^2.29.7",
 		"@types/node": "^24.8.1",
 		"@vitest/coverage-v8": "^3.2.4",
 		"eslint": "^9.37.0",

@@ -1,6 +1,6 @@
 # 🔢 ts-order
 
-A tiny (968 B), type-safe sorting toolkit for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
+A tiny (968 B), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
 
 ---
 

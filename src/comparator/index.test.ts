@@ -311,18 +311,3 @@ describe(when, () => {
 		expect(base).not.toHaveBeenCalled();
 	});
 });
-
-declare const items: { label: string; active: boolean }[];
-const foo = items.sort(
-	by((item: { label: string; active: boolean }) => item.label, {
-		predicate: (item) => item.active,
-	}),
-);
-
-declare const users: { firstName: string; lastName: string }[];
-users.sort(
-	order(
-		by((u) => u.lastName),
-		by((u) => u.firstName),
-	),
-);

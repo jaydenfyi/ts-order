@@ -1,5 +1,11 @@
 # ts-order
 
+## 0.0.4
+
+### Patch Changes
+
+- Add TSDoc comments to Order class and methods + tweak docs
+
 ## 0.0.3
 
 ### Patch Changes

@@ -312,8 +312,12 @@ Natural three-way comparator that relies on `<`/`>` checks. Also exported as `st
 <summary>Signature</summary>
 
 ```ts
-function nullsFirst<T>(compareFn: Comparator<T>): Comparator<T | null | undefined>;
-function nullsLast<T>(compareFn: Comparator<T>): Comparator<T | null | undefined>;
+function nullsFirst<T>(
+	compareFn: Comparator<T>,
+): Comparator<T | null | undefined>;
+function nullsLast<T>(
+	compareFn: Comparator<T>,
+): Comparator<T | null | undefined>;
 ```
 
 </details>
@@ -356,7 +360,7 @@ function localeString(a: string, b: string): number;
 
 </details>
 
-Ready-to-use comparators for common primitives. `localeString` uses `Intl.Collator` under the hood.
+Ready-to-use comparators for common primitives.
 
 ```ts
 scores.sort(number); // numeric sort asc (NaN's first)

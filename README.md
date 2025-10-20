@@ -132,10 +132,7 @@ interface Customer {
 
 const byAddress = Order.by((a: Address) => a.city).by((a) => a.postcode);
 
-const byCustomerAddress = Order.map<Customer, Address>(
-	(c) => c.address,
-	byAddress,
-);
+const byCustomerAddress = Order.map((c: Customer) => c.address, byAddress);
 
 // Or chain onto an existing order
 const byIdThenAddress = new Order<Customer>()
@@ -242,8 +239,10 @@ Handle `NaN` explicitly while delegating other values to the base comparator.
 Ready-to-use comparators for common primitives. `localeString` uses `Intl.Collator` under the hood.
 
 ```ts
-users.sort((a, b) => localeString(a.lastName, b.lastName));
-flags.sort(boolean); // `false` values first
+scores.sort(number); // numeric sort asc (NaN's first)
+users.sort(localeString); // locale-aware string sort asc
+flags.sort(boolean); // boolean sort asc (false first)
+createdAt.sort(date); // chronological date sort asc (invalid dates first)
 ```
 
 #### `by<T, K>(key: (value: T) => K, options?: KeyOptions<K, T>): Comparator<T>`
@@ -251,10 +250,7 @@ flags.sort(boolean); // `false` values first
 Project values before comparing them. Accepts `direction`, `compare`, and `predicate` just like `Order.by`.
 
 ```ts
-const byLabel = by((item: { label: string; active: boolean }) => item.label, {
-	predicate: (item) => item.active,
-});
-items.sort(byLabel);
+items.sort(by((item) => item.label));
 ```
 
 #### `order<T>(...comparators: Comparator<T>[]): Comparator<T>`
@@ -262,11 +258,12 @@ items.sort(byLabel);
 Chain comparators from most to least significant.
 
 ```ts
-const comparator = order<User>(
-	by((u) => u.lastName),
-	by((u) => u.firstName),
+users.sort(
+	order(
+		by((u) => u.lastName),
+		by((u) => u.firstName),
+	),
 );
-users.sort(comparator);
 ```
 
 #### `map<T, U>(mapper: (value: T) => U, comparator?: Comparator<U>): Comparator<T>`

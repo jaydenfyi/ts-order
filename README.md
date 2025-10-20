@@ -63,7 +63,33 @@ users.sort(byActiveAndName.compare);
 
 ### `class Order<T>`
 
-#### `static by<T, K>(selector: (t: T) => K, options?: { direction?: 'asc' | 'desc'; compare?: (a: K, b: K) => number; predicate?: (value: T) => boolean }): Order<T>` and `by<K>(selector, options)`
+#### `by(selector, options?)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+class Order<T> {
+	static by<K, T>(
+		selector: (value: T) => K,
+		options?: {
+			direction?: 'asc' | 'desc';
+			compare?: Comparator<K>;
+			predicate?: (value: T) => boolean;
+		},
+	): Order<T>;
+	by<K>(
+		selector: (value: T) => K,
+		options?: {
+			direction?: 'asc' | 'desc';
+			compare?: Comparator<K>;
+			predicate?: (value: T) => boolean;
+		},
+	): Order<T>;
+}
+```
+
+</details>
 
 Create a new order with a single sort step. Defaults to an ascending direction and natural three-way comparison (i.e. `a < b`, `a > b`).
 
@@ -108,7 +134,19 @@ const byCreatedThenId = new Order<User>()
 	.by((u) => u.id);
 ```
 
-#### `static reverse<T>(order: Order<T>): Order<T>` and `reverse(): Order<T>`
+#### `reverse(order)` and `reverse()`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+class Order<T> {
+	static reverse<T>(order: Order<T>): Order<T>;
+	reverse(): Order<T>;
+}
+```
+
+</details>
 
 Flip all step directions.
 
@@ -116,7 +154,19 @@ Flip all step directions.
 const newestFirst = Order.by((u: User) => u.createdAt).reverse();
 ```
 
-#### `static map<T, K>(outer: (t: T) => K, sub: Order<K>): Order<T>` and `map<K>(outer, sub)`
+#### `map(outer, order)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+class Order<T> {
+	static map<T, K>(outer: (t: T) => K, sub: Order<K>): Order<T>;
+	map<K>(outer: (t: T) => K, sub: Order<K>): Order<T>;
+}
+```
+
+</details>
 
 Lift an order defined for a nested value into the parent domain.
 
@@ -140,7 +190,19 @@ const byIdThenAddress = new Order<Customer>()
 	.map((c) => c.address, byAddress);
 ```
 
-#### `static when<T>(predicate: (value: T) => boolean, order: Order<T>): Order<T>` and `when(predicate, order)`
+#### `when(predicate, order)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+class Order<T> {
+	static when<T>(predicate: (value: T) => boolean, order: Order<T>): Order<T>;
+	when(predicate: (value: T) => boolean, order: Order<T>): Order<T>;
+}
+```
+
+</details>
 
 Wrap an order with a guard so every step only runs when both values pass the predicate. This is handy for enabling blocks of steps conditionally or combining with per-step predicates.
 
@@ -157,7 +219,18 @@ const byRegion = new Order<User>()
 	.by((u) => u.id); // tiebreak id sort for all users
 ```
 
-#### `get compare(): (a: T, b: T) => number`
+#### `compare`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+class Order<T> {
+	get compare(): (a: T, b: T) => number;
+}
+```
+
+</details>
 
 Retrieve a native comparator compatible with `Array.prototype.sort`.
 
@@ -165,7 +238,19 @@ Retrieve a native comparator compatible with `Array.prototype.sort`.
 items.sort(Order.by((i: Item) => i.score, { direction: 'desc' }).compare);
 ```
 
-#### `static sort<T>(array: readonly T[], order: Order<T>): T[]` and `sort(array)`
+#### `sort(array, order)` and `sort(array)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+class Order<T> {
+	static sort<T>(array: readonly T[], order: Order<T>): T[];
+	sort(array: readonly T[]): T[];
+}
+```
+
+</details>
 
 Sort an array and return a **new** array.
 
@@ -202,20 +287,23 @@ import {
 } from 'ts-order/comparator';
 ```
 
-#### `compare<T>(a: T, b: T): number`
+### Comparators
+
+#### `compare(a, b)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+function compare<T>(a: T, b: T): number;
+```
+
+</details>
 
 Natural three-way comparator that relies on `<`/`>` checks. Also exported as `string`.
 
 ```ts
 ['b', 'a', 'c'].sort(compare); // ['a', 'b', 'c']
-```
-
-#### `reverse<T>(comparator: (a: T, b: T) => number): Comparator<T>`
-
-Flip the direction of a comparator.
-
-```ts
-events.sort(reverse(date)); // most recent first
 ```
 
 #### `nullsFirst` and `nullsLast`
@@ -245,7 +333,23 @@ flags.sort(boolean); // boolean sort asc (false first)
 createdAt.sort(date); // chronological date sort asc (invalid dates first)
 ```
 
-#### `by<T, K>(key: (value: T) => K, options?: KeyOptions<K, T>): Comparator<T>`
+### Comparator builders & combinators
+
+These functions let you build, adapt, and compose comparators for flexible multi-key or conditional sorting. Similar to the `Order` class methods, but working directly on comparator functions instead of `Order` instances.
+
+#### `by(key, options?)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+function by<T, K>(
+	key: (value: T) => K,
+	options?: KeyOptions<K, T>,
+): Comparator<T>;
+```
+
+</details>
 
 Project values before comparing them. Accepts `direction`, `compare`, and `predicate` just like `Order.by`.
 
@@ -253,7 +357,16 @@ Project values before comparing them. Accepts `direction`, `compare`, and `predi
 items.sort(by((item) => item.label));
 ```
 
-#### `order<T>(...comparators: Comparator<T>[]): Comparator<T>`
+#### `order(...comparators)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+function order<T>(...comparators: Comparator<T>[]): Comparator<T>;
+```
+
+</details>
 
 Chain comparators from most to least significant.
 
@@ -266,7 +379,19 @@ users.sort(
 );
 ```
 
-#### `map<T, U>(mapper: (value: T) => U, comparator?: Comparator<U>): Comparator<T>`
+#### `map(mapper, comparator?)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+function map<T, U>(
+	mapper: (value: T) => U,
+	comparator?: Comparator<U>,
+): Comparator<T>;
+```
+
+</details>
 
 Adapt a comparator to operate on mapped values.
 
@@ -275,7 +400,36 @@ Adapt a comparator to operate on mapped values.
 items.sort(map((item) => item.nested.score));
 ```
 
-#### `when<T>(predicate: (value: T) => boolean, comparator: Comparator<T>): Comparator<T>`
+#### `reverse(compareFn)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+function reverse<T>(compareFn: Comparator<T>): Comparator<T>;
+```
+
+</details>
+
+Flip the direction of a comparator.
+
+```ts
+events.sort(reverse(date)); // most recent first
+```
+
+#### `when(predicate, comparator)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+function when<T>(
+	predicate: (value: T) => boolean,
+	comparator: Comparator<T>,
+): Comparator<T>;
+```
+
+</details>
 
 Run a comparator only when both values pass a guard.
 

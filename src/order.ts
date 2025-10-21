@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/no-new-array */
 
-import type { Direction, KeyOptions } from './types.js';
+import type { Comparator, Direction, KeyOptions } from './types.js';
 
 /** Direction sign for the given order step. 1 for "asc", -1 for "desc" */
 type DirectionSign = 1 | -1;
@@ -9,7 +9,7 @@ type DirectionSign = 1 | -1;
 type OrderStep<T> = {
 	key: (t: T) => unknown;
 	direction: DirectionSign;
-	compare?: ((a: unknown, b: unknown) => number) | undefined;
+	compare?: Comparator<unknown> | undefined;
 	predicate?: ((value: T) => boolean) | undefined;
 };
 
@@ -100,7 +100,7 @@ export class Order<T> {
 	): Order<T> {
 		const order = new Order<T>();
 		const direction = directionSignByDirection[options?.direction ?? 'asc'];
-		const compare = options?.compare as (a: unknown, b: unknown) => number;
+		const compare = options?.compare as Comparator<unknown>;
 		order._assignSteps([
 			{
 				key: selectorFn as (t: T) => unknown,
@@ -126,7 +126,7 @@ export class Order<T> {
 	by<K>(selectorFn: (item: T) => K, options?: KeyOptions<K, T>): Order<T> {
 		const nextOrder = new Order<T>();
 		const direction = directionSignByDirection[options?.direction ?? 'asc'];
-		const compare = options?.compare as (a: unknown, b: unknown) => number;
+		const compare = options?.compare as Comparator<unknown>;
 		nextOrder._assignSteps([
 			...this._steps,
 			{
@@ -307,7 +307,7 @@ export class Order<T> {
 	 * users.sort(Order.by((u: User) => u.id).compare);
 	 * ```
 	 */
-	get compare(): (a: T, b: T) => number {
+	get compare(): Comparator<T> {
 		const steps = this._steps;
 		const numberOfSteps = steps.length;
 		if (numberOfSteps === 0) return () => 0;
@@ -389,9 +389,7 @@ export class Order<T> {
 
 		// ---------- Unified comparator-aware DSU comparator (explicit ifs for 1..5) ----------
 		const dirs = new Int8Array(numberOfSteps);
-		const cmps = new Array<
-			((a: unknown, b: unknown) => number) | undefined
-		>(numberOfSteps);
+		const cmps = new Array<Comparator<unknown> | undefined>(numberOfSteps);
 		for (let j = 0; j < numberOfSteps; j++) {
 			dirs[j] = steps[j]!.direction;
 			cmps[j] = steps[j]!.compare;

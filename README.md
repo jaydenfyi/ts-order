@@ -1,6 +1,6 @@
 # 🔢 ts-order
 
-A tiny ([968 B](https://bundlejs.com/?q=ts-order)), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
+A tiny ([962 B](https://bundlejs.com/?q=ts-order)), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
 
 ## Features
 
@@ -52,11 +52,10 @@ const byActiveAndName = new Order<User>()
 	.by((u) => u.firstName)
 	.by((u) => u.id); // tiebreaker stable sort on id
 
-// Use order's .sort() method for DSU (decorate-sort-undecorate) optimized sorting (ensure's keys are computed only once per step)
+// Use order's optimized .sort() method
 const sorted = byActiveAndName.sort(users);
-
-// Or use the comparator directly with native Array.prototype.sort
-users.sort(byActiveAndName.compare);
+// Or use the `compare` function directly with native Array.prototype.sort
+const sorted2 = users.toSorted(byActiveAndName.compare);
 ```
 
 ## API
@@ -254,7 +253,7 @@ class Order<T> {
 
 Sort an array and return a **new** array.
 
-This method implements the Schwartzian Transform or DSU (decorate-sort-undecorate) technique, which ensures that each key selector is only invoked once per element per step. For larger arrays or costly key computations, this can yield significant performance improvements over repeatedly calling the selector during comparisons.
+This method implements the [Schwartzian Transform](https://en.wikipedia.org/wiki/Schwartzian_transform) or DSU (decorate-sort-undecorate) technique, which ensures that each key selector is only invoked once per element per step. For larger arrays or costly key computations, this can yield significant performance improvements over repeatedly calling the selector during comparisons.
 
 ```ts
 const out = Order.sort(users, byName);

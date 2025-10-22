@@ -2,7 +2,7 @@
 	"name": "ts-order",
 	"type": "module",
 	"version": "0.0.5",
-	"description": "Type-safe Order utility for delarative, composable, and immutable multi-key ordering logic",
+	"description": "Type-safe Order utility for declarative, composable, and immutable multi-key ordering logic",
 	"author": {
 		"name": "jaydenfyi",
 		"url": "https://github.com/jaydenfyi"

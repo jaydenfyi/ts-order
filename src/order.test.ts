@@ -540,13 +540,18 @@ describe('Order#sort', () => {
 
 describe('Order.when', () => {
 	it('conjoins step predicates with the guard predicate via static helper', () => {
-		type Item = { score: number; enabled: boolean; region: 'eu' | 'us' };
+		type Item =
+			| { score: number; enabled: boolean; region: 'eu' }
+			| { score: number; enabled: boolean; region: 'us' };
 		const key = vi.fn((item: Item) => item.score);
 		const guarded = Order.when(
-			(item) => item.region === 'eu',
-			Order.by<Item, number>(key, {
-				predicate: (item) => item.enabled,
-			}),
+			(item: Item) => item.region === 'eu',
+			// Order.by<Item, number>(key, {
+			//         predicate: (item) => item.enabled,
+			// }),
+			(order) => {
+				return order.by((item) => item.region);
+			},
 		);
 
 		const euOne = { score: 1, enabled: true, region: 'eu' } as const;
@@ -564,6 +569,40 @@ describe('Order.when', () => {
 
 		key.mockClear();
 		expect(guarded.compare(euOne, euDisabled)).toBe(0);
+		expect(key).not.toHaveBeenCalled();
+	});
+
+	it('accepts a builder callback for type guard predicates via static helper', () => {
+		type Numeric = { kind: 'number'; value: number };
+		type Textual = { kind: 'text'; value: string };
+		type Item = Numeric | Textual;
+
+		const isNumeric = (item: Item): item is Numeric =>
+			item.kind === 'number';
+		const key = vi.fn((item: Numeric) => item.value);
+
+		const builder = vi.fn((order: Order<Numeric>) => {
+			expectTypeOf(order).toEqualTypeOf<Order<Numeric>>();
+			return order.by((item) => {
+				expectTypeOf(item).toEqualTypeOf<Numeric>();
+				return key(item);
+			});
+		});
+
+		const guarded = Order.when(isNumeric, builder);
+
+		expect(builder).toHaveBeenCalledTimes(1);
+
+		const lower = { kind: 'number', value: 1 } as const;
+		const higher = { kind: 'number', value: 2 } as const;
+		const text = { kind: 'text', value: 'a' } as const;
+
+		key.mockClear();
+		expect(guarded.compare(lower, higher)).toBeLessThan(0);
+		expect(key).toHaveBeenCalledTimes(2);
+
+		key.mockClear();
+		expect(guarded.compare(lower, text)).toBe(0);
 		expect(key).not.toHaveBeenCalled();
 	});
 
@@ -596,5 +635,152 @@ describe('Order.when', () => {
 		key.mockClear();
 		expect(combined.compare(euOne, euDisabled)).toBe(0);
 		expect(key).not.toHaveBeenCalled();
+	});
+
+	it('supports builder callbacks with instance when chaining', () => {
+		type Numeric = { kind: 'number'; value: number; enabled: boolean };
+		type Textual = { kind: 'text'; value: string; enabled: boolean };
+		type Item = Numeric | Textual;
+
+		const isNumeric = (item: Item): item is Numeric =>
+			item.kind === 'number';
+		const key = vi.fn((item: Numeric) => item.value);
+
+		const base = Order.by<Item, string>((item) => item.kind);
+		const combined = base.when(isNumeric, (order) => {
+			expectTypeOf(order).toEqualTypeOf<Order<Numeric>>();
+			return order
+				.by((item) => {
+					expectTypeOf(item).toEqualTypeOf<Numeric>();
+					return key(item);
+				})
+				.by((item) => item.enabled);
+		});
+
+		const numericA = { kind: 'number', value: 1, enabled: true } as const;
+		const numericB = { kind: 'number', value: 2, enabled: false } as const;
+		const textA = { kind: 'text', value: 'x', enabled: true } as const;
+
+		expect(combined.compare(numericA, numericB)).toBeLessThan(0);
+		expect(combined.compare(numericA, textA)).toBeLessThan(0);
+		expect(key).toHaveBeenCalledTimes(2);
+	});
+
+	it('narrows chained guards and enforces exhaustiveness', () => {
+		type Circle = { kind: 'circle'; radius: number };
+		type Square = { kind: 'square'; size: number };
+		type Triangle = { kind: 'triangle'; base: number; height: number };
+		type Shape = Circle | Square | Triangle;
+
+		const isCircle = (shape: Shape): shape is Circle =>
+			shape.kind === 'circle';
+		const isSquare = (shape: Shape): shape is Square =>
+			shape.kind === 'square';
+		const isTriangle = (shape: Shape): shape is Triangle =>
+			shape.kind === 'triangle';
+
+		const circleOrder = Order.by<Circle, number>((shape) => shape.radius);
+		const squareOrder = Order.by<Square, number>((shape) => shape.size);
+		const triangleOrder = Order.by<Triangle, number>(
+			(shape) => shape.base + shape.height,
+		);
+
+		const base = new Order<Shape>();
+		const circleFirst = base.when(isCircle, circleOrder);
+
+		expectTypeOf(circleFirst._orderRemaining).toEqualTypeOf<
+			| ((shape: Exclude<Shape, Circle>) => Exclude<Shape, Circle>)
+			| undefined
+		>();
+
+		const circleThenSquare = circleFirst.when(isSquare, squareOrder);
+
+		expectTypeOf(circleThenSquare._orderRemaining).toEqualTypeOf<
+			((shape: Triangle) => Triangle) | undefined
+		>();
+
+		const complete = circleThenSquare.when(isTriangle, triangleOrder);
+
+		expectTypeOf(complete._orderRemaining).toEqualTypeOf<
+			((shape: never) => never) | undefined
+		>();
+
+		// @ts-expect-error Exhaustive cannot be called until all cases are handled
+		circleFirst.exhaustive();
+
+		const finalized = complete.exhaustive();
+		expectTypeOf(finalized).toEqualTypeOf<Order<Shape>>();
+	});
+
+	it('applies a fallback order only when guards fail', () => {
+		type Vip = { kind: 'vip'; score: number; id: number };
+		type Regular = { kind: 'regular'; score: number; id: number };
+		type Customer = Vip | Regular;
+
+		const isVip = (customer: Customer): customer is Vip =>
+			customer.kind === 'vip';
+		const vipScore = vi.fn((customer: Vip) => customer.score);
+		const regularId = vi.fn((customer: Regular) => customer.id);
+
+		const vipOrder = Order.by<Vip, number>(vipScore, {
+			direction: 'desc',
+		});
+		const fallback = Order.by<Regular, number>(regularId);
+
+		const order = new Order<Customer>()
+			.when(isVip, vipOrder)
+			.otherwise(fallback)
+			.by((customer) => customer.score);
+
+		const vipHigh = { kind: 'vip', score: 100, id: 1 } as const;
+		const vipLow = { kind: 'vip', score: 50, id: 2 } as const;
+		const regularFirst = { kind: 'regular', score: 50, id: 3 } as const;
+		const regularSecond = { kind: 'regular', score: 50, id: 4 } as const;
+
+		vipScore.mockClear();
+		regularId.mockClear();
+
+		expect(order.compare(vipHigh, vipLow)).toBeLessThan(0);
+		expect(vipScore).toHaveBeenCalledTimes(2);
+		expect(regularId).not.toHaveBeenCalled();
+
+		vipScore.mockClear();
+		regularId.mockClear();
+
+		expect(order.compare(regularFirst, regularSecond)).toBeLessThan(0);
+		expect(vipScore).not.toHaveBeenCalled();
+		expect(regularId).toHaveBeenCalledTimes(2);
+
+		vipScore.mockClear();
+		regularId.mockClear();
+
+		expect(order.compare(vipHigh, regularFirst)).toBeGreaterThan(0);
+		expect(vipScore).not.toHaveBeenCalled();
+		expect(regularId).not.toHaveBeenCalled();
+	});
+
+	it('returns a plain order after providing an otherwise fallback', () => {
+		type Circle = { kind: 'circle'; radius: number };
+		type Square = { kind: 'square'; size: number };
+		type Triangle = { kind: 'triangle'; base: number; height: number };
+		type Shape = Circle | Square | Triangle;
+
+		const isCircle = (shape: Shape): shape is Circle =>
+			shape.kind === 'circle';
+		const circleOrder = Order.by<Circle, number>((shape) => shape.radius);
+		const fallback = Order.by<Exclude<Shape, Circle>, number>((shape) =>
+			shape.kind === 'square' ? shape.size : shape.base + shape.height,
+		);
+
+		const withFallback = new Order<Shape>()
+			.when(isCircle, circleOrder)
+			.otherwise(fallback);
+
+		expectTypeOf(withFallback).toEqualTypeOf<Order<Shape>>();
+		// @ts-expect-error Conditional metadata is cleared after otherwise
+		withFallback._orderRemaining;
+
+		const extended = withFallback.by((shape) => shape.kind);
+		expectTypeOf(extended).toEqualTypeOf<Order<Shape>>();
 	});
 });

@@ -7,10 +7,24 @@ type DirectionSign = 1 | -1;
 
 /** Internal representation of a single order step. */
 type OrderStep<T> = {
-	key: (t: T) => unknown;
-	direction: DirectionSign;
-	compare?: Comparator<unknown> | undefined;
-	predicate?: ((value: T) => boolean) | undefined;
+        key: (t: T) => unknown;
+        direction: DirectionSign;
+        compare?: Comparator<unknown> | undefined;
+        predicate?: ((value: T) => boolean) | undefined;
+};
+
+type NoInfer<T> = [T][T extends any ? 0 : never];
+
+type ConditionalOrderChain<T, Remaining> = Order<T> & {
+        readonly _orderRemaining?: (_: Remaining) => Remaining;
+};
+
+const mergeConditionalPredicates = <T>(
+        existing: ((value: T) => boolean) | undefined,
+        next: (value: T) => boolean,
+): ((value: T) => boolean) => {
+        if (!existing) return next;
+        return (value: T) => existing(value) || next(value);
 };
 
 const directionSignByDirection = {
@@ -36,7 +50,8 @@ const directionSignByDirection = {
  * ```
  */
 export class Order<T> {
-	private _steps: OrderStep<T>[] = [];
+        private _steps: OrderStep<T>[] = [];
+        private _conditionalGuard?: (value: T) => boolean;
 
 	/**
 	 * Create a new order. When a source or iterable of sources is provided, the
@@ -79,10 +94,11 @@ export class Order<T> {
 			return;
 		}
 
-		for (let i = 0; i < (sourceOrSources as Order<T>)._steps.length; i++) {
-			this._steps.push((sourceOrSources as Order<T>)._steps[i]!);
-		}
-	}
+                for (let i = 0; i < (sourceOrSources as Order<T>)._steps.length; i++) {
+                        this._steps.push((sourceOrSources as Order<T>)._steps[i]!);
+                }
+                this._conditionalGuard = (sourceOrSources as Order<T>)._conditionalGuard;
+        }
 
 	/**
 	 * Create a new order with a single sort step.
@@ -224,25 +240,48 @@ export class Order<T> {
 	 * );
 	 * ```
 	 */
-	static when<T>(
-		predicate: (value: T) => boolean,
-		input: Order<T>,
-	): Order<T> {
-		if (input._steps.length === 0) return new Order<T>();
-		const guardedOrder = new Order<T>();
-		guardedOrder._assignSteps(
-			input._steps.map((step) => ({
-				key: step.key,
-				direction: step.direction,
-				compare: step.compare,
-				predicate: step.predicate
-					? (value: T) => step.predicate!(value) && predicate(value)
-					: predicate,
-			})),
-		);
+        static when<T, Narrow extends T>(
+                predicate: (value: T) => value is Narrow,
+                input:
+                        | Order<Narrow>
+                        | ((order: Order<NoInfer<Narrow>>) => Order<Narrow>),
+        ): ConditionalOrderChain<T, Exclude<T, Narrow>>;
+        static when<T>(
+                predicate: (value: T) => boolean,
+                input: Order<T> | ((order: Order<T>) => Order<T>),
+        ): ConditionalOrderChain<T, T>;
+        static when<T>(
+                predicate: (value: T) => boolean,
+                input: Order<T> | ((order: Order<T>) => Order<T>),
+        ): ConditionalOrderChain<T, any> {
+                const built = Order._resolveConditionalInput(
+                        input as Order<T> | ((order: Order<T>) => Order<T>),
+                );
 
-		return guardedOrder;
-	}
+                if (built._steps.length === 0) {
+                        return new Order<T>() as unknown as ConditionalOrderChain<T, any>;
+                }
+                const guardedOrder = new Order<T>();
+                guardedOrder._assignSteps(
+                        built._steps.map((step) => {
+                                const stepPredicate = step.predicate as
+                                        | ((value: T) => boolean)
+                                        | undefined;
+                                return {
+                                        key: step.key as (t: T) => unknown,
+                                        direction: step.direction,
+                                        compare: step.compare,
+                                        predicate: stepPredicate
+                                                ? (value: T) => stepPredicate(value) && predicate(value)
+                                                : predicate,
+                                } satisfies OrderStep<T>;
+                        }),
+                );
+
+                guardedOrder._conditionalGuard = predicate as (value: T) => boolean;
+
+                return guardedOrder as unknown as ConditionalOrderChain<T, any>;
+        }
 
 	/**
 	 * Lifts an order defined for a derived or nested value into the parent domain.
@@ -290,14 +329,92 @@ export class Order<T> {
 	 *	.by((u) => u.id);
 	 * ```
 	 */
-	when(predicate: (value: T) => boolean, order: Order<T>): Order<T> {
-		const guarded = Order.when(predicate, order);
-		if (this._steps.length === 0) return guarded;
-		if (guarded._steps.length === 0) return new Order<T>(this);
-		const nextOrder = new Order<T>();
-		nextOrder._assignSteps([...this._steps, ...guarded._steps]);
-		return nextOrder;
-	}
+        when<Remaining extends T, Narrow extends Remaining>(
+                this: ConditionalOrderChain<T, Remaining>,
+                predicate: (value: T) => value is Narrow,
+                order:
+                        | Order<Narrow>
+                        | ((order: Order<NoInfer<Narrow>>) => Order<Narrow>),
+        ): ConditionalOrderChain<T, Exclude<Remaining, Narrow>>;
+        when<Remaining extends T>(
+                this: ConditionalOrderChain<T, Remaining>,
+                predicate: (value: T) => boolean,
+                order: Order<Remaining> | ((order: Order<Remaining>) => Order<Remaining>),
+        ): ConditionalOrderChain<T, Remaining>;
+        when<Remaining extends T>(
+                this: ConditionalOrderChain<T, Remaining>,
+                predicate: (value: T) => boolean,
+                order: Order<Remaining> | ((order: Order<Remaining>) => Order<Remaining>),
+        ): ConditionalOrderChain<T, any> {
+                const normalized = Order._resolveConditionalInput(
+                        order as Order<Remaining> | ((order: Order<Remaining>) => Order<Remaining>),
+                );
+                const guarded = Order.when(
+                        predicate,
+                        normalized,
+                ) as unknown as ConditionalOrderChain<T, Remaining>;
+                const nextConditionalGuard = mergeConditionalPredicates(
+                        this._conditionalGuard,
+                        predicate as (value: T) => boolean,
+                );
+                if (this._steps.length === 0) {
+                        (guarded as Order<T>)._conditionalGuard = nextConditionalGuard;
+                        return guarded as ConditionalOrderChain<T, any>;
+                }
+                const guardedSteps = (guarded as Order<T>)._steps;
+                if (guardedSteps.length === 0) {
+                        const clone = new Order<T>(this);
+                        clone._conditionalGuard = this._conditionalGuard;
+                        return clone as unknown as ConditionalOrderChain<T, any>;
+                }
+                const nextOrder = new Order<T>();
+                nextOrder._assignSteps([...this._steps, ...guardedSteps]);
+                nextOrder._conditionalGuard = nextConditionalGuard;
+                return nextOrder as unknown as ConditionalOrderChain<T, any>;
+        }
+
+        otherwise<Remaining extends T>(
+                this: ConditionalOrderChain<T, Remaining>,
+                order: Order<Remaining>,
+        ): Order<T> {
+                const fallbackSteps = order._steps;
+                if (fallbackSteps.length === 0) {
+                        const clone = new Order<T>(this);
+                        clone._conditionalGuard = undefined;
+                        return clone;
+                }
+
+                const guard = this._conditionalGuard;
+                const fallbackPredicate: (value: T) => boolean = guard
+                        ? (value: T) => !guard(value)
+                        : () => true;
+
+                const projectedFallbackSteps = fallbackSteps.map<OrderStep<T>>((step) => {
+                        const stepPredicate = step.predicate as
+                                | ((value: Remaining) => boolean)
+                                | undefined;
+                        const predicate = stepPredicate
+                                ? (value: T) =>
+                                          stepPredicate(value as Remaining) && fallbackPredicate(value)
+                                : fallbackPredicate;
+
+                        return {
+                                key: step.key as (value: T) => unknown,
+                                direction: step.direction,
+                                compare: step.compare,
+                                predicate,
+                        } satisfies OrderStep<T>;
+                });
+
+                const nextOrder = new Order<T>();
+                nextOrder._assignSteps([...this._steps, ...projectedFallbackSteps]);
+
+                return nextOrder;
+        }
+
+        exhaustive(this: ConditionalOrderChain<T, never>): Order<T> {
+                return this;
+        }
 
 	/**
 	 * Retrieve a comparator compatible with `Array.prototype.sort`.
@@ -438,12 +555,22 @@ export class Order<T> {
 	 * const sorted = Order.by((u: User) => u.lastName).sort(users);
 	 * ```
 	 */
-	sort(array: readonly T[]): T[] {
-		return Order.sort(array, this);
-	}
+        sort(array: readonly T[]): T[] {
+                return Order.sort(array, this);
+        }
 
-	/** Replace the internal step list with provided steps. */
-	private _assignSteps(steps: OrderStep<T>[]): void {
-		this._steps = steps;
-	}
+        private static _resolveConditionalInput<S>(
+                input: Order<S> | ((order: Order<NoInfer<S>>) => Order<S>),
+        ): Order<S> {
+                if (typeof input === 'function') {
+                        return (input as (order: Order<S>) => Order<S>)(new Order<S>());
+                }
+
+                return input;
+        }
+
+        /** Replace the internal step list with provided steps. */
+        private _assignSteps(steps: OrderStep<T>[]): void {
+                this._steps = steps;
+        }
 }

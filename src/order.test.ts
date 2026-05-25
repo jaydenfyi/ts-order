@@ -20,6 +20,15 @@ type User = {
 	address: Address;
 };
 
+type Shape = {
+	area: number;
+};
+
+type Triangle = Shape & {
+	base: number;
+	height: number;
+};
+
 const ROLE_RANK: Record<Role, number> = {
 	admin: 0,
 	manager: 1,
@@ -519,6 +528,22 @@ describe('Order.sort', () => {
 			items[1],
 		]);
 	});
+
+	it('preserves the input array element type when sorting with a wider order', () => {
+		const order = Order.by<Shape, number>((shape) => shape.area);
+		const triangles: Triangle[] = [
+			{ area: 6, base: 3, height: 4 },
+			{ area: 3, base: 2, height: 3 },
+		];
+
+		const result = Order.sort(triangles, order);
+
+		expectTypeOf(result).toEqualTypeOf<Triangle[]>();
+		expect(result).toEqual([
+			{ area: 3, base: 2, height: 3 },
+			{ area: 6, base: 3, height: 4 },
+		]);
+	});
 });
 
 describe('Order#sort', () => {
@@ -535,6 +560,22 @@ describe('Order#sort', () => {
 		expect(items).toEqual([3, 1, 2]);
 
 		spy.mockRestore();
+	});
+
+	it('preserves the input array element type when sorting through a wider order', () => {
+		const order = Order.by<Shape, number>((shape) => shape.area);
+		const triangles: Triangle[] = [
+			{ area: 6, base: 3, height: 4 },
+			{ area: 3, base: 2, height: 3 },
+		];
+
+		const result = order.sort(triangles);
+
+		expectTypeOf(result).toEqualTypeOf<Triangle[]>();
+		expect(result).toEqual([
+			{ area: 3, base: 2, height: 3 },
+			{ area: 6, base: 3, height: 4 },
+		]);
 	});
 });
 

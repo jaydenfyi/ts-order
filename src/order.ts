@@ -349,7 +349,7 @@ export class Order<T> {
 	 * const out = Order.sort(users, Order.by((u: User) => u.lastName));
 	 * ```
 	 */
-	static sort<T>(array: readonly T[], order: Order<T>): T[] {
+	static sort<T, U extends T>(array: readonly U[], order: Order<T>): U[] {
 		const steps = order._steps;
 		const arrayLength = array.length;
 
@@ -419,7 +419,7 @@ export class Order<T> {
 			return 0;
 		});
 
-		const out: T[] = new Array(arrayLength);
+		const out: U[] = new Array(arrayLength);
 		for (let i = 0; i < arrayLength; i++) out[i] = array[arrayIndexes[i]!]!;
 		return out;
 	}
@@ -438,7 +438,7 @@ export class Order<T> {
 	 * const sorted = Order.by((u: User) => u.lastName).sort(users);
 	 * ```
 	 */
-	sort(array: readonly T[]): T[] {
+	sort<U extends T>(array: readonly U[]): U[] {
 		return Order.sort(array, this);
 	}
 

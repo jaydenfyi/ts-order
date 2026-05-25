@@ -244,8 +244,8 @@ items.sort(Order.by((i: Item) => i.score, { direction: 'desc' }).compare);
 
 ```ts
 class Order<T> {
-	static sort<T>(array: readonly T[], order: Order<T>): T[];
-	sort(array: readonly T[]): T[];
+	static sort<T, U extends T>(array: readonly U[], order: Order<T>): U[];
+	sort<U extends T>(array: readonly U[]): U[];
 }
 ```
 

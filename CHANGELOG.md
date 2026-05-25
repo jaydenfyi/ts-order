@@ -1,5 +1,12 @@
 # ts-order
 
+## 0.0.6
+
+### Patch Changes
+
+- Preserve the input array element type when sorting with an `Order` for a wider base type.
+- reuse `Comparator` type
+
 ## 0.0.5
 
 ### Patch Changes

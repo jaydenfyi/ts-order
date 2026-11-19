@@ -227,10 +227,9 @@ export class Order<T> {
 	}
 
 	/**
-	 * Appends the steps of another order, guarded by `predicate`. Each appended step
-	 * gets `predicate` as its step predicate, combined with the step's own predicate.
-	 * An item that passes comes before one that fails. Two items that fail skip the
-	 * appended steps, and the next step in the current `Order` decides.
+	 * Appends the steps of another order, guarded by `predicate`. An item that passes
+	 * comes before one that fails. Two items that pass are sorted by the appended steps.
+	 * Two items that fail skip them, and the next step in the current `Order` decides.
 	 *
 	 * @example
 	 * ```ts
@@ -282,10 +281,9 @@ export class Order<T> {
 	}
 
 	/**
-	 * Appends the steps of another order, guarded by `predicate`. Each appended step
-	 * gets `predicate` as its step predicate, combined with the step's own predicate.
-	 * An item that passes comes before one that fails. Two items that fail skip the
-	 * appended steps, and the next step in the current `Order` decides.
+	 * Appends the steps of another order, guarded by `predicate`. An item that passes
+	 * comes before one that fails. Two items that pass are sorted by the appended steps.
+	 * Two items that fail skip them, and the next step in the current `Order` decides.
 	 *
 	 * @example
 	 * ```ts
@@ -302,6 +300,9 @@ export class Order<T> {
 	when(predicate: (value: T) => boolean, order: Order<T>): Order<T> {
 		return Order._from([
 			...this._steps,
+			// The guard is a step of its own, so items that pass it come first.
+			// Every item ties on its key.
+			{ key: () => 0, direction: 1, predicate, nulls: 1 },
 			...order._steps.map((step) => {
 				const p = step.predicate;
 				return {

@@ -1,6 +1,6 @@
 # 🔢 ts-order
 
-A tiny ([860 B](https://bundlejs.com/?q=ts-order) minified and gzipped), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
+A tiny ([878 B](https://bundlejs.com/?q=ts-order) minified and gzipped), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
 
 ## Features
 
@@ -233,9 +233,7 @@ class Order<T> {
 
 </details>
 
-Append the steps of another order, guarded by a predicate. Each wrapped step gets the guard as its predicate, combined with the step's own predicate, so the [predicate rules](#how-ordering-works) apply. Items that pass the guard come first, sorted by the wrapped order. Items that fail it skip the wrapped steps.
-
-The guard is not a step of its own. An item that passes the guard but fails a wrapped step's own predicate does not come first at that step. If the wrapped order has no steps, `when()` adds nothing. The `when` comparator works differently: it always puts the values that pass first.
+Append the steps of another order, guarded by a predicate. Items that pass the guard come first, sorted by the wrapped order. Items that fail it skip the wrapped steps, so a later step decides their order. The `when` comparator follows the same rules.
 
 ```ts
 const byRegion = new Order<User>()
@@ -586,7 +584,7 @@ The main entry exports these types:
 
 0.1.0 fixes several cases where the sort result depended on the input order. Each fix changes behaviour, so check the cases below.
 
-**Predicates and `when()`.** When only one of two items passes, it now comes first. Before, the step was skipped, so the failing item tied with every other item. For example, the `evenNumbersFirst` comparator from the `when` docs returned `[1, 2, 3, 4]` for `[3, 2, 1, 4]`. It now returns `[2, 4, 1, 3]`.
+**Predicates and `when()`.** When only one of two items passes, it now comes first. Before, the step was skipped, so the failing item tied with every other item. For example, the `evenNumbersFirst` comparator from the `when` docs returned `[1, 2, 3, 4]` for `[3, 2, 1, 4]`. It now returns `[2, 4, 1, 3]`. In `Order.when()`, items that pass the guard now come first even when they fail a wrapped step's own predicate, as with the `when` comparator.
 
 ```ts
 const byScore = Order.by((u: User) => u.score, {

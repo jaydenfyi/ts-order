@@ -671,6 +671,20 @@ describe('Order.when', () => {
 		expect(combined.compare(euOne, euDisabled)).toBe(-1);
 		expect(key).not.toHaveBeenCalled();
 	});
+
+	it('puts items that pass the guard first, even when they fail a wrapped predicate', () => {
+		type Item = { id: number; region: 'eu' | 'us'; enabled: boolean };
+		const items: Item[] = [
+			{ id: 1, region: 'us', enabled: true },
+			{ id: 2, region: 'eu', enabled: false },
+		];
+		const isEu = (item: Item) => item.region === 'eu';
+		const ids = (sorted: Item[]) => sorted.map((item) => item.id);
+
+		const wrapped = Order.by((item: Item) => item.id, { predicate: (item) => item.enabled });
+		expect(ids(Order.when(isEu, wrapped).sort(items))).toEqual([2, 1]);
+		expect(ids(Order.when(isEu, new Order<Item>()).sort(items))).toEqual([2, 1]);
+	});
 });
 
 describe('comparators that return NaN', () => {

@@ -97,11 +97,6 @@ const stepsArb = fc.array(stepArb, { minLength: 1, maxLength: 4 });
 const toOrder = (steps: Step[]) =>
 	steps.reduce((result, step) => result.by(step.key, step.options), new Order<Item>());
 const toComparator = (steps: Step[]) => order(...steps.map((step) => by(step.key, step.options)));
-/** `steps` with no predicate on the last step. */
-const withPlainLastStep = (steps: Step[]): Step[] => {
-	const last = steps[steps.length - 1]!;
-	return [...steps.slice(0, -1), { ...last, options: { ...last.options, predicate: undefined } }];
-};
 
 function isConsistent<T>(compareFn: Comparator<T>, a: T, b: T, c: T): boolean {
 	const ab = compareFn(a, b);
@@ -200,9 +195,9 @@ describe('Order properties', () => {
 		);
 	});
 
-	it('puts items that pass the when() guard first when a wrapped step has no predicate', () => {
+	it('puts items that pass the when() guard first', () => {
 		fc.assert(
-			fc.property(stepsArb.map(withPlainLastStep), itemsArb, (steps, items) => {
+			fc.property(fc.array(stepArb, { maxLength: 4 }), itemsArb, (steps, items) => {
 				const guarded = new Order<Item>().when((item) => item.b, toOrder(steps));
 				const passes = guarded.sort(items).map((item) => item.b);
 				expect(passes).toEqual(passes.slice().sort((a, b) => +b - +a));
@@ -234,9 +229,9 @@ describe('Order and the comparator module agree', () => {
 		);
 	});
 
-	it('Order#when matches the when comparator when a wrapped step has no predicate', () => {
+	it('Order#when matches the when comparator', () => {
 		fc.assert(
-			fc.property(stepsArb.map(withPlainLastStep), itemArb, itemArb, (steps, a, b) => {
+			fc.property(fc.array(stepArb, { maxLength: 4 }), itemArb, itemArb, (steps, a, b) => {
 				const guard = (item: Item) => item.b;
 				const viaOrder = new Order<Item>().when(guard, toOrder(steps)).compare(a, b);
 				expect(sign(when(guard, toComparator(steps))(a, b))).toBe(sign(viaOrder));

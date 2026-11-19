@@ -16,24 +16,3 @@ export function distinctSorts<T>(
 ): Set<string> {
 	return new Set(permutations(items).map((p) => JSON.stringify(sort(p))));
 }
-
-/** A seeded random number generator, so that randomized tests repeat exactly. */
-export function seededRandom(seed: number): () => number {
-	let x = seed >>> 0 || 1;
-	return () => {
-		x ^= x << 13;
-		x ^= x >>> 17;
-		x ^= x << 5;
-		return (x >>> 0) / 4294967296;
-	};
-}
-
-/** A shuffled copy of `items` (Fisher-Yates). */
-export function shuffled<T>(items: readonly T[], random: () => number): T[] {
-	const out = items.slice();
-	for (let i = out.length - 1; i > 0; i--) {
-		const j = Math.floor(random() * (i + 1));
-		[out[i], out[j]] = [out[j]!, out[i]!];
-	}
-	return out;
-}

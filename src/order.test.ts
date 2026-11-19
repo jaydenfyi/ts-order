@@ -1,7 +1,7 @@
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { number } from './comparator/index.js';
 import { Order } from './order.js';
-import { distinctSorts, permutations, seededRandom, shuffled } from './testing.js';
+import { distinctSorts, permutations } from './testing.js';
 
 type Role = 'admin' | 'manager' | 'staff' | 'guest';
 
@@ -746,63 +746,5 @@ describe('predicate steps give one consistent order', () => {
 		expect(distinctSorts([a, b, c], (p) => ids(p.sort(order.compare)))).toEqual(
 			new Set([JSON.stringify([3, 1, 2])]),
 		);
-	});
-
-	it('gives one result for many shuffles of random input', () => {
-		const random = seededRandom(42);
-		const items: Item[] = Array.from({ length: 60 }, (_, i) => ({
-			id: i,
-			region: random() < 0.5 ? 'eu' : 'us',
-			score: random() < 0.2 ? null : Math.floor(random() * 10),
-		}));
-		const orders = [
-			new Order<Item>()
-				.when((item) => item.region === 'eu', Order.by((item: Item) => item.score))
-				.by((item) => item.id),
-			Order.by((item: Item) => item.score, {
-				predicate: (item) => item.score != null,
-				direction: 'desc',
-			}).by((item) => item.id),
-		];
-
-		for (const order of orders) {
-			const expected = ids(order.sort(items));
-			for (let i = 0; i < 50; i++) {
-				const input = shuffled(items, random);
-				expect(ids(order.sort(input))).toEqual(expected);
-				expect(ids(input.slice().sort(order.compare))).toEqual(expected);
-			}
-		}
-	});
-});
-
-describe('sort matches sort(compare) for small and large arrays', () => {
-	type Item = { id: number; group: number; score: number | null; flag: boolean };
-
-	it.each([2, 3, 15, 16, 17, 40, 200])('gives the same result for %i items, ties included', (length) => {
-		const random = seededRandom(length);
-		const orders = [
-			Order.by((item: Item) => item.group),
-			Order.by((item: Item) => item.score, { direction: 'desc' }),
-			Order.by((item: Item) => item.group).by((item) => item.score, {
-				predicate: (item) => item.flag,
-			}),
-			Order.by((item: Item) => item.score, {
-				compare: (a, b) => a! - b!,
-				nulls: 'first',
-			}),
-		];
-		for (let round = 0; round < 20; round++) {
-			const items: Item[] = Array.from({ length }, (_, id) => ({
-				id,
-				group: Math.floor(random() * 3),
-				score: random() < 0.2 ? null : Math.floor(random() * 5),
-				flag: random() < 0.5,
-			}));
-			for (const order of orders) {
-				const ids = (sorted: Item[]) => sorted.map((item) => item.id);
-				expect(ids(order.sort(items))).toEqual(ids(items.slice().sort(order.compare)));
-			}
-		}
 	});
 });

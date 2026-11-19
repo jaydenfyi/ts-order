@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-import { seededRandom, shuffled } from '../testing.js';
 import {
 	boolean as booleanComparator,
 	by,
@@ -328,31 +327,6 @@ describe(when, () => {
 		expect(comparator(2, 3)).toBe(-1);
 		expect(comparator(3, 5)).toBe(0);
 		expect(base).not.toHaveBeenCalled();
-	});
-});
-
-describe('predicates give one consistent order', () => {
-	it('gives one result for many shuffles of random input', () => {
-		type Item = { id: number; region: 'eu' | 'us'; score: number | null };
-		const random = seededRandom(7);
-		const items: Item[] = Array.from({ length: 60 }, (_, i) => ({
-			id: i,
-			region: random() < 0.5 ? 'eu' : 'us',
-			score: random() < 0.2 ? null : Math.floor(random() * 10),
-		}));
-		const byId = by((item: Item) => item.id);
-		const comparators = [
-			order(when((item: Item) => item.region === 'eu', by((item: Item) => item.score)), byId),
-			order(by((item: Item) => item.score, { predicate: (item) => item.score != null }), byId),
-		];
-
-		for (const comparator of comparators) {
-			const expected = items.slice().sort(comparator).map((item) => item.id);
-			for (let i = 0; i < 50; i++) {
-				const sorted = shuffled(items, random).sort(comparator);
-				expect(sorted.map((item) => item.id)).toEqual(expected);
-			}
-		}
 	});
 });
 

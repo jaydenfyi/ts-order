@@ -414,9 +414,6 @@ export class Order<T> {
 		const predicateMatchesPerStep: (boolean[] | undefined)[] = new Array(
 			numberOfSteps,
 		);
-		// Steps where some key could be missing. The others compare with `<` and
-		// `>` alone. The test is cheap and inline: `isMissing` decides later.
-		const mayMiss: boolean[] = [];
 		for (let j = 0; j < numberOfSteps; j++) {
 			const step = steps[j]!;
 			const keys = new Array(arrayLength);
@@ -427,20 +424,12 @@ export class Order<T> {
 					const item = array[i]!;
 					const match = !!predicate(item);
 					matches[i] = match;
-					if (match) {
-						const key = step.key(item);
-						keys[i] = key;
-						// eslint-disable-next-line no-self-compare -- true only for NaN
-						if (key == null || key !== key || key instanceof Date) mayMiss[j] = true;
-					}
+					if (match) keys[i] = step.key(item);
 				}
 				predicateMatchesPerStep[j] = matches;
 			} else {
 				for (let i = 0; i < arrayLength; i++) {
-					const key = step.key(array[i]!);
-					keys[i] = key;
-					// eslint-disable-next-line no-self-compare -- true only for NaN
-					if (key == null || key !== key || key instanceof Date) mayMiss[j] = true;
+					keys[i] = step.key(array[i]!);
 				}
 			}
 			keysPerStep[j] = keys;
@@ -479,18 +468,13 @@ export class Order<T> {
 					const r = c(a, b);
 					if (r > 0) return d;
 					if (r < 0) return -d;
-				} else if (!mayMiss[j]) {
-					if ((a as any) < (b as any)) return -d;
-					if ((a as any) > (b as any)) return d;
 				} else {
-					// `null` compares as 0 with `<` and `>`, so check for it first.
+					// The same fast and slow path as `compare`.
 					if (a !== null && b !== null) {
 						if ((a as any) < (b as any)) return -d;
 						if ((a as any) > (b as any)) return d;
 						if (a === b) continue;
 					}
-					// A null key, or neither key is less: NaN, undefined, an invalid
-					// date, or equal values that are not ===.
 					const missingA = isMissing(a);
 					if (missingA !== isMissing(b)) return missingA ? steps[j]!.nulls! : -steps[j]!.nulls!;
 				}

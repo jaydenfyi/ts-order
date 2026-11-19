@@ -4,7 +4,7 @@
 		"path": "dist/index.js",
 		"import": "{ Order }",
 		"gzip": true,
-		"limit": "1050 B"
+		"limit": "950 B"
 	},
 	{
 		"name": "ts-order/comparator",

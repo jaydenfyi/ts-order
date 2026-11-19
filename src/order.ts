@@ -97,7 +97,9 @@ export class Order<T> {
 	}
 
 	/**
-	 * Create a new order with a single sort step.
+	 * Create a new order with a single sort step. Without a `compare` option,
+	 * keys compare with `<` and `>`, and missing keys (`null`, `undefined`, `NaN`
+	 * and invalid dates) sort last.
 	 *
 	 * @example
 	 * ```ts
@@ -110,6 +112,17 @@ export class Order<T> {
 		selectorFn: (item: T) => K,
 		options?: KeyOptions<K, T>,
 	): Order<T>;
+	/**
+	 * Create a new order with a single sort step, for a key of any type. The
+	 * `compare` option orders the keys.
+	 *
+	 * @example
+	 * ```ts
+	 * const byAddress = Order.by((c: Customer) => c.address, {
+	 * 	compare: (a, b) => a.city.localeCompare(b.city),
+	 * });
+	 * ```
+	 */
 	static by<T, K>(
 		selectorFn: (item: T) => K,
 		options: KeyOptionsWithCompare<K, T>,
@@ -135,6 +148,17 @@ export class Order<T> {
 		selectorFn: (item: T) => K,
 		options?: KeyOptions<K, T>,
 	): Order<T>;
+	/**
+	 * Append a sort step for a key of any type, and return a new order
+	 * instance. The `compare` option orders the keys.
+	 *
+	 * @example
+	 * ```ts
+	 * const byIdThenAddress = new Order<Customer>()
+	 * 	.by((c) => c.id)
+	 * 	.by((c) => c.address, { compare: (a, b) => a.city.localeCompare(b.city) });
+	 * ```
+	 */
 	by<K>(
 		selectorFn: (item: T) => K,
 		options: KeyOptionsWithCompare<K, T>,

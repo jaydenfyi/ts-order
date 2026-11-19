@@ -40,11 +40,30 @@ export type Comparable =
 	| null
 	| undefined;
 
-/** `KeyOptions` that include a `compare` option. */
+/**
+ * `KeyOptions` that include a `compare` option. A key of any type needs this.
+ *
+ * @example
+ * ```ts
+ * const options: KeyOptionsWithCompare<Address> = {
+ *   compare: (a, b) => a.city.localeCompare(b.city),
+ * };
+ * ```
+ */
 export type KeyOptionsWithCompare<K, T = unknown> = KeyOptions<K, T> & {
 	compare: Comparator<K>;
 };
 
+/**
+ * Options for one sort step of `Order.by` or the comparator `by`. `K` is the
+ * key type and `T` is the item type.
+ *
+ * @example
+ * ```ts
+ * const options: KeyOptions<number, User> = { direction: 'desc', nulls: 'first' };
+ * const byAge = Order.by((user: User) => user.age, options);
+ * ```
+ */
 export type KeyOptions<K, T = unknown> = {
 	/**
 	 * Direction for this step.

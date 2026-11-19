@@ -8,14 +8,30 @@ import { isMissing } from '../missing.js';
 
 /**
  * Convenience alias for `-1`, indicating that `a` should come before `b` inside a comparator function.
+ *
+ * @example
+ * ```ts
+ * const shortFirst: Comparator<string> = (a, b) =>
+ *   a.length < b.length ? A_BEFORE_B : a.length > b.length ? A_AFTER_B : EQUAL;
+ * ```
  */
 export const A_BEFORE_B = -1;
 /**
  * Convenience alias for `1`, indicating that `a` should come after `b` inside a comparator function.
+ *
+ * @example
+ * ```ts
+ * const trueFirst: Comparator<boolean> = (a, b) => (a === b ? EQUAL : a ? A_BEFORE_B : A_AFTER_B);
+ * ```
  */
 export const A_AFTER_B = 1;
 /**
  * Convenience alias for `0` indicating that `a` is equal to `b` inside a comparator function.
+ *
+ * @example
+ * ```ts
+ * const keepOrder: Comparator<unknown> = () => EQUAL;
+ * ```
  */
 export const EQUAL = 0;
 
@@ -222,6 +238,14 @@ export function by<T, K extends Comparable>(
 	key: (v: T) => K,
 	options?: KeyOptions<K, T>,
 ): Comparator<T>;
+/**
+ * Builds a comparator for a key of any type. The `compare` option orders the keys.
+ *
+ * @example
+ * ```ts
+ * customers.sort(by((c) => c.address, { compare: (a, b) => a.city.localeCompare(b.city) }));
+ * ```
+ */
 export function by<T, K>(
 	key: (v: T) => K,
 	options: KeyOptionsWithCompare<K, T>,
@@ -287,6 +311,14 @@ export function map<T, U extends Comparable>(
 	map: (value: T) => U,
 	compareFn?: Comparator<U>,
 ): Comparator<T>;
+/**
+ * Adapts a comparator to work on mapped values of any type.
+ *
+ * @example
+ * ```ts
+ * users.sort(map((user) => user.address, (a, b) => a.city.localeCompare(b.city)));
+ * ```
+ */
 export function map<T, U>(
 	map: (value: T) => U,
 	compareFn: Comparator<U>,

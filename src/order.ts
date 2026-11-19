@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/no-new-array */
 
-import type { Comparator, Direction, KeyOptions } from './types.js';
+import type { Comparator, KeyOptions } from './types.js';
 
 /** Direction sign for the given order step. 1 for "asc", -1 for "desc" */
 type DirectionSign = 1 | -1;
@@ -12,11 +12,6 @@ type OrderStep<T> = {
 	compare?: Comparator<unknown> | undefined;
 	predicate?: ((value: T) => boolean) | undefined;
 };
-
-const directionSignByDirection = {
-	asc: 1,
-	desc: -1,
-} as const satisfies Record<Direction, DirectionSign>;
 
 /**
  * Builder for immutable multi-step ordering rules.
@@ -36,7 +31,9 @@ const directionSignByDirection = {
  * ```
  */
 export class Order<T> {
-	private _steps: OrderStep<T>[] = [];
+	/** Steps never change after an order exists, so orders share these arrays. */
+	private _steps: readonly OrderStep<T>[] = [];
+	private _compare: Comparator<T> | undefined;
 
 	/**
 	 * Create a new order. When a source or iterable of sources is provided, the
@@ -63,25 +60,24 @@ export class Order<T> {
 			| null
 			| undefined,
 	) {
-		if (!sourceOrSources) {
+		if (!sourceOrSources) return;
+		// Not `instanceof`: an order from another copy of this package must work too.
+		if (!(Symbol.iterator in sourceOrSources)) {
+			this._steps = sourceOrSources._steps;
 			return;
 		}
-		if (Symbol.iterator in new Object(sourceOrSources)) {
-			for (const s of sourceOrSources as Iterable<
-				Order<T> | null | undefined
-			>) {
-				if (!s || s._steps.length === 0) continue;
-
-				for (let i = 0; i < s._steps.length; i++) {
-					this._steps.push(s._steps[i]!);
-				}
-			}
-			return;
+		const steps: OrderStep<T>[] = [];
+		for (const source of sourceOrSources) {
+			if (source) steps.push(...source._steps);
 		}
+		this._steps = steps;
+	}
 
-		for (let i = 0; i < (sourceOrSources as Order<T>)._steps.length; i++) {
-			this._steps.push((sourceOrSources as Order<T>)._steps[i]!);
-		}
+	/** Create an order from a steps array that no one else will change. */
+	private static _from<T>(steps: readonly OrderStep<T>[]): Order<T> {
+		const order = new Order<T>();
+		order._steps = steps;
+		return order;
 	}
 
 	/**
@@ -98,19 +94,7 @@ export class Order<T> {
 		selectorFn: (item: T) => K,
 		options?: KeyOptions<K, T>,
 	): Order<T> {
-		const order = new Order<T>();
-		const direction = directionSignByDirection[options?.direction ?? 'asc'];
-		const compare = options?.compare as Comparator<unknown>;
-		order._assignSteps([
-			{
-				key: selectorFn as (t: T) => unknown,
-				direction,
-				compare,
-				predicate: options?.predicate,
-			},
-		]);
-
-		return order;
+		return new Order<T>().by(selectorFn, options);
 	}
 
 	/**
@@ -124,20 +108,15 @@ export class Order<T> {
 	 * ```
 	 */
 	by<K>(selectorFn: (item: T) => K, options?: KeyOptions<K, T>): Order<T> {
-		const nextOrder = new Order<T>();
-		const direction = directionSignByDirection[options?.direction ?? 'asc'];
-		const compare = options?.compare as Comparator<unknown>;
-		nextOrder._assignSteps([
+		return Order._from([
 			...this._steps,
 			{
 				key: selectorFn,
-				direction,
-				compare,
+				direction: options?.direction === 'desc' ? -1 : 1,
+				compare: options?.compare as Comparator<unknown> | undefined,
 				predicate: options?.predicate,
 			},
 		]);
-
-		return nextOrder;
 	}
 
 	/**
@@ -149,18 +128,7 @@ export class Order<T> {
 	 * ```
 	 */
 	static reverse<T>(input: Order<T>): Order<T> {
-		if (input._steps.length === 0) return new Order<T>();
-		const reversedOrder = new Order<T>();
-		reversedOrder._assignSteps(
-			input._steps.map((s) => ({
-				key: s.key,
-				direction: s.direction === 1 ? -1 : 1,
-				compare: s.compare,
-				predicate: s.predicate,
-			})),
-		);
-
-		return reversedOrder;
+		return input.reverse();
 	}
 
 	/**
@@ -172,7 +140,9 @@ export class Order<T> {
 	 * ```
 	 */
 	reverse(): Order<T> {
-		return Order.reverse(this);
+		return Order._from(
+			this._steps.map((s) => ({ ...s, direction: s.direction === 1 ? -1 : 1 })),
+		);
 	}
 
 	/**
@@ -195,20 +165,7 @@ export class Order<T> {
 	 * ```
 	 */
 	static map<T, K>(outer: (t: T) => K, sub: Order<K>): Order<T> {
-		if (sub._steps.length === 0) return new Order<T>();
-		const mappedOrder = new Order<T>();
-		mappedOrder._assignSteps(
-			sub._steps.map<OrderStep<T>>((s) => ({
-				key: (t: T) => s.key(outer(t)),
-				direction: s.direction,
-				compare: s.compare,
-				predicate: s.predicate
-					? (t: T) => s.predicate!(outer(t))
-					: undefined,
-			})),
-		);
-
-		return mappedOrder;
+		return new Order<T>().map(outer, sub);
 	}
 
 	/**
@@ -228,20 +185,7 @@ export class Order<T> {
 		predicate: (value: T) => boolean,
 		input: Order<T>,
 	): Order<T> {
-		if (input._steps.length === 0) return new Order<T>();
-		const guardedOrder = new Order<T>();
-		guardedOrder._assignSteps(
-			input._steps.map((step) => ({
-				key: step.key,
-				direction: step.direction,
-				compare: step.compare,
-				predicate: step.predicate
-					? (value: T) => step.predicate!(value) && predicate(value)
-					: predicate,
-			})),
-		);
-
-		return guardedOrder;
+		return new Order<T>().when(predicate, input);
 	}
 
 	/**
@@ -265,12 +209,17 @@ export class Order<T> {
 	 * ```
 	 */
 	map<K>(outer: (t: T) => K, sub: Order<K>): Order<T> {
-		if (this._steps.length === 0) return Order.map(outer, sub);
-		const mappedOrder = Order.map(outer, sub);
-		const nextOrder = new Order<T>();
-		nextOrder._assignSteps([...this._steps, ...mappedOrder._steps]);
-
-		return nextOrder;
+		return Order._from([
+			...this._steps,
+			...sub._steps.map((s): OrderStep<T> => {
+				const p = s.predicate;
+				return {
+					...s,
+					key: (t) => s.key(outer(t)),
+					predicate: p && ((t) => p(outer(t))),
+				};
+			}),
+		]);
 	}
 
 	/**
@@ -291,12 +240,16 @@ export class Order<T> {
 	 * ```
 	 */
 	when(predicate: (value: T) => boolean, order: Order<T>): Order<T> {
-		const guarded = Order.when(predicate, order);
-		if (this._steps.length === 0) return guarded;
-		if (guarded._steps.length === 0) return new Order<T>(this);
-		const nextOrder = new Order<T>();
-		nextOrder._assignSteps([...this._steps, ...guarded._steps]);
-		return nextOrder;
+		return Order._from([
+			...this._steps,
+			...order._steps.map((step) => {
+				const p = step.predicate;
+				return {
+					...step,
+					predicate: p ? (value: T) => p(value) && predicate(value) : predicate,
+				};
+			}),
+		]);
 	}
 
 	/**
@@ -310,9 +263,8 @@ export class Order<T> {
 	get compare(): Comparator<T> {
 		const steps = this._steps;
 		const numberOfSteps = steps.length;
-		if (numberOfSteps === 0) return () => 0;
 
-		return (a: T, b: T): number => {
+		return (this._compare ??= (a: T, b: T): number => {
 			for (let i = 0; i < numberOfSteps; i++) {
 				const s = steps[i]!;
 				const p = s.predicate;
@@ -330,7 +282,7 @@ export class Order<T> {
 			}
 
 			return 0;
-		};
+		});
 	}
 
 	/**
@@ -348,7 +300,25 @@ export class Order<T> {
 	 * ```
 	 */
 	static sort<T, U extends T>(array: readonly U[], order: Order<T>): U[] {
-		const steps = order._steps;
+		return order.sort(array);
+	}
+
+	/**
+	 * Sort an array with the provided order and return a new array.
+	 *
+	 * This method implements the Schwartzian Transform or DSU
+	 * (decorate-sort-undecorate) technique, which ensures that each key
+	 * selector is only invoked once per element per step. For larger arrays or
+	 * costly key computations, this can yield significant performance
+	 * improvements over repeatedly calling the selector during comparisons.
+	 *
+	 * @example
+	 * ```ts
+	 * const sorted = Order.by((u: User) => u.lastName).sort(users);
+	 * ```
+	 */
+	sort<U extends T>(array: readonly U[]): U[] {
+		const steps = this._steps;
 		const arrayLength = array.length;
 
 		if (arrayLength <= 1) return array.slice();
@@ -417,28 +387,5 @@ export class Order<T> {
 		const out: U[] = new Array(arrayLength);
 		for (let i = 0; i < arrayLength; i++) out[i] = array[arrayIndexes[i]!]!;
 		return out;
-	}
-
-	/**
-	 * Sort an array with the provided order and return a new array.
-	 *
-	 * This method implements the Schwartzian Transform or DSU
-	 * (decorate-sort-undecorate) technique, which ensures that each key
-	 * selector is only invoked once per element per step. For larger arrays or
-	 * costly key computations, this can yield significant performance
-	 * improvements over repeatedly calling the selector during comparisons.
-	 *
-	 * @example
-	 * ```ts
-	 * const sorted = Order.by((u: User) => u.lastName).sort(users);
-	 * ```
-	 */
-	sort<U extends T>(array: readonly U[]): U[] {
-		return Order.sort(array, this);
-	}
-
-	/** Replace the internal step list with provided steps. */
-	private _assignSteps(steps: OrderStep<T>[]): void {
-		this._steps = steps;
 	}
 }

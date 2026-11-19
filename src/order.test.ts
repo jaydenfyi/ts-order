@@ -130,9 +130,43 @@ describe('Order constructor', () => {
 		expect(composed.compare(a, b)).toBeGreaterThan(0);
 		expect(composed.compare(a, c)).toBeLessThan(0);
 	});
+
+	it('combines orders from another copy of the package', async () => {
+		vi.resetModules();
+		const { Order: OtherOrder } = await import('./order.js');
+		expect(OtherOrder).not.toBe(Order);
+
+		type Item = { value: number; label: string };
+		const byValue = OtherOrder.by((item: Item) => item.value);
+		const byLabel = Order.by((item: Item) => item.label);
+		const items: Item[] = [
+			{ value: 2, label: 'a' },
+			{ value: 1, label: 'b' },
+			{ value: 1, label: 'a' },
+		];
+		const expected = [
+			{ value: 1, label: 'a' },
+			{ value: 1, label: 'b' },
+			{ value: 2, label: 'a' },
+		];
+
+		expect(new Order<Item>(byValue).by((item) => item.label).sort(items)).toEqual(expected);
+		expect(new Order<Item>([byValue, byLabel]).sort(items)).toEqual(expected);
+		expect(Order.map((item: Item) => item, byValue).by((item) => item.label).sort(items)).toEqual(expected);
+		expect(byLabel.reverse().when(() => true, byValue).reverse().sort(items)).toEqual([
+			{ value: 2, label: 'a' },
+			{ value: 1, label: 'a' },
+			{ value: 1, label: 'b' },
+		]);
+	});
 });
 
 describe('Order.compare', () => {
+	it('returns the same comparator on every access', () => {
+		const order = Order.by((value: number) => value);
+		expect(order.compare).toBe(order.compare);
+	});
+
 	it('returns 0 when no steps are defined', () => {
 		const order = new Order<any>();
 		expect(order.compare({ foo: 1 }, { foo: 2 })).toBe(0);
@@ -547,19 +581,16 @@ describe('Order.sort', () => {
 });
 
 describe('Order#sort', () => {
-	it('delegates to the static helper and returns a sorted copy', () => {
+	it('returns a sorted copy and matches the static helper', () => {
 		const order = Order.by<number, number>((value) => value);
 		const items = [3, 1, 2];
-		const spy = vi.spyOn(Order, 'sort');
 
 		const result = order.sort(items);
 
-		expect(spy).toHaveBeenCalledWith(items, order);
 		expect(result).toEqual([1, 2, 3]);
+		expect(result).toEqual(Order.sort(items, order));
 		expect(result).not.toBe(items);
 		expect(items).toEqual([3, 1, 2]);
-
-		spy.mockRestore();
 	});
 
 	it('preserves the input array element type when sorting through a wider order', () => {

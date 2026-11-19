@@ -46,10 +46,6 @@ export class Order<T> {
 	/** Steps never change after an order exists, so orders share these arrays. */
 	private _steps: readonly OrderStep<T>[] = [];
 	private _compare: Comparator<T> | undefined;
-	/** Per-step directions and comparators for `sort`, built on first use. */
-	private _sortPlan:
-		| { dirs: DirectionSign[]; cmps: (Comparator<unknown> | undefined)[] }
-		| undefined;
 
 	/**
 	 * Create a new order. When a source or iterable of sources is provided, the
@@ -336,32 +332,8 @@ export class Order<T> {
 					if (failsA !== !p(b)) return failsA ? 1 : -1;
 					if (failsA) continue;
 				}
-				const x = s.key(a);
-				const y = s.key(b);
-				const c = s.compare;
-				const n = s.nulls;
-				if (c) {
-					if (n) {
-						const missingX = isMissing(x);
-						if (missingX !== isMissing(y)) return missingX ? n : -n;
-						if (missingX) continue;
-					}
-					const r = c(x, y);
-					// Compare against 0 both ways so that a NaN result counts as a tie.
-					if (r > 0) return s.direction;
-					if (r < 0) return -s.direction;
-				} else {
-					// Fast path. `null` compares as 0 with `<` and `>`, so it takes the slow path.
-					// `undefined` and NaN reach the slow path because `<` and `>` both return false.
-					if (x !== null && y !== null) {
-						if ((x as any) < (y as any)) return -s.direction;
-						if ((x as any) > (y as any)) return s.direction;
-						if (x === y) continue;
-					}
-					// Slow path: nullish, NaN, an invalid date, or equal values that are not ===.
-					const missingX = isMissing(x);
-					if (missingX !== isMissing(y)) return missingX ? n! : -n!;
-				}
+				const r = compareKeys(s, s.key(a), s.key(b));
+				if (r) return r;
 			}
 
 			return 0;
@@ -438,10 +410,6 @@ export class Order<T> {
 		const arrayIndexes: number[] = new Array(arrayLength);
 		for (let i = 0; i < arrayLength; i++) arrayIndexes[i] = i;
 
-		const { dirs, cmps } = (this._sortPlan ??= {
-			dirs: steps.map((step) => step.direction),
-			cmps: steps.map((step) => step.compare),
-		});
 
 		// The same rules as `compare`, on the precomputed keys.
 		const compareIndexes = (ia: number, ib: number): number => {
@@ -453,31 +421,8 @@ export class Order<T> {
 					if (!matchA) continue;
 				}
 				const kj = keysPerStep[j]!;
-				const a = kj[ia];
-				const b = kj[ib];
-				const c = cmps[j];
-				const d = dirs[j]!;
-
-				if (c) {
-					const n = steps[j]!.nulls;
-					if (n) {
-						const missingA = isMissing(a);
-						if (missingA !== isMissing(b)) return missingA ? n : -n;
-						if (missingA) continue;
-					}
-					const r = c(a, b);
-					if (r > 0) return d;
-					if (r < 0) return -d;
-				} else {
-					// The same fast and slow path as `compare`.
-					if (a !== null && b !== null) {
-						if ((a as any) < (b as any)) return -d;
-						if ((a as any) > (b as any)) return d;
-						if (a === b) continue;
-					}
-					const missingA = isMissing(a);
-					if (missingA !== isMissing(b)) return missingA ? steps[j]!.nulls! : -steps[j]!.nulls!;
-				}
+				const r = compareKeys(steps[j]!, kj[ia], kj[ib]);
+				if (r) return r;
 			}
 
 			return 0;
@@ -488,4 +433,33 @@ export class Order<T> {
 		for (let i = 0; i < arrayLength; i++) out[i] = array[arrayIndexes[i]!]!;
 		return out;
 	}
+}
+
+/**
+ * Compare two keys with one step's rules: the comparator or `<` and `>`, the
+ * direction, and the position of missing keys. 0 means the keys tie.
+ */
+function compareKeys(step: OrderStep<any>, x: unknown, y: unknown): number {
+	const c = step.compare;
+	const n = step.nulls;
+	if (c) {
+		if (n) {
+			const missingX = isMissing(x);
+			if (missingX !== isMissing(y)) return missingX ? n : -n;
+			if (missingX) return 0;
+		}
+		const r = c(x, y);
+		// Compare against 0 both ways so that a NaN result counts as a tie.
+		return r > 0 ? step.direction : r < 0 ? -step.direction : 0;
+	}
+	// Fast path. `null` compares as 0 with `<` and `>`, so it takes the slow path.
+	// `undefined` and NaN reach the slow path because `<` and `>` both return false.
+	if (x !== null && y !== null) {
+		if ((x as any) < (y as any)) return -step.direction;
+		if ((x as any) > (y as any)) return step.direction;
+		if (x === y) return 0;
+	}
+	// Slow path: nullish, NaN, an invalid date, or equal values that are not ===.
+	const missingX = isMissing(x);
+	return missingX === isMissing(y) ? 0 : missingX ? n! : -n!;
 }

@@ -58,6 +58,8 @@ function placeWhere<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T> {
 	return (a, b) => {
+		// A value ties with itself. Checking this first skips the test for equal keys.
+		if (a === b) return 0;
 		const testA = test(a);
 		if (testA !== test(b)) return testA ? sign : -sign;
 		return testA ? 0 : compareFn(a, b);
@@ -129,6 +131,8 @@ export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
  * ```
  */
 export function compare<T extends Comparable>(a: T, b: T): number {
+	// A value ties with itself.
+	if (a === b) return 0;
 	// Check missing values first: `null` compares as 0 with `<` and `>`.
 	const missingA = isMissing(a);
 	if (missingA !== isMissing(b)) return missingA ? 1 : -1;

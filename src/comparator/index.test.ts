@@ -62,6 +62,13 @@ describe(nullsFirst, () => {
 });
 
 describe(nullsLast, () => {
+	it('ties two equal values without calling the base comparator', () => {
+		// This comparator breaks the contract: it never returns 0.
+		const base = vi.fn((a: number, b: number) => (a < b ? -1 : 1));
+		expect(nullsLast(base)(3, 3)).toBe(0);
+		expect(base).not.toHaveBeenCalled();
+	});
+
 	it('orders nullish values after non-null values', () => {
 		const base = vi.fn(compare<number>);
 		const comparator = nullsLast(base);

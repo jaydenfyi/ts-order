@@ -10,6 +10,6 @@
 		"name": "ts-order/comparator",
 		"path": "dist/comparator/index.js",
 		"gzip": true,
-		"limit": "650 B"
+		"limit": "660 B"
 	}
 ]

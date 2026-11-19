@@ -7,8 +7,5 @@ export default defineConfig({
 			enabled: true,
 			include: ['src/**/*.test-d.ts'],
 		},
-		benchmark: {
-			compare: './benchmarks/bench.json',
-		},
 	},
 });

@@ -1,11 +1,10 @@
-import { describe, bench as vitestBench } from 'vitest';
+import type { BenchRegistration } from 'vitest';
+import { it } from 'vitest';
 import { by, order } from '../src/comparator/index.js';
-import { Order } from '../src/order.js';
+import { Order as OrderExport } from '../src/order.js';
 
-const bench = (...args: Parameters<typeof vitestBench>) => {
-	// eslint-disable-next-line test/consistent-test-it
-	return vitestBench(args[0], args[1], { time: 1000, ...args[2] });
-};
+// Vitest turns imports into getters. A local reference keeps the getter out of the timings.
+const Order = OrderExport;
 
 // ----- Domain -----
 type Role = 'admin' | 'manager' | 'staff' | 'guest';
@@ -223,9 +222,23 @@ const SIMPLE_NAME_ORDER_DEFAULT = Order.by<User, string>((u) => u.lastName);
 const SAMPLE_SIZES = [10, 25, 50, 100, 1_000, 50_000, 100_000] as const;
 
 // ----- Benches -----
-describe.each(SAMPLE_SIZES)(
+type AddBench = (name: string, fn: () => void) => void;
+
+/** One comparison table per sample size. `body` adds the benches to compare. */
+function benchGroup(name: string, body: (sampleSize: number, bench: AddBench) => void) {
+	it.for(SAMPLE_SIZES)(name, async (sampleSize, { bench }) => {
+		const benches: BenchRegistration<string>[] = [];
+		body(sampleSize, (benchName, fn) => {
+			benches.push(bench(benchName, fn));
+		});
+		// eslint-disable-next-line test/consistent-test-it
+		await bench.compare(...benches, { time: 1000 });
+	});
+}
+
+benchGroup(
 	'order.sort(User) — multi-step (%i users)',
-	(sampleSize) => {
+	(sampleSize, bench) => {
 		const users = makeUsers(sampleSize, 1300 + sampleSize);
 		const comparator = USER_ORDER.compare;
 
@@ -261,9 +274,9 @@ describe.each(SAMPLE_SIZES)(
 	},
 );
 
-describe.each(SAMPLE_SIZES)(
+benchGroup(
 	'order.sort(User) — nested address map (%i users)',
-	(sampleSize) => {
+	(sampleSize, bench) => {
 		const users = makeUsers(sampleSize, 1700 + sampleSize);
 		const comparator = COMBINED.compare;
 
@@ -312,9 +325,9 @@ describe.each(SAMPLE_SIZES)(
 	},
 );
 
-describe.each(SAMPLE_SIZES)(
+benchGroup(
 	'order.sort(User) — basic name asc (%i users)',
-	(sampleSize) => {
+	(sampleSize, bench) => {
 		const users = makeUsers(sampleSize, 2100 + sampleSize);
 		const comparator = SIMPLE_NAME_ORDER.compare;
 
@@ -345,9 +358,9 @@ describe.each(SAMPLE_SIZES)(
 	},
 );
 
-describe.each(SAMPLE_SIZES)(
+benchGroup(
 	'order.sort(User) — basic name asc (default compare) (%i users)',
-	(sampleSize) => {
+	(sampleSize, bench) => {
 		const users = makeUsers(sampleSize, 1337);
 		const comparator = SIMPLE_NAME_ORDER_DEFAULT.compare;
 
@@ -381,10 +394,9 @@ describe.each(SAMPLE_SIZES)(
 	},
 );
 
-// describe("Cold vs warm Order creation", () => {
-describe.each(SAMPLE_SIZES)(
+benchGroup(
 	'order creation + sort(User) — cold vs warm (%i users)',
-	(sampleSize) => {
+	(sampleSize, bench) => {
 		const users = makeUsers(sampleSize, 1337);
 
 		bench('cold Order creation and sort', () => {
@@ -427,9 +439,9 @@ describe.each(SAMPLE_SIZES)(
 );
 
 // Bucketing by role rank → per-role rules → final tie-break on id
-describe.each(SAMPLE_SIZES)(
+benchGroup(
 	'role-bucketed per-role rules (%i users)',
-	(sampleSize) => {
+	(sampleSize, bench) => {
 		const users = makeUsers(sampleSize, 7400 + sampleSize);
 
 		// Order.case: bucket by role rank; within each role apply its own rules; final tie-break by id.

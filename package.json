@@ -46,8 +46,7 @@
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
 		"bench": "vitest bench",
-		"bench:snapshot": "vitest bench --outputJson=./benchmarks/bench.json",
-		"bench:compare": "vitest bench --compare ./benchmarks/bench.json",
+		"bench:snapshot": "vitest bench --reporter=default --reporter=json --outputFile.json=./benchmarks/bench.json",
 		"size": "size-limit",
 		"smoke-test": "sh scripts/smoke-test.sh",
 		"prettier": "prettier --write .",
@@ -66,7 +65,7 @@
 		"@changesets/cli": "^2.29.7",
 		"@size-limit/preset-small-lib": "^14.3.0",
 		"@types/node": "^24.8.1",
-		"@vitest/coverage-v8": "^3.2.4",
+		"@vitest/coverage-v8": "^5.1.0",
 		"eslint": "^9.37.0",
 		"fast-check": "^4.10.2",
 		"prettier": "^3.6.2",
@@ -74,6 +73,6 @@
 		"size-limit": "^14.3.0",
 		"tsdown": "^0.15.7",
 		"typescript": "^5.9.3",
-		"vitest": "^3.2.4"
+		"vitest": "^5.1.0"
 	}
 }

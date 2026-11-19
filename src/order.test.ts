@@ -775,3 +775,34 @@ describe('predicate steps give one consistent order', () => {
 		}
 	});
 });
+
+describe('sort matches sort(compare) for small and large arrays', () => {
+	type Item = { id: number; group: number; score: number | null; flag: boolean };
+
+	it.each([2, 3, 15, 16, 17, 40, 200])('gives the same result for %i items, ties included', (length) => {
+		const random = seededRandom(length);
+		const orders = [
+			Order.by((item: Item) => item.group),
+			Order.by((item: Item) => item.score, { direction: 'desc' }),
+			Order.by((item: Item) => item.group).by((item) => item.score, {
+				predicate: (item) => item.flag,
+			}),
+			Order.by((item: Item) => item.score, {
+				compare: (a, b) => a! - b!,
+				nulls: 'first',
+			}),
+		];
+		for (let round = 0; round < 20; round++) {
+			const items: Item[] = Array.from({ length }, (_, id) => ({
+				id,
+				group: Math.floor(random() * 3),
+				score: random() < 0.2 ? null : Math.floor(random() * 5),
+				flag: random() < 0.5,
+			}));
+			for (const order of orders) {
+				const ids = (sorted: Item[]) => sorted.map((item) => item.id);
+				expect(ids(order.sort(items))).toEqual(ids(items.slice().sort(order.compare)));
+			}
+		}
+	});
+});

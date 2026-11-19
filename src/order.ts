@@ -46,6 +46,10 @@ export class Order<T> {
 	/** Steps never change after an order exists, so orders share these arrays. */
 	private _steps: readonly OrderStep<T>[] = [];
 	private _compare: Comparator<T> | undefined;
+	/** Per-step directions and comparators for `sort`, built on first use. */
+	private _sortPlan:
+		| { dirs: DirectionSign[]; cmps: (Comparator<unknown> | undefined)[] }
+		| undefined;
 
 	/**
 	 * Create a new order. When a source or iterable of sources is provided, the
@@ -388,7 +392,7 @@ export class Order<T> {
 		);
 		// Steps where some key could be missing. The others compare with `<` and
 		// `>` alone. The test is cheap and inline: `isMissing` decides later.
-		const mayMiss = new Uint8Array(numberOfSteps);
+		const mayMiss: boolean[] = [];
 		for (let j = 0; j < numberOfSteps; j++) {
 			const step = steps[j]!;
 			const keys = new Array(arrayLength);
@@ -403,7 +407,7 @@ export class Order<T> {
 						const key = step.key(item);
 						keys[i] = key;
 						// eslint-disable-next-line no-self-compare -- true only for NaN
-						if (key == null || key !== key || key instanceof Date) mayMiss[j] = 1;
+						if (key == null || key !== key || key instanceof Date) mayMiss[j] = true;
 					}
 				}
 				predicateMatchesPerStep[j] = matches;
@@ -412,7 +416,7 @@ export class Order<T> {
 					const key = step.key(array[i]!);
 					keys[i] = key;
 					// eslint-disable-next-line no-self-compare -- true only for NaN
-					if (key == null || key !== key || key instanceof Date) mayMiss[j] = 1;
+					if (key == null || key !== key || key instanceof Date) mayMiss[j] = true;
 				}
 			}
 			keysPerStep[j] = keys;
@@ -421,15 +425,13 @@ export class Order<T> {
 		const arrayIndexes: number[] = new Array(arrayLength);
 		for (let i = 0; i < arrayLength; i++) arrayIndexes[i] = i;
 
-		const dirs = new Int8Array(numberOfSteps);
-		const cmps = new Array<Comparator<unknown> | undefined>(numberOfSteps);
-		for (let j = 0; j < numberOfSteps; j++) {
-			dirs[j] = steps[j]!.direction;
-			cmps[j] = steps[j]!.compare;
-		}
+		const { dirs, cmps } = (this._sortPlan ??= {
+			dirs: steps.map((step) => step.direction),
+			cmps: steps.map((step) => step.compare),
+		});
 
 		// The same rules as `compare`, on the precomputed keys.
-		arrayIndexes.sort((ia, ib) => {
+		const compareIndexes = (ia: number, ib: number): number => {
 			for (let j = 0; j < numberOfSteps; j++) {
 				const matches = predicateMatchesPerStep[j];
 				if (matches) {
@@ -441,7 +443,7 @@ export class Order<T> {
 				const a = kj[ia];
 				const b = kj[ib];
 				const c = cmps[j];
-				const d = dirs[j] as 1 | -1;
+				const d = dirs[j]!;
 
 				if (c) {
 					const n = steps[j]!.nulls;
@@ -471,7 +473,8 @@ export class Order<T> {
 			}
 
 			return 0;
-		});
+		};
+		arrayIndexes.sort(compareIndexes);
 
 		const out: U[] = new Array(arrayLength);
 		for (let i = 0; i < arrayLength; i++) out[i] = array[arrayIndexes[i]!]!;

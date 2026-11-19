@@ -21,8 +21,7 @@
 	},
 	"include": [
 		"src/**/*.ts",
-		"src/order.test.ts",
 		"benchmarks/order.bench.ts"
 	],
-	"exclude": ["node_modules", "dist", "coverage", "**/*.test.ts"]
+	"exclude": ["node_modules", "dist", "coverage"]
 }

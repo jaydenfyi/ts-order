@@ -1,0 +1,15 @@
+[
+	{
+		"name": "ts-order",
+		"path": "dist/index.js",
+		"import": "{ Order }",
+		"gzip": true,
+		"limit": "900 B"
+	},
+	{
+		"name": "ts-order/comparator",
+		"path": "dist/comparator/index.js",
+		"gzip": true,
+		"limit": "600 B"
+	}
+]

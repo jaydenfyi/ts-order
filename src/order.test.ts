@@ -1,5 +1,5 @@
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
-import { Order } from './order';
+import { Order } from './order.js';
 
 type Role = 'admin' | 'manager' | 'staff' | 'guest';
 

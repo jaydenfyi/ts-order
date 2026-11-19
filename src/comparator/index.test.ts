@@ -14,7 +14,7 @@ import {
 	reverse,
 	string,
 	when,
-} from './index';
+} from './index.js';
 
 describe(reverse, () => {
 	it('swaps comparator arguments to flip the sort order', () => {

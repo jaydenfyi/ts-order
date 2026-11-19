@@ -1,4 +1,4 @@
-import type { KeyOptions } from './types.js';
+import type { Comparable, KeyOptions } from './types.js';
 import { describe, expect, it, vi } from 'vitest';
 import { by, compare, order } from './comparator/index.js';
 import { Order } from './order.js';
@@ -15,7 +15,7 @@ const invalid = new Date('invalid');
 // Each case lists the expected ids. Missing keys tie, so the id tiebreaker orders them.
 const cases: {
 	name: string;
-	values: unknown[];
+	values: Comparable[];
 	expected: Record<'asc' | 'desc' | 'firstAsc' | 'firstDesc', number[]>;
 }[] = [
 	{
@@ -50,7 +50,7 @@ const cases: {
 	},
 ];
 
-const variants: [keyof (typeof cases)[number]['expected'], KeyOptions<unknown>][] = [
+const variants: [keyof (typeof cases)[number]['expected'], KeyOptions<Comparable>][] = [
 	['asc', {}],
 	['desc', { direction: 'desc' }],
 	['firstAsc', { nulls: 'first' }],
@@ -61,7 +61,7 @@ describe('missing keys', () => {
 	for (const { name, values, expected } of cases) {
 		describe(name, () => {
 			it.each(variants)('%s: Order.by sorts to one result from every input order', (variant, options) => {
-				const byV = Order.by((item: Item<unknown>) => item.v, options).by((item) => item.id);
+				const byV = Order.by((item: Item<Comparable>) => item.v, options).by((item) => item.id);
 				const sorts = distinctSorts(items(values), (p) => ids(byV.sort(p)));
 				expect(sorts).toEqual(new Set([JSON.stringify(expected[variant])]));
 				const viaCompare = distinctSorts(items(values), (p) => ids(p.sort(byV.compare)));
@@ -70,7 +70,7 @@ describe('missing keys', () => {
 
 			it.each(variants)('%s: the comparator by gives the same result', (variant, options) => {
 				const comparator = order(
-					by((item: Item<unknown>) => item.v, options),
+					by((item: Item<Comparable>) => item.v, options),
 					by((item) => item.id),
 				);
 				const sorts = distinctSorts(items(values), (p) => ids(p.sort(comparator)));

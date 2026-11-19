@@ -1,4 +1,9 @@
-import type { Comparator, KeyOptions } from '../types.js';
+import type {
+	Comparable,
+	Comparator,
+	KeyOptions,
+	KeyOptionsWithCompare,
+} from '../types.js';
 import { isMissing } from '../missing.js';
 
 /**
@@ -112,9 +117,9 @@ export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
  * [2, undefined, 1].sort(compare); // [1, 2, undefined]
  * ```
  */
-export function compare<T>(a: T, b: T): number {
+export function compare<T extends Comparable>(a: T, b: T): number {
 	// Check missing values first: `null` compares as 0 with `<` and `>`.
-	return compareMissing(a, b, 1) || (a < b ? -1 : a > b ? 1 : 0);
+	return compareMissing(a, b, 1) || ((a as any) < (b as any) ? -1 : (a as any) > (b as any) ? 1 : 0);
 }
 
 /** Order two values by whether they are missing: 0 when both or neither are. */
@@ -209,12 +214,20 @@ export function date(a: Date, b: Date) {
  * users.sort(by(user => user.age));
  * ```
  */
+export function by<T, K extends Comparable>(
+	key: (v: T) => K,
+	options?: KeyOptions<K, T>,
+): Comparator<T>;
+export function by<T, K>(
+	key: (v: T) => K,
+	options: KeyOptionsWithCompare<K, T>,
+): Comparator<T>;
 export function by<T, K>(
 	key: (v: T) => K,
 	options?: KeyOptions<K, T>,
 ): Comparator<T> {
 	const custom = options?.compare;
-	const compareFn = custom ?? compare;
+	const compareFn = custom ?? (compare as Comparator<K>);
 	const predicate = options?.predicate;
 	const compareFnWithDirection =
 		options?.direction === 'desc' ? reverse(compareFn) : compareFn;
@@ -266,9 +279,17 @@ export function order<T>(...comparators: Comparator<T>[]): Comparator<T> {
  * ['aa', 'b'].sort(map((value: string) => value.length)); // ['b', 'aa']
  * ```
  */
+export function map<T, U extends Comparable>(
+	map: (value: T) => U,
+	compareFn?: Comparator<U>,
+): Comparator<T>;
 export function map<T, U>(
 	map: (value: T) => U,
-	compareFn: Comparator<U> = compare,
+	compareFn: Comparator<U>,
+): Comparator<T>;
+export function map<T, U>(
+	map: (value: T) => U,
+	compareFn: Comparator<U> = compare as Comparator<U>,
 ): Comparator<T> {
 	return (a, b) => compareFn(map(a), map(b));
 }

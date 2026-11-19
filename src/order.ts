@@ -1,6 +1,11 @@
 /* eslint-disable unicorn/no-new-array */
 
-import type { Comparator, KeyOptions } from './types.js';
+import type {
+	Comparable,
+	Comparator,
+	KeyOptions,
+	KeyOptionsWithCompare,
+} from './types.js';
 import { isMissing } from './missing.js';
 
 /** Direction sign for the given order step. 1 for "asc", -1 for "desc" */
@@ -97,11 +102,19 @@ export class Order<T> {
 	 * });
 	 * ```
 	 */
+	static by<T, K extends Comparable>(
+		selectorFn: (item: T) => K,
+		options?: KeyOptions<K, T>,
+	): Order<T>;
+	static by<T, K>(
+		selectorFn: (item: T) => K,
+		options: KeyOptionsWithCompare<K, T>,
+	): Order<T>;
 	static by<T, K>(
 		selectorFn: (item: T) => K,
 		options?: KeyOptions<K, T>,
 	): Order<T> {
-		return new Order<T>().by(selectorFn, options);
+		return new Order<T>().by(selectorFn, options as KeyOptionsWithCompare<K, T>);
 	}
 
 	/**
@@ -114,6 +127,14 @@ export class Order<T> {
 	 * 	.by((u) => u.id);
 	 * ```
 	 */
+	by<K extends Comparable>(
+		selectorFn: (item: T) => K,
+		options?: KeyOptions<K, T>,
+	): Order<T>;
+	by<K>(
+		selectorFn: (item: T) => K,
+		options: KeyOptionsWithCompare<K, T>,
+	): Order<T>;
 	by<K>(selectorFn: (item: T) => K, options?: KeyOptions<K, T>): Order<T> {
 		return Order._from([
 			...this._steps,

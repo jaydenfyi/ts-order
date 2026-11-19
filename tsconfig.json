@@ -21,7 +21,6 @@
 	},
 	"include": [
 		"src/**/*.ts",
-		"internal/inline-steps.ts",
 		"src/order.test.ts",
 		"benchmarks/order.bench.ts"
 	],

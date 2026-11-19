@@ -312,8 +312,6 @@ export class Order<T> {
 		const numberOfSteps = steps.length;
 		if (numberOfSteps === 0) return () => 0;
 
-		// @codegen inlineCompareSteps(16)
-
 		return (a: T, b: T): number => {
 			for (let i = 0; i < numberOfSteps; i++) {
 				const s = steps[i]!;
@@ -387,15 +385,12 @@ export class Order<T> {
 		const arrayIndexes: number[] = new Array(arrayLength);
 		for (let i = 0; i < arrayLength; i++) arrayIndexes[i] = i;
 
-		// ---------- Unified comparator-aware DSU comparator (explicit ifs for 1..5) ----------
 		const dirs = new Int8Array(numberOfSteps);
 		const cmps = new Array<Comparator<unknown> | undefined>(numberOfSteps);
 		for (let j = 0; j < numberOfSteps; j++) {
 			dirs[j] = steps[j]!.direction;
 			cmps[j] = steps[j]!.compare;
 		}
-
-		// @codegen inlineSortSteps(16)
 
 		arrayIndexes.sort((ia, ib) => {
 			for (let j = 0; j < numberOfSteps; j++) {

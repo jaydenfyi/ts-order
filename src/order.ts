@@ -274,7 +274,9 @@ export class Order<T> {
 				const c = s.compare;
 				if (c) {
 					const r = c(x, y);
-					if (r !== 0) return r > 0 ? s.direction : -s.direction;
+					// Compare against 0 both ways so that a NaN result counts as a tie.
+					if (r > 0) return s.direction;
+					if (r < 0) return -s.direction;
 				} else {
 					if ((x as any) < (y as any)) return -s.direction;
 					if ((x as any) > (y as any)) return s.direction;
@@ -374,7 +376,8 @@ export class Order<T> {
 
 				if (c) {
 					const r = c(a, b);
-					if (r !== 0) return r > 0 ? d : -d;
+					if (r > 0) return d;
+					if (r < 0) return -d;
 				} else {
 					if ((a as any) < (b as any)) return -d;
 					if ((a as any) > (b as any)) return d;

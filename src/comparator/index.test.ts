@@ -132,10 +132,16 @@ describe(string, () => {
 describe(numberComparator, () => {
 	it('orders numbers while handling NaN values', () => {
 		expect(numberComparator(1, 2)).toBe(-1);
-		expect(numberComparator(3, 1)).toBe(2);
+		expect(numberComparator(3, 1)).toBe(1);
 		expect(numberComparator(Number.NaN, Number.NaN)).toBe(0);
 		expect(numberComparator(Number.NaN, 5)).toBe(-1);
 		expect(numberComparator(5, Number.NaN)).toBe(1);
+	});
+
+	it('treats equal infinities as equal', () => {
+		expect(numberComparator(Infinity, Infinity)).toBe(0);
+		expect(numberComparator(-Infinity, -Infinity)).toBe(0);
+		expect(numberComparator(-Infinity, Infinity)).toBe(-1);
 	});
 });
 
@@ -254,6 +260,11 @@ describe(order, () => {
 		expect(comparator('a', 'b')).toBe(1);
 		expect(first).toHaveBeenCalledTimes(1);
 		expect(second).toHaveBeenCalledTimes(1);
+	});
+
+	it('treats a NaN result as a tie and continues to the next comparator', () => {
+		const comparator = order<number>(() => Number.NaN, (a, b) => a - b);
+		expect(comparator(1, 2)).toBe(-1);
 	});
 });
 

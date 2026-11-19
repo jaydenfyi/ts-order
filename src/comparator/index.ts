@@ -153,7 +153,8 @@ export function number(a: number, b: number) {
 	if (isANaN) return -1;
 	if (isBNaN) return 1;
 
-	return a - b;
+	// Not `a - b`: `Infinity - Infinity` is NaN.
+	return a < b ? -1 : a > b ? 1 : 0;
 }
 
 /**
@@ -236,7 +237,8 @@ export function order<T>(...comparators: Comparator<T>[]): Comparator<T> {
 	return (a, b) => {
 		for (let i = 0; i < comparators.length; i++) {
 			const r = comparators[i]!(a, b);
-			if (r !== 0) return r;
+			// NaN is falsy, so a NaN result counts as a tie.
+			if (r) return r;
 		}
 
 		return 0;

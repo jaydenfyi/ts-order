@@ -32,6 +32,25 @@ export function reverse<T>(compareFn: Comparator<T>): Comparator<T> {
 }
 
 /**
+ * Wraps `compareFn` so that values where `test` is true sort first (`sign` -1)
+ * or last (`sign` 1). Those values tie with each other. `compareFn` compares
+ * only the other values.
+ */
+function placeWhere<T>(
+	test: (value: T) => boolean,
+	sign: 1 | -1,
+	compareFn: Comparator<T>,
+): Comparator<T> {
+	return (a, b) => {
+		const testA = test(a);
+		if (testA !== test(b)) return testA ? sign : -sign;
+		return testA ? 0 : compareFn(a, b);
+	};
+}
+
+const isNullish = (value: unknown): boolean => value == null;
+
+/**
  * Wraps a comparator so `null` and `undefined` sort before defined values.
  *
  * @example
@@ -42,12 +61,7 @@ export function reverse<T>(compareFn: Comparator<T>): Comparator<T> {
 export function nullsFirst<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T | null | undefined> {
-	return (a, b) => {
-		if (a == null && b == null) return 0;
-		if (a == null) return -1;
-		if (b == null) return 1;
-		return compareFn(a, b);
-	};
+	return placeWhere(isNullish, -1, compareFn as Comparator<T | null | undefined>);
 }
 
 /**
@@ -61,12 +75,7 @@ export function nullsFirst<T>(
 export function nullsLast<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T | null | undefined> {
-	return (a, b) => {
-		if (a == null && b == null) return 0;
-		if (a == null) return 1;
-		if (b == null) return -1;
-		return compareFn(a, b);
-	};
+	return placeWhere(isNullish, 1, compareFn as Comparator<T | null | undefined>);
 }
 
 /**
@@ -78,14 +87,7 @@ export function nullsLast<T>(
  * ```
  */
 export function nansFirst<T>(compareFn: Comparator<T>): Comparator<T> {
-	return (a, b) => {
-		const isANaN = typeof a === 'number' && Number.isNaN(a);
-		const isBNaN = typeof b === 'number' && Number.isNaN(b);
-		if (isANaN && isBNaN) return 0;
-		if (isANaN) return -1;
-		if (isBNaN) return 1;
-		return compareFn(a, b);
-	};
+	return placeWhere(Number.isNaN, -1, compareFn);
 }
 
 /**
@@ -97,14 +99,7 @@ export function nansFirst<T>(compareFn: Comparator<T>): Comparator<T> {
  * ```
  */
 export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
-	return (a, b) => {
-		const isANaN = typeof a === 'number' && Number.isNaN(a);
-		const isBNaN = typeof b === 'number' && Number.isNaN(b);
-		if (isANaN && isBNaN) return 0;
-		if (isANaN) return 1;
-		if (isBNaN) return -1;
-		return compareFn(a, b);
-	};
+	return placeWhere(Number.isNaN, 1, compareFn);
 }
 
 /**
@@ -140,15 +135,33 @@ function compareMissing(a: unknown, b: unknown, nulls: 1 | -1): number {
 export { compare as string };
 
 /**
- * Locale-aware string comparator using `Intl.Collator`.
+ * Locale-aware string comparator using `String.prototype.localeCompare` with
+ * the default locale. Use `collate` for a specific locale or for options.
  *
  * @example
  * ```ts
- * ['ä', 'a', 'z'].sort(localeString); // ['a', 'ä', 'z'] in de-DE locale
+ * ['ä', 'z', 'a'].sort(localeString); // ['a', 'ä', 'z']
  * ```
  */
 export function localeString(a: string, b: string): number {
 	return a.localeCompare(b);
+}
+
+/**
+ * Builds a locale-aware string comparator from one `Intl.Collator`. The
+ * collator is created once, when `collate` is called.
+ *
+ * @example
+ * ```ts
+ * ['file10', 'file2', 'file1'].sort(collate(undefined, { numeric: true }));
+ * // ['file1', 'file2', 'file10']
+ * ```
+ */
+export function collate(
+	locales?: string | string[],
+	options?: Intl.CollatorOptions,
+): Comparator<string> {
+	return new Intl.Collator(locales, options).compare;
 }
 
 /**
@@ -192,17 +205,8 @@ export function boolean(a: boolean, b: boolean) {
  * ```
  */
 export function date(a: Date, b: Date) {
-	const aTime = a.getTime();
-	const bTime = b.getTime();
-
-	const isANaN = Number.isNaN(aTime);
-	const isBNaN = Number.isNaN(bTime);
-
-	if (isANaN && isBNaN) return 0;
-	if (isANaN) return 1;
-	if (isBNaN) return -1;
-
-	return aTime - bTime;
+	// An invalid date has the time NaN.
+	return number(a.getTime(), b.getTime());
 }
 
 /**

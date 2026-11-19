@@ -3,6 +3,7 @@ import { seededRandom, shuffled } from '../testing.js';
 import {
 	boolean as booleanComparator,
 	by,
+	collate,
 	compare,
 	date as dateComparator,
 	map,
@@ -352,5 +353,26 @@ describe('predicates give one consistent order', () => {
 				expect(sorted.map((item) => item.id)).toEqual(expected);
 			}
 		}
+	});
+});
+
+describe(collate, () => {
+	it('sorts with the given collator options', () => {
+		expect(['file10', 'file2', 'file1'].sort(collate(undefined, { numeric: true }))).toEqual([
+			'file1',
+			'file2',
+			'file10',
+		]);
+		expect(['b', 'A', 'a'].sort(collate('en', { caseFirst: 'upper' }))).toEqual(['A', 'a', 'b']);
+	});
+
+	it('creates one collator when it is called, not one per comparison', () => {
+		const spy = vi.spyOn(Intl, 'Collator');
+		const comparator = collate('en');
+		['c', 'a', 'b', 'e', 'd'].sort(comparator);
+		comparator('x', 'y');
+
+		expect(spy).toHaveBeenCalledTimes(1);
+		spy.mockRestore();
 	});
 });

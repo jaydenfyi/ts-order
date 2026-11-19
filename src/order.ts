@@ -227,9 +227,10 @@ export class Order<T> {
 	}
 
 	/**
-	 * Appends additional sort steps that only apply when both compared items satisfy the given predicate.
-	 * If either item fails the predicate, the appended steps are skipped and sorting continues
-	 * with the next step in the current `Order`.
+	 * Appends the steps of another order, guarded by `predicate`. Each appended step
+	 * gets `predicate` as its step predicate, combined with the step's own predicate.
+	 * An item that passes comes before one that fails. Two items that fail skip the
+	 * appended steps, and the next step in the current `Order` decides.
 	 *
 	 * @example
 	 * ```ts
@@ -281,9 +282,10 @@ export class Order<T> {
 	}
 
 	/**
-	 * Appends additional sort steps that only apply when both compared items satisfy the given predicate.
-	 * If either item fails the predicate, the appended steps are skipped and sorting continues
-	 * with the next step in the current `Order`.
+	 * Appends the steps of another order, guarded by `predicate`. Each appended step
+	 * gets `predicate` as its step predicate, combined with the step's own predicate.
+	 * An item that passes comes before one that fails. Two items that fail skip the
+	 * appended steps, and the next step in the current `Order` decides.
 	 *
 	 * @example
 	 * ```ts

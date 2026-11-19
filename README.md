@@ -233,7 +233,9 @@ class Order<T> {
 
 </details>
 
-Wrap an order with a guard. Items that pass the guard come first, sorted by the wrapped order. Items that fail it skip those steps. The guard combines with any per-step predicates inside the wrapped order.
+Append the steps of another order, guarded by a predicate. Each wrapped step gets the guard as its predicate, combined with the step's own predicate, so the [predicate rules](#how-ordering-works) apply. Items that pass the guard come first, sorted by the wrapped order. Items that fail it skip the wrapped steps.
+
+The guard is not a step of its own. An item that passes the guard but fails a wrapped step's own predicate does not come first at that step. If the wrapped order has no steps, `when()` adds nothing. The `when` comparator works differently: it always puts the values that pass first.
 
 ```ts
 const byRegion = new Order<User>()

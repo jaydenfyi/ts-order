@@ -455,12 +455,14 @@ function compareKeys(step: OrderStep<any>, x: unknown, y: unknown): number {
 		// Compare against 0 both ways so that a NaN result counts as a tie.
 		return r > 0 ? step.direction : r < 0 ? -step.direction : 0;
 	}
+	// Check equal keys first: multi-step orders compare many of them. This also
+	// ties two nulls or two undefineds.
+	if (x === y) return 0;
 	// Fast path. `null` compares as 0 with `<` and `>`, so it takes the slow path.
 	// `undefined` and NaN reach the slow path because `<` and `>` both return false.
 	if (x !== null && y !== null) {
 		if ((x as any) < (y as any)) return -step.direction;
 		if ((x as any) > (y as any)) return step.direction;
-		if (x === y) return 0;
 	}
 	// Slow path: nullish, NaN, an invalid date, or equal values that are not ===.
 	const missingX = isMissing(x);

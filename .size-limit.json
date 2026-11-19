@@ -4,12 +4,12 @@
 		"path": "dist/index.js",
 		"import": "{ Order }",
 		"gzip": true,
-		"limit": "800 B"
+		"limit": "1000 B"
 	},
 	{
 		"name": "ts-order/comparator",
 		"path": "dist/comparator/index.js",
 		"gzip": true,
-		"limit": "600 B"
+		"limit": "700 B"
 	}
 ]

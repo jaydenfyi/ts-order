@@ -1,4 +1,5 @@
 import type { Comparator, KeyOptions } from '../types.js';
+import { isMissing } from '../missing.js';
 
 /**
  * Convenience alias for `-1`, indicating that `a` should come before `b` inside a comparator function.
@@ -103,16 +104,24 @@ export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
 
 /**
  * Basic three-way comparator using JavaScript relational operators (i.e. `a < b`, `a > b`).
+ * Missing values (`null`, `undefined`, `NaN` and invalid dates) sort last.
  *
  * @example
  * ```ts
  * ['b', 'a', 'c'].sort(compare); // ['a', 'b', 'c']
+ * [2, undefined, 1].sort(compare); // [1, 2, undefined]
  * ```
  */
 export function compare<T>(a: T, b: T): number {
-	if (a < b) return -1;
-	if (a > b) return 1;
-	return 0;
+	// Check missing values first: `null` compares as 0 with `<` and `>`.
+	return compareMissing(a, b, 1) || (a < b ? -1 : a > b ? 1 : 0);
+}
+
+/** Order two values by whether they are missing: 0 when both or neither are. */
+function compareMissing(a: unknown, b: unknown, nulls: 1 | -1): number {
+	const missingA = isMissing(a);
+	if (missingA === isMissing(b)) return 0;
+	return missingA ? nulls : -nulls;
 }
 
 /**
@@ -138,11 +147,11 @@ export function localeString(a: string, b: string): number {
 }
 
 /**
- * Numeric comparator that places `NaN` before finite numbers.
+ * Numeric comparator that places `NaN` after all other numbers.
  *
  * @example
  * ```ts
- * [3, NaN, 1].sort(number); // [NaN, 1, 3]
+ * [3, NaN, 1].sort(number); // [1, 3, NaN]
  * ```
  */
 export function number(a: number, b: number) {
@@ -150,8 +159,8 @@ export function number(a: number, b: number) {
 	const isBNaN = Number.isNaN(b);
 
 	if (isANaN && isBNaN) return 0;
-	if (isANaN) return -1;
-	if (isBNaN) return 1;
+	if (isANaN) return 1;
+	if (isBNaN) return -1;
 
 	// Not `a - b`: `Infinity - Infinity` is NaN.
 	return a < b ? -1 : a > b ? 1 : 0;
@@ -170,7 +179,7 @@ export function boolean(a: boolean, b: boolean) {
 }
 
 /**
- * Date comparator that falls back to placing invalid dates first.
+ * Date comparator that places invalid dates after all valid dates.
  *
  * @example
  * ```ts
@@ -185,8 +194,8 @@ export function date(a: Date, b: Date) {
 	const isBNaN = Number.isNaN(bTime);
 
 	if (isANaN && isBNaN) return 0;
-	if (isANaN) return -1;
-	if (isBNaN) return 1;
+	if (isANaN) return 1;
+	if (isBNaN) return -1;
 
 	return aTime - bTime;
 }
@@ -204,16 +213,22 @@ export function by<T, K>(
 	key: (v: T) => K,
 	options?: KeyOptions<K, T>,
 ): Comparator<T> {
-	const compareFn = options?.compare ?? compare;
-	const direction = options?.direction ?? 'asc';
+	const custom = options?.compare;
+	const compareFn = custom ?? compare;
 	const predicate = options?.predicate;
 	const compareFnWithDirection =
-		direction === 'asc' ? compareFn : reverse(compareFn);
-	if (!predicate) {
-		return (a, b) => compareFnWithDirection(key(a), key(b));
-	}
+		options?.direction === 'desc' ? reverse(compareFn) : compareFn;
+	// Handle missing keys before the direction applies, so `desc` does not move them.
+	// A custom comparator with no `nulls` option receives missing keys unchanged.
+	const nulls
+		= options?.nulls === 'first' ? -1 : options?.nulls || !custom ? 1 : 0;
+	const compareKeys: Comparator<K> = nulls
+		? (x, y) =>
+				compareMissing(x, y, nulls) || (isMissing(x) ? 0 : compareFnWithDirection(x, y))
+		: compareFnWithDirection;
+	const byKey: Comparator<T> = (a, b) => compareKeys(key(a), key(b));
 
-	return when(predicate, (a, b) => compareFnWithDirection(key(a), key(b)));
+	return predicate ? when(predicate, byKey) : byKey;
 }
 
 /**

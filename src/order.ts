@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/no-new-array */
 
 import type { Comparator, KeyOptions } from './types.js';
+import { isMissing } from './missing.js';
 
 /** Direction sign for the given order step. 1 for "asc", -1 for "desc" */
 type DirectionSign = 1 | -1;
@@ -11,6 +12,12 @@ type OrderStep<T> = {
 	direction: DirectionSign;
 	compare?: Comparator<unknown> | undefined;
 	predicate?: ((value: T) => boolean) | undefined;
+	/**
+	 * Where missing keys go: 1 after the other keys, -1 before them, in both
+	 * directions. Undefined only for a custom comparator with no `nulls` option,
+	 * which then receives missing keys unchanged.
+	 */
+	nulls?: DirectionSign | undefined;
 };
 
 /**
@@ -115,6 +122,12 @@ export class Order<T> {
 				direction: options?.direction === 'desc' ? -1 : 1,
 				compare: options?.compare as Comparator<unknown> | undefined,
 				predicate: options?.predicate,
+				nulls:
+					options?.nulls === 'first'
+						? -1
+						: options?.nulls || !options?.compare
+							? 1
+							: undefined,
 			},
 		]);
 	}
@@ -271,21 +284,34 @@ export class Order<T> {
 				if (p) {
 					// The item that passes comes first. When neither passes, skip the step.
 					const failsA = !p(a);
-					const failsB = !p(b);
-					if (failsA !== failsB) return failsA ? 1 : -1;
+					if (failsA !== !p(b)) return failsA ? 1 : -1;
 					if (failsA) continue;
 				}
 				const x = s.key(a);
 				const y = s.key(b);
 				const c = s.compare;
+				const n = s.nulls;
 				if (c) {
+					if (n) {
+						const missingX = isMissing(x);
+						if (missingX !== isMissing(y)) return missingX ? n : -n;
+						if (missingX) continue;
+					}
 					const r = c(x, y);
 					// Compare against 0 both ways so that a NaN result counts as a tie.
 					if (r > 0) return s.direction;
 					if (r < 0) return -s.direction;
 				} else {
-					if ((x as any) < (y as any)) return -s.direction;
-					if ((x as any) > (y as any)) return s.direction;
+					// Fast path. `null` compares as 0 with `<` and `>`, so it takes the slow path.
+					// `undefined` and NaN reach the slow path because `<` and `>` both return false.
+					if (x !== null && y !== null) {
+						if ((x as any) < (y as any)) return -s.direction;
+						if ((x as any) > (y as any)) return s.direction;
+						if (x === y) continue;
+					}
+					// Slow path: nullish, NaN, an invalid date, or equal values that are not ===.
+					const missingX = isMissing(x);
+					if (missingX !== isMissing(y)) return missingX ? n! : -n!;
 				}
 			}
 
@@ -339,6 +365,9 @@ export class Order<T> {
 		const predicateMatchesPerStep: (boolean[] | undefined)[] = new Array(
 			numberOfSteps,
 		);
+		// Steps where some key could be missing. The others compare with `<` and
+		// `>` alone. The test is cheap and inline: `isMissing` decides later.
+		const mayMiss = new Uint8Array(numberOfSteps);
 		for (let j = 0; j < numberOfSteps; j++) {
 			const step = steps[j]!;
 			const keys = new Array(arrayLength);
@@ -349,12 +378,20 @@ export class Order<T> {
 					const item = array[i]!;
 					const match = !!predicate(item);
 					matches[i] = match;
-					if (match) keys[i] = step.key(item);
+					if (match) {
+						const key = step.key(item);
+						keys[i] = key;
+						// eslint-disable-next-line no-self-compare -- true only for NaN
+						if (key == null || key !== key || key instanceof Date) mayMiss[j] = 1;
+					}
 				}
 				predicateMatchesPerStep[j] = matches;
 			} else {
 				for (let i = 0; i < arrayLength; i++) {
-					keys[i] = step.key(array[i]!);
+					const key = step.key(array[i]!);
+					keys[i] = key;
+					// eslint-disable-next-line no-self-compare -- true only for NaN
+					if (key == null || key !== key || key instanceof Date) mayMiss[j] = 1;
 				}
 			}
 			keysPerStep[j] = keys;
@@ -370,27 +407,45 @@ export class Order<T> {
 			cmps[j] = steps[j]!.compare;
 		}
 
+		// The same rules as `compare`, on the precomputed keys.
 		arrayIndexes.sort((ia, ib) => {
 			for (let j = 0; j < numberOfSteps; j++) {
-				const kj = keysPerStep[j]!;
 				const matches = predicateMatchesPerStep[j];
 				if (matches) {
 					const matchA = matches[ia];
 					if (matchA !== matches[ib]) return matchA ? -1 : 1;
 					if (!matchA) continue;
 				}
+				const kj = keysPerStep[j]!;
 				const a = kj[ia];
 				const b = kj[ib];
 				const c = cmps[j];
 				const d = dirs[j] as 1 | -1;
 
 				if (c) {
+					const n = steps[j]!.nulls;
+					if (n) {
+						const missingA = isMissing(a);
+						if (missingA !== isMissing(b)) return missingA ? n : -n;
+						if (missingA) continue;
+					}
 					const r = c(a, b);
 					if (r > 0) return d;
 					if (r < 0) return -d;
-				} else {
+				} else if (!mayMiss[j]) {
 					if ((a as any) < (b as any)) return -d;
 					if ((a as any) > (b as any)) return d;
+				} else {
+					// `null` compares as 0 with `<` and `>`, so check for it first.
+					if (a !== null && b !== null) {
+						if ((a as any) < (b as any)) return -d;
+						if ((a as any) > (b as any)) return d;
+						if (a === b) continue;
+					}
+					// A null key, or neither key is less: NaN, undefined, an invalid
+					// date, or equal values that are not ===.
+					const missingA = isMissing(a);
+					if (missingA !== isMissing(b)) return missingA ? steps[j]!.nulls! : -steps[j]!.nulls!;
 				}
 			}
 

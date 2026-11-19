@@ -46,4 +46,19 @@ export type KeyOptions<K, T = unknown> = {
 	 * ```
 	 */
 	predicate?: (value: T) => boolean;
+	/**
+	 * Where missing keys go: `null`, `undefined`, `NaN` and invalid dates.
+	 * `direction` does not move them. Missing keys tie with each other, so the
+	 * next step decides their order.
+	 *
+	 * With a custom `compare` and no `nulls` option, the comparator receives
+	 * missing keys unchanged.
+	 *
+	 * @defaultValue "last"
+	 * @example
+	 * ```ts
+	 * const byAge = Order.by((user: User) => user.age, { nulls: 'first' });
+	 * ```
+	 */
+	nulls?: 'first' | 'last';
 };

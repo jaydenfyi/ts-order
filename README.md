@@ -90,7 +90,7 @@ class Order<T> {
 
 </details>
 
-Create a new order with a single sort step. Defaults to an ascending direction and natural three-way comparison (i.e. `a < b`, `a > b`).
+Create a new order with a single sort step. Defaults to an ascending direction and natural three-way comparison (i.e. `a < b`, `a > b`). Missing keys (`null`, `undefined`, `NaN` and invalid dates) sort last in both directions. Pass `nulls: 'first'` to put them first.
 
 ```ts
 const byAgeAsc = Order.by((u: User) => u.age);
@@ -362,10 +362,10 @@ function localeString(a: string, b: string): number;
 Ready-to-use comparators for common primitives.
 
 ```ts
-scores.sort(number); // numeric sort asc (NaN's first)
+scores.sort(number); // numeric sort asc (NaN last)
 users.sort(localeString); // locale-aware string sort asc
 flags.sort(boolean); // boolean sort asc (false first)
-createdAt.sort(date); // chronological date sort asc (invalid dates first)
+createdAt.sort(date); // chronological date sort asc (invalid dates last)
 ```
 
 ### Comparator builders & combinators

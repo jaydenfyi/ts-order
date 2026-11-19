@@ -135,8 +135,8 @@ describe(numberComparator, () => {
 		expect(numberComparator(1, 2)).toBe(-1);
 		expect(numberComparator(3, 1)).toBe(1);
 		expect(numberComparator(Number.NaN, Number.NaN)).toBe(0);
-		expect(numberComparator(Number.NaN, 5)).toBe(-1);
-		expect(numberComparator(5, Number.NaN)).toBe(1);
+		expect(numberComparator(Number.NaN, 5)).toBe(1);
+		expect(numberComparator(5, Number.NaN)).toBe(-1);
 	});
 
 	it('treats equal infinities as equal', () => {
@@ -164,8 +164,8 @@ describe(dateComparator, () => {
 		expect(dateComparator(earlier, later)).toBeLessThan(0);
 		expect(dateComparator(later, earlier)).toBeGreaterThan(0);
 		expect(dateComparator(earlier, earlier)).toBe(0);
-		expect(dateComparator(invalidA, later)).toBe(-1);
-		expect(dateComparator(later, invalidA)).toBe(1);
+		expect(dateComparator(invalidA, later)).toBe(1);
+		expect(dateComparator(later, invalidA)).toBe(-1);
 		expect(dateComparator(invalidA, invalidB)).toBe(0);
 	});
 });

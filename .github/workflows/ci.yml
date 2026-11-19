@@ -25,6 +25,7 @@ jobs:
       - run: bun run build
       - run: bun run lint:package
       - run: bun run size
+      - run: bun run smoke-test
       - name: Check for a changeset
         if: github.event_name == 'pull_request'
         run: bunx changeset status --since=origin/${{ github.base_ref }}

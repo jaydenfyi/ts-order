@@ -49,6 +49,7 @@
 		"bench:snapshot": "vitest bench --outputJson=./benchmarks/bench.json",
 		"bench:compare": "vitest bench --compare ./benchmarks/bench.json",
 		"size": "size-limit",
+		"smoke-test": "sh scripts/smoke-test.sh",
 		"prettier": "prettier --write .",
 		"lint": "eslint . --ext .ts",
 		"lint:fix": "eslint . --ext .ts --fix",
@@ -61,6 +62,7 @@
 	"devDependencies": {
 		"@antfu/eslint-config": "^6.0.0",
 		"@arethetypeswrong/cli": "^0.18.5",
+		"@changesets/changelog-github": "^1.0.1",
 		"@changesets/cli": "^2.29.7",
 		"@size-limit/preset-small-lib": "^14.3.0",
 		"@types/node": "^24.8.1",

@@ -1,10 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+	A_AFTER_B,
+	A_BEFORE_B,
 	boolean as booleanComparator,
 	by,
 	collate,
 	compare,
 	date as dateComparator,
+	EQUAL,
 	map,
 	nansFirst,
 	nansLast,
@@ -16,6 +19,12 @@ import {
 	string,
 	when,
 } from './index.js';
+
+describe('comparator constants', () => {
+	it('are -1, 1 and 0', () => {
+		expect([A_BEFORE_B, A_AFTER_B, EQUAL]).toEqual([-1, 1, 0]);
+	});
+});
 
 describe(reverse, () => {
 	it('swaps comparator arguments to flip the sort order', () => {

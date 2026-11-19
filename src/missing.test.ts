@@ -80,10 +80,16 @@ describe('missing keys', () => {
 	}
 
 	it('passes missing keys to a custom comparator when there is no nulls option', () => {
+		// The comparator reads null as 0, so null sorts between -1 and 1.
 		const custom = vi.fn((a: number | null, b: number | null) => (a ?? 0) - (b ?? 0));
-		Order.by((item: Item<number | null>) => item.v, { compare: custom }).sort(items([1, null, 2]));
-		by((item: Item<number | null>) => item.v, { compare: custom })({ id: 1, v: null }, { id: 2, v: 1 });
+		const values = items([1, null, -1]);
 
+		const sorted = Order.by((item: Item<number | null>) => item.v, { compare: custom }).sort(values);
+		expect(ids(sorted)).toEqual([3, 2, 1]);
+		expect(custom.mock.calls.flat()).toContain(null);
+
+		custom.mockClear();
+		expect(ids(values.slice().sort(by((item) => item.v, { compare: custom })))).toEqual([3, 2, 1]);
 		expect(custom.mock.calls.flat()).toContain(null);
 	});
 
@@ -109,6 +115,7 @@ describe('missing keys', () => {
 		);
 		expect(ids(byDate.sort(values))).toEqual([2, 3, 1]);
 		expect(ids(values.slice().sort(byDate.compare))).toEqual([2, 3, 1]);
+		expect(by((item: Item<Date>) => item.v)(values[0]!, values[2]!)).toBe(0);
 	});
 
 	it('sorts missing values last with the exported compare', () => {

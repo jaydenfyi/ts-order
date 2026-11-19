@@ -374,6 +374,20 @@ describe('Order.map', () => {
 		expect(mapped.compare(sydney, perth)).toBeGreaterThan(0);
 	});
 
+	it('applies predicates of the sub-order to the mapped value', () => {
+		type Place = { city: string; visible: boolean };
+		type Item = { id: number; place: Place };
+		const byCity = Order.by((place: Place) => place.city, { predicate: (place) => place.visible });
+		const items: Item[] = [
+			{ id: 1, place: { city: 'a', visible: false } },
+			{ id: 2, place: { city: 'c', visible: true } },
+			{ id: 3, place: { city: 'b', visible: true } },
+		];
+
+		const sorted = Order.map((item: Item) => item.place, byCity).sort(items);
+		expect(sorted.map((item) => item.id)).toEqual([3, 2, 1]);
+	});
+
 	it('preserves existing steps when using the instance .map()', () => {
 		const addressOrder = Order.by<Address, string>(
 			(address) => address.city,
@@ -533,6 +547,23 @@ describe('Order.sort', () => {
 
 		expect(first).toHaveBeenCalledTimes(items.length);
 		expect(second).toHaveBeenCalledTimes(items.length);
+	});
+
+	it('does not pass the keys of items that fail a predicate to a custom comparator', () => {
+		type Item = { name: string; active: boolean };
+		const custom = vi.fn((a: string, b: string) => a.localeCompare(b));
+		const items: Item[] = [
+			{ name: 'b', active: false },
+			{ name: 'a', active: true },
+			{ name: 'c', active: false },
+		];
+		const byName = Order.by((item: Item) => item.name, {
+			compare: custom,
+			predicate: (item) => item.active,
+		});
+
+		expect(byName.sort(items).map((item) => item.name)).toEqual(['a', 'b', 'c']);
+		expect(custom).not.toHaveBeenCalled();
 	});
 
 	it('sorts items that pass a step predicate first, and keeps the input order of the rest', () => {

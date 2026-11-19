@@ -268,7 +268,13 @@ export class Order<T> {
 			for (let i = 0; i < numberOfSteps; i++) {
 				const s = steps[i]!;
 				const p = s.predicate;
-				if (p && (!p(a) || !p(b))) continue;
+				if (p) {
+					// The item that passes comes first. When neither passes, skip the step.
+					const failsA = !p(a);
+					const failsB = !p(b);
+					if (failsA !== failsB) return failsA ? 1 : -1;
+					if (failsA) continue;
+				}
 				const x = s.key(a);
 				const y = s.key(b);
 				const c = s.compare;
@@ -341,7 +347,7 @@ export class Order<T> {
 				const matches = new Array(arrayLength);
 				for (let i = 0; i < arrayLength; i++) {
 					const item = array[i]!;
-					const match = predicate(item);
+					const match = !!predicate(item);
 					matches[i] = match;
 					if (match) keys[i] = step.key(item);
 				}
@@ -368,7 +374,11 @@ export class Order<T> {
 			for (let j = 0; j < numberOfSteps; j++) {
 				const kj = keysPerStep[j]!;
 				const matches = predicateMatchesPerStep[j];
-				if (matches && (!matches[ia] || !matches[ib])) continue;
+				if (matches) {
+					const matchA = matches[ia];
+					if (matchA !== matches[ib]) return matchA ? -1 : 1;
+					if (!matchA) continue;
+				}
 				const a = kj[ia];
 				const b = kj[ib];
 				const c = cmps[j];

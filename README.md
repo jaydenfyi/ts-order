@@ -116,13 +116,13 @@ const byAgeAscNullsLast = Order.by((u: User) => u.age, {
 });
 ```
 
-You may also optionally pass `predicate` to run a step only when both values satisfy the guard function.
+You may also pass a `predicate`. Items that pass it come first, sorted by the step's key. Items that fail it come after, and the step skips them, so later steps decide their order.
 
 ```ts
-const activeUsersFirst = Order.by((u: User) => u.isActive, {
-	direction: 'desc',
-	predicate: (u) => u.isActive,
-});
+// Users with an age first, youngest first. Users without an age last, by name.
+const byAgeThenName = Order.by((u: User) => u.age, {
+	predicate: (u) => u.age != null,
+}).by((u) => u.lastName);
 ```
 
 Every Order instance also exposes a chainable `.by()` method to append additional sort steps.
@@ -203,7 +203,7 @@ class Order<T> {
 
 </details>
 
-Wrap an order with a guard so every step only runs when both values pass the predicate. This is handy for enabling blocks of steps conditionally or combining with per-step predicates.
+Wrap an order with a guard. Items that pass the guard come first, sorted by the wrapped order. Items that fail it skip those steps. The guard combines with any per-step predicates inside the wrapped order.
 
 ```ts
 const byRegion = new Order<User>()
@@ -466,7 +466,7 @@ function when<T>(
 
 </details>
 
-Run a comparator only when both values pass a guard.
+Put values that pass a guard first, sorted by the comparator. Values that fail the guard tie, so a later comparator decides their order.
 
 ```ts
 const evenNumbersFirst = order<number>(

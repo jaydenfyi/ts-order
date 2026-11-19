@@ -213,10 +213,7 @@ export function by<T, K>(
 		return (a, b) => compareFnWithDirection(key(a), key(b));
 	}
 
-	return (a, b) => {
-		if (!predicate(a) || !predicate(b)) return 0;
-		return compareFnWithDirection(key(a), key(b));
-	};
+	return when(predicate, (a, b) => compareFnWithDirection(key(a), key(b)));
 }
 
 /**
@@ -279,9 +276,10 @@ export function when<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T> {
 	return (a, b) => {
-		const aMatch = predicate(a);
-		const bMatch = predicate(b);
-		if (aMatch && bMatch) return compareFn(a, b);
-		return 0;
+		// The value that passes comes first. When neither passes, the values tie.
+		const failsA = !predicate(a);
+		const failsB = !predicate(b);
+		if (failsA !== failsB) return failsA ? 1 : -1;
+		return failsA ? 0 : compareFn(a, b);
 	};
 }

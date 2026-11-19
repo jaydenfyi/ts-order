@@ -1,7 +1,7 @@
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { number } from './comparator/index.js';
 import { Order } from './order.js';
-import { distinctSorts } from './testing.js';
+import { distinctSorts, permutations, seededRandom, shuffled } from './testing.js';
 
 type Role = 'admin' | 'manager' | 'staff' | 'guest';
 
@@ -234,7 +234,7 @@ describe('Order.compare', () => {
 		expect(order.compare(first, first)).toBe(0);
 	});
 
-	it('respects predicate options on individual steps', () => {
+	it('puts the item that passes a step predicate first', () => {
 		type Item = { score: number | null; fallback: number };
 		const keyed = vi.fn((item: Item) => item.score!);
 		const fallback = vi.fn((item: Item) => item.fallback);
@@ -245,11 +245,10 @@ describe('Order.compare', () => {
 		const missing = { score: null, fallback: 0 };
 		const present = { score: 10, fallback: 1 };
 
-		const result = order.compare(missing, present);
-
-		expect(result).toBeLessThan(0);
+		expect(order.compare(missing, present)).toBe(1);
+		expect(order.compare(present, missing)).toBe(-1);
 		expect(keyed).not.toHaveBeenCalled();
-		expect(fallback).toHaveBeenCalledTimes(2);
+		expect(fallback).not.toHaveBeenCalled();
 	});
 	it('does not mutate the original order when chaining with by()', () => {
 		type Item = { primary: number; secondary: number };
@@ -536,7 +535,7 @@ describe('Order.sort', () => {
 		expect(second).toHaveBeenCalledTimes(items.length);
 	});
 
-	it('applies per-step predicates without disturbing stability', () => {
+	it('sorts items that pass a step predicate first, and keeps the input order of the rest', () => {
 		type Item = { id: number; score: number | null };
 		const key = vi.fn((item: Item) => item.score!);
 		const order = Order.by<Item, number>(key, {
@@ -554,7 +553,7 @@ describe('Order.sort', () => {
 		const result = Order.sort(items, order);
 
 		expect(key).toHaveBeenCalledTimes(2);
-		expect(result.map((item) => item.id)).toEqual([1, 3, 2, 4]);
+		expect(result.map((item) => item.id)).toEqual([3, 2, 1, 4]);
 		expect(result.filter((item) => item.score == null)).toStrictEqual([
 			items[0],
 			items[3],
@@ -633,11 +632,12 @@ describe('Order.when', () => {
 		expect(key).toHaveBeenCalledTimes(2);
 
 		key.mockClear();
-		expect(guarded.compare(euOne, us)).toBe(0);
+		expect(guarded.compare(euOne, us)).toBe(-1);
+		expect(guarded.compare(us, euOne)).toBe(1);
 		expect(key).not.toHaveBeenCalled();
 
 		key.mockClear();
-		expect(guarded.compare(euOne, euDisabled)).toBe(0);
+		expect(guarded.compare(euOne, euDisabled)).toBe(-1);
 		expect(key).not.toHaveBeenCalled();
 	});
 
@@ -668,7 +668,7 @@ describe('Order.when', () => {
 		expect(key).not.toHaveBeenCalled();
 
 		key.mockClear();
-		expect(combined.compare(euOne, euDisabled)).toBe(0);
+		expect(combined.compare(euOne, euDisabled)).toBe(-1);
 		expect(key).not.toHaveBeenCalled();
 	});
 });
@@ -707,5 +707,71 @@ describe('comparators that return NaN', () => {
 		);
 		const sorts = distinctSorts(items, (p) => order.sort(p).map((item) => item.id));
 		expect(sorts).toEqual(new Set([JSON.stringify([3, 5, 6, 2, 1, 4])]));
+	});
+});
+
+describe('predicate steps give one consistent order', () => {
+	type Item = { id: number; region: 'eu' | 'us'; score: number | null };
+	const ids = (items: Item[]) => items.map((item) => item.id);
+
+	it('sorts items that skip a null score after the scored items, from any input order', () => {
+		const items: Item[] = [
+			{ id: 1, region: 'eu', score: null },
+			{ id: 2, region: 'eu', score: 10 },
+			{ id: 3, region: 'eu', score: 5 },
+			{ id: 4, region: 'eu', score: null },
+		];
+		const byScore = Order.by((item: Item) => item.score, {
+			predicate: (item) => item.score != null,
+		});
+
+		const sorts = distinctSorts(items, (p) => ids(byScore.by((item) => item.id).sort(p)));
+		expect(sorts).toEqual(new Set([JSON.stringify([3, 2, 1, 4])]));
+		for (const p of permutations(items)) {
+			expect(ids(byScore.sort(p)).slice(0, 2)).toEqual([3, 2]);
+		}
+	});
+
+	it('does not form a cycle when a when() block is followed by a tiebreaker', () => {
+		const a: Item = { id: 3, region: 'eu', score: 1 };
+		const b: Item = { id: 2, region: 'us', score: 0 };
+		const c: Item = { id: 1, region: 'eu', score: 2 };
+		const order = new Order<Item>()
+			.when((item) => item.region === 'eu', Order.by((item: Item) => item.score))
+			.by((item) => item.id);
+
+		expect(distinctSorts([a, b, c], (p) => ids(order.sort(p)))).toEqual(
+			new Set([JSON.stringify([3, 1, 2])]),
+		);
+		expect(distinctSorts([a, b, c], (p) => ids(p.sort(order.compare)))).toEqual(
+			new Set([JSON.stringify([3, 1, 2])]),
+		);
+	});
+
+	it('gives one result for many shuffles of random input', () => {
+		const random = seededRandom(42);
+		const items: Item[] = Array.from({ length: 60 }, (_, i) => ({
+			id: i,
+			region: random() < 0.5 ? 'eu' : 'us',
+			score: random() < 0.2 ? null : Math.floor(random() * 10),
+		}));
+		const orders = [
+			new Order<Item>()
+				.when((item) => item.region === 'eu', Order.by((item: Item) => item.score))
+				.by((item) => item.id),
+			Order.by((item: Item) => item.score, {
+				predicate: (item) => item.score != null,
+				direction: 'desc',
+			}).by((item) => item.id),
+		];
+
+		for (const order of orders) {
+			const expected = ids(order.sort(items));
+			for (let i = 0; i < 50; i++) {
+				const input = shuffled(items, random);
+				expect(ids(order.sort(input))).toEqual(expected);
+				expect(ids(input.slice().sort(order.compare))).toEqual(expected);
+			}
+		}
 	});
 });

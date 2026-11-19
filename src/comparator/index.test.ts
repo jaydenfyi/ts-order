@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { seededRandom, shuffled } from '../testing.js';
 import {
 	boolean as booleanComparator,
 	by,
@@ -209,7 +210,7 @@ describe(by, () => {
 		expect(custom).toHaveBeenCalledWith('hi', 'there');
 	});
 
-	it('only compares values when both satisfy the predicate', () => {
+	it('puts the value that passes the predicate first, and compares keys only when both pass', () => {
 		type Item = { label: string; active: boolean };
 		const key = vi.fn((item: Item) => item.label);
 		const base = vi.fn((a: string, b: string) => a.localeCompare(b));
@@ -221,7 +222,7 @@ describe(by, () => {
 		const inactive = { label: 'baker', active: false };
 		const otherActive = { label: 'charlie', active: true };
 
-		expect(comparator(active, inactive)).toBe(0);
+		expect(comparator(active, inactive)).toBe(-1);
 		expect(predicate).toHaveBeenNthCalledWith(1, active);
 		expect(predicate).toHaveBeenNthCalledWith(2, inactive);
 		expect(key).not.toHaveBeenCalled();
@@ -296,18 +297,23 @@ describe(map, () => {
 });
 
 describe(when, () => {
-	it('returns 0 when only one value matches and relies on follow-up comparators', () => {
+	it('puts the value that passes first, and ties values that both fail', () => {
 		const withinBucket = when<string>(
 			(value) => value.startsWith('x'),
 			compare,
 		);
 		const fallback = order(withinBucket, compare);
 
-		expect(withinBucket('xylophone', 'apple')).toBe(0);
-		expect(withinBucket('apple', 'xylophone')).toBe(0);
-		expect(fallback('xylophone', 'apple')).toBeGreaterThan(0);
-		expect(fallback('apple', 'xylophone')).toBeLessThan(0);
+		expect(withinBucket('xylophone', 'apple')).toBe(-1);
+		expect(withinBucket('apple', 'xylophone')).toBe(1);
+		expect(withinBucket('apple', 'banana')).toBe(0);
 		expect(fallback('apple', 'banana')).toBeLessThan(0);
+		expect(['banana', 'xylophone', 'apple', 'xray'].sort(fallback)).toEqual([
+			'xray',
+			'xylophone',
+			'apple',
+			'banana',
+		]);
 	});
 
 	it('delegates to the comparator only when both values satisfy the predicate', () => {
@@ -318,7 +324,33 @@ describe(when, () => {
 		expect(base).toHaveBeenCalledWith(2, 4);
 
 		base.mockClear();
-		expect(comparator(2, 3)).toBe(0);
+		expect(comparator(2, 3)).toBe(-1);
+		expect(comparator(3, 5)).toBe(0);
 		expect(base).not.toHaveBeenCalled();
+	});
+});
+
+describe('predicates give one consistent order', () => {
+	it('gives one result for many shuffles of random input', () => {
+		type Item = { id: number; region: 'eu' | 'us'; score: number | null };
+		const random = seededRandom(7);
+		const items: Item[] = Array.from({ length: 60 }, (_, i) => ({
+			id: i,
+			region: random() < 0.5 ? 'eu' : 'us',
+			score: random() < 0.2 ? null : Math.floor(random() * 10),
+		}));
+		const byId = by((item: Item) => item.id);
+		const comparators = [
+			order(when((item: Item) => item.region === 'eu', by((item: Item) => item.score)), byId),
+			order(by((item: Item) => item.score, { predicate: (item) => item.score != null }), byId),
+		];
+
+		for (const comparator of comparators) {
+			const expected = items.slice().sort(comparator).map((item) => item.id);
+			for (let i = 0; i < 50; i++) {
+				const sorted = shuffled(items, random).sort(comparator);
+				expect(sorted.map((item) => item.id)).toEqual(expected);
+			}
+		}
 	});
 });

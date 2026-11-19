@@ -130,14 +130,15 @@ export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
  */
 export function compare<T extends Comparable>(a: T, b: T): number {
 	// Check missing values first: `null` compares as 0 with `<` and `>`.
-	return compareMissing(a, b, 1) || ((a as any) < (b as any) ? -1 : (a as any) > (b as any) ? 1 : 0);
+	const missingA = isMissing(a);
+	if (missingA !== isMissing(b)) return missingA ? 1 : -1;
+	if (missingA) return 0;
+	return (a as any) < (b as any) ? -1 : (a as any) > (b as any) ? 1 : 0;
 }
 
-/** Order two values by whether they are missing: 0 when both or neither are. */
-function compareMissing(a: unknown, b: unknown, nulls: 1 | -1): number {
-	const missingA = isMissing(a);
-	if (missingA === isMissing(b)) return 0;
-	return missingA ? nulls : -nulls;
+/** Three-way comparison with `<` and `>` alone, for values that are not missing. */
+function relational(a: any, b: any): number {
+	return a < b ? -1 : a > b ? 1 : 0;
 }
 
 /**
@@ -209,7 +210,7 @@ export function number(a: number, b: number) {
  * ```
  */
 export function boolean(a: boolean, b: boolean) {
-	return Number(a) - Number(b);
+	return +a - +b;
 }
 
 /**
@@ -255,7 +256,8 @@ export function by<T, K>(
 	options?: KeyOptions<K, T>,
 ): Comparator<T> {
 	const custom = options?.compare;
-	const compareFn = custom ?? (compare as Comparator<K>);
+	// Missing keys are handled below, so the default needs only `<` and `>`.
+	const compareFn: Comparator<K> = custom ?? relational;
 	const predicate = options?.predicate;
 	const compareFnWithDirection =
 		options?.direction === 'desc' ? reverse(compareFn) : compareFn;
@@ -263,9 +265,8 @@ export function by<T, K>(
 	// A custom comparator with no `nulls` option receives missing keys unchanged.
 	const nulls
 		= options?.nulls === 'first' ? -1 : options?.nulls || !custom ? 1 : 0;
-	const compareKeys: Comparator<K> = nulls
-		? (x, y) =>
-				compareMissing(x, y, nulls) || (isMissing(x) ? 0 : compareFnWithDirection(x, y))
+	const compareKeys = nulls
+		? placeWhere<K>(isMissing, nulls, compareFnWithDirection)
 		: compareFnWithDirection;
 	const byKey: Comparator<T> = (a, b) => compareKeys(key(a), key(b));
 

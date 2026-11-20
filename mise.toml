@@ -1,3 +1,4 @@
 [tools]
+jactionlint = "2.6.0"
 node = "lts"
 "npm:@antfu/ni" = "latest"

@@ -1,0 +1,16 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"semi": true,
+	"singleQuote": true,
+	"printWidth": 80,
+	"trailingComma": "all",
+	"sortPackageJson": false,
+	"ignorePatterns": [
+		"BENCHMARKS.md",
+		"BENCHMARKS.html",
+		"benchmarks/results.json",
+		"benchmarks/full.*",
+		"benchmarks/complex.json",
+		"benchmarks/complex.md"
+	]
+}

@@ -1,0 +1,28 @@
+[
+	{
+		"name": "ts-order",
+		"path": "dist/index.js",
+		"import": "{ Order }",
+		"gzip": true,
+		"limit": "900 B"
+	},
+	{
+		"name": "ts-order/comparator",
+		"path": "dist/comparator/index.js",
+		"gzip": true,
+		"limit": "660 B"
+	},
+	{
+		"name": "ts-order compile()",
+		"path": "dist/index.js",
+		"import": "{ Order, compile }",
+		"gzip": true,
+		"limit": "1.6 kB"
+	},
+	{
+		"name": "ts-order/compile",
+		"path": "dist/compile.js",
+		"gzip": true,
+		"limit": "1.7 kB"
+	}
+]

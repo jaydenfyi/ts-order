@@ -1,15 +1,37 @@
-import type { Comparator, KeyOptions } from '../types.js';
+import type {
+	Comparable,
+	Comparator,
+	KeyOptions,
+	KeyOptionsWithCompare,
+} from '../types.js';
+import { isMissing } from '../missing.js';
 
 /**
  * Convenience alias for `-1`, indicating that `a` should come before `b` inside a comparator function.
+ *
+ * @example
+ * ```ts
+ * const shortFirst: Comparator<string> = (a, b) =>
+ *   a.length < b.length ? A_BEFORE_B : a.length > b.length ? A_AFTER_B : EQUAL;
+ * ```
  */
 export const A_BEFORE_B = -1;
 /**
  * Convenience alias for `1`, indicating that `a` should come after `b` inside a comparator function.
+ *
+ * @example
+ * ```ts
+ * const trueFirst: Comparator<boolean> = (a, b) => (a === b ? EQUAL : a ? A_BEFORE_B : A_AFTER_B);
+ * ```
  */
 export const A_AFTER_B = 1;
 /**
  * Convenience alias for `0` indicating that `a` is equal to `b` inside a comparator function.
+ *
+ * @example
+ * ```ts
+ * const keepOrder: Comparator<unknown> = () => EQUAL;
+ * ```
  */
 export const EQUAL = 0;
 
@@ -26,7 +48,29 @@ export function reverse<T>(compareFn: Comparator<T>): Comparator<T> {
 }
 
 /**
+ * Wraps `compareFn` so that values where `test` is true sort first (`sign` -1)
+ * or last (`sign` 1). Those values tie with each other. `compareFn` compares
+ * only the other values.
+ */
+function placeWhere<T>(
+	test: (value: T) => boolean,
+	sign: 1 | -1,
+	compareFn: Comparator<T>,
+): Comparator<T> {
+	return (a, b) => {
+		// A value ties with itself. Checking this first skips the test for equal keys.
+		if (a === b) return 0;
+		const testA = test(a);
+		if (testA !== test(b)) return testA ? sign : -sign;
+		return testA ? 0 : compareFn(a, b);
+	};
+}
+
+const isNullish = (value: unknown): boolean => value == null;
+
+/**
  * Wraps a comparator so `null` and `undefined` sort before defined values.
+ * It does not move `NaN`: use `nansFirst` for that.
  *
  * @example
  * ```ts
@@ -36,16 +80,16 @@ export function reverse<T>(compareFn: Comparator<T>): Comparator<T> {
 export function nullsFirst<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T | null | undefined> {
-	return (a, b) => {
-		if (a == null && b == null) return 0;
-		if (a == null) return -1;
-		if (b == null) return 1;
-		return compareFn(a, b);
-	};
+	return placeWhere(
+		isNullish,
+		-1,
+		compareFn as Comparator<T | null | undefined>,
+	);
 }
 
 /**
  * Wraps a comparator so `null` and `undefined` sort after defined values.
+ * It does not move `NaN`: use `nansLast` for that.
  *
  * @example
  * ```ts
@@ -55,12 +99,11 @@ export function nullsFirst<T>(
 export function nullsLast<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T | null | undefined> {
-	return (a, b) => {
-		if (a == null && b == null) return 0;
-		if (a == null) return 1;
-		if (b == null) return -1;
-		return compareFn(a, b);
-	};
+	return placeWhere(
+		isNullish,
+		1,
+		compareFn as Comparator<T | null | undefined>,
+	);
 }
 
 /**
@@ -72,14 +115,7 @@ export function nullsLast<T>(
  * ```
  */
 export function nansFirst<T>(compareFn: Comparator<T>): Comparator<T> {
-	return (a, b) => {
-		const isANaN = typeof a === 'number' && Number.isNaN(a);
-		const isBNaN = typeof b === 'number' && Number.isNaN(b);
-		if (isANaN && isBNaN) return 0;
-		if (isANaN) return -1;
-		if (isBNaN) return 1;
-		return compareFn(a, b);
-	};
+	return placeWhere(Number.isNaN, -1, compareFn);
 }
 
 /**
@@ -91,28 +127,32 @@ export function nansFirst<T>(compareFn: Comparator<T>): Comparator<T> {
  * ```
  */
 export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
-	return (a, b) => {
-		const isANaN = typeof a === 'number' && Number.isNaN(a);
-		const isBNaN = typeof b === 'number' && Number.isNaN(b);
-		if (isANaN && isBNaN) return 0;
-		if (isANaN) return 1;
-		if (isBNaN) return -1;
-		return compareFn(a, b);
-	};
+	return placeWhere(Number.isNaN, 1, compareFn);
 }
 
 /**
  * Basic three-way comparator using JavaScript relational operators (i.e. `a < b`, `a > b`).
+ * Nulls (`null`, `undefined`, `NaN` and invalid dates) sort last.
  *
  * @example
  * ```ts
  * ['b', 'a', 'c'].sort(compare); // ['a', 'b', 'c']
+ * [2, undefined, 1].sort(compare); // [1, 2, undefined]
  * ```
  */
-export function compare<T>(a: T, b: T): number {
-	if (a < b) return -1;
-	if (a > b) return 1;
-	return 0;
+export function compare<T extends Comparable>(a: T, b: T): number {
+	// A value ties with itself.
+	if (a === b) return 0;
+	// Check missing values first: `null` compares as 0 with `<` and `>`.
+	const missingA = isMissing(a);
+	if (missingA !== isMissing(b)) return missingA ? 1 : -1;
+	if (missingA) return 0;
+	return (a as any) < (b as any) ? -1 : (a as any) > (b as any) ? 1 : 0;
+}
+
+/** Three-way comparison with `<` and `>` alone, for values that are not missing. */
+function relational(a: any, b: any): number {
+	return a < b ? -1 : a > b ? 1 : 0;
 }
 
 /**
@@ -126,11 +166,13 @@ export function compare<T>(a: T, b: T): number {
 export { compare as string };
 
 /**
- * Locale-aware string comparator using `Intl.Collator`.
+ * Locale-aware string comparator using `String.prototype.localeCompare` with
+ * the default locale. For a specific locale or options, create one
+ * `Intl.Collator` and use its `compare` function.
  *
  * @example
  * ```ts
- * ['ä', 'a', 'z'].sort(localeString); // ['a', 'ä', 'z'] in de-DE locale
+ * ['ä', 'z', 'a'].sort(localeString); // ['a', 'ä', 'z']
  * ```
  */
 export function localeString(a: string, b: string): number {
@@ -138,11 +180,11 @@ export function localeString(a: string, b: string): number {
 }
 
 /**
- * Numeric comparator that places `NaN` before finite numbers.
+ * Numeric comparator that places `NaN` after all other numbers.
  *
  * @example
  * ```ts
- * [3, NaN, 1].sort(number); // [NaN, 1, 3]
+ * [3, NaN, 1].sort(number); // [1, 3, NaN]
  * ```
  */
 export function number(a: number, b: number) {
@@ -150,10 +192,11 @@ export function number(a: number, b: number) {
 	const isBNaN = Number.isNaN(b);
 
 	if (isANaN && isBNaN) return 0;
-	if (isANaN) return -1;
-	if (isBNaN) return 1;
+	if (isANaN) return 1;
+	if (isBNaN) return -1;
 
-	return a - b;
+	// Not `a - b`: `Infinity - Infinity` is NaN.
+	return a < b ? -1 : a > b ? 1 : 0;
 }
 
 /**
@@ -165,11 +208,11 @@ export function number(a: number, b: number) {
  * ```
  */
 export function boolean(a: boolean, b: boolean) {
-	return Number(a) - Number(b);
+	return +a - +b;
 }
 
 /**
- * Date comparator that falls back to placing invalid dates first.
+ * Date comparator that places invalid dates after all valid dates.
  *
  * @example
  * ```ts
@@ -177,17 +220,8 @@ export function boolean(a: boolean, b: boolean) {
  * ```
  */
 export function date(a: Date, b: Date) {
-	const aTime = a.getTime();
-	const bTime = b.getTime();
-
-	const isANaN = Number.isNaN(aTime);
-	const isBNaN = Number.isNaN(bTime);
-
-	if (isANaN && isBNaN) return 0;
-	if (isANaN) return -1;
-	if (isBNaN) return 1;
-
-	return aTime - bTime;
+	// An invalid date has the time NaN.
+	return number(a.getTime(), b.getTime());
 }
 
 /**
@@ -199,23 +233,42 @@ export function date(a: Date, b: Date) {
  * users.sort(by(user => user.age));
  * ```
  */
+export function by<T, K extends Comparable>(
+	key: (v: T) => K,
+	options?: KeyOptions<K, T>,
+): Comparator<T>;
+/**
+ * Builds a comparator for a key of any type. The `compare` option orders the keys.
+ *
+ * @example
+ * ```ts
+ * customers.sort(by((c) => c.address, { compare: (a, b) => a.city.localeCompare(b.city) }));
+ * ```
+ */
+export function by<T, K>(
+	key: (v: T) => K,
+	options: KeyOptionsWithCompare<K, T>,
+): Comparator<T>;
 export function by<T, K>(
 	key: (v: T) => K,
 	options?: KeyOptions<K, T>,
 ): Comparator<T> {
-	const compareFn = options?.compare ?? compare;
-	const direction = options?.direction ?? 'asc';
+	const custom = options?.compare;
+	// Missing keys are handled below, so the default needs only `<` and `>`.
+	const compareFn: Comparator<K> = custom ?? relational;
 	const predicate = options?.predicate;
 	const compareFnWithDirection =
-		direction === 'asc' ? compareFn : reverse(compareFn);
-	if (!predicate) {
-		return (a, b) => compareFnWithDirection(key(a), key(b));
-	}
+		options?.direction === 'desc' ? reverse(compareFn) : compareFn;
+	// Handle missing keys before the direction applies, so `desc` does not move them.
+	// A custom comparator with no `nulls` option receives missing keys unchanged.
+	const nulls =
+		options?.nulls === 'first' ? -1 : options?.nulls || !custom ? 1 : 0;
+	const compareKeys = nulls
+		? placeWhere<K>(isMissing, nulls, compareFnWithDirection)
+		: compareFnWithDirection;
+	const byKey: Comparator<T> = (a, b) => compareKeys(key(a), key(b));
 
-	return (a, b) => {
-		if (!predicate(a) || !predicate(b)) return 0;
-		return compareFnWithDirection(key(a), key(b));
-	};
+	return predicate ? when(predicate, byKey) : byKey;
 }
 
 /**
@@ -236,7 +289,8 @@ export function order<T>(...comparators: Comparator<T>[]): Comparator<T> {
 	return (a, b) => {
 		for (let i = 0; i < comparators.length; i++) {
 			const r = comparators[i]!(a, b);
-			if (r !== 0) return r;
+			// NaN is falsy, so a NaN result counts as a tie.
+			if (r) return r;
 		}
 
 		return 0;
@@ -252,9 +306,25 @@ export function order<T>(...comparators: Comparator<T>[]): Comparator<T> {
  * ['aa', 'b'].sort(map((value: string) => value.length)); // ['b', 'aa']
  * ```
  */
+export function map<T, U extends Comparable>(
+	map: (value: T) => U,
+	compareFn?: Comparator<U>,
+): Comparator<T>;
+/**
+ * Adapts a comparator to work on mapped values of any type.
+ *
+ * @example
+ * ```ts
+ * users.sort(map((user) => user.address, (a, b) => a.city.localeCompare(b.city)));
+ * ```
+ */
 export function map<T, U>(
 	map: (value: T) => U,
-	compareFn: Comparator<U> = compare,
+	compareFn: Comparator<U>,
+): Comparator<T>;
+export function map<T, U>(
+	map: (value: T) => U,
+	compareFn: Comparator<U> = compare as Comparator<U>,
 ): Comparator<T> {
 	return (a, b) => compareFn(map(a), map(b));
 }
@@ -277,9 +347,10 @@ export function when<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T> {
 	return (a, b) => {
-		const aMatch = predicate(a);
-		const bMatch = predicate(b);
-		if (aMatch && bMatch) return compareFn(a, b);
-		return 0;
+		// The value that passes comes first. When neither passes, the values tie.
+		const failsA = !predicate(a);
+		const failsB = !predicate(b);
+		if (failsA !== failsB) return failsA ? 1 : -1;
+		return failsA ? 0 : compareFn(a, b);
 	};
 }

@@ -1,0 +1,32 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"ignorePatterns": [".ignore/**", ".scratch/**"],
+	"plugins": ["unicorn", "typescript", "oxc", "import", "vitest"],
+	"options": { "typeAware": true },
+	"rules": {
+		"no-unused-vars": "error",
+		"no-console": ["error", { "allow": ["warn", "error"] }],
+		"typescript/consistent-type-imports": "error",
+		"typescript/no-floating-promises": "error",
+		"typescript/no-misused-promises": "error",
+		"typescript/no-unsafe-argument": "error",
+		"typescript/switch-exhaustiveness-check": "error",
+		"import/no-cycle": "error",
+		"import/no-duplicates": "error",
+		"vitest/no-focused-tests": "error",
+		"vitest/expect-expect": "off",
+		"vitest/require-mock-type-parameters": "off",
+		"vitest/valid-title": "off"
+	},
+	"overrides": [
+		{
+			"files": [
+				"benchmarks/run.ts",
+				"benchmarks/sizes.ts",
+				"benchmarks/complex-run.ts",
+				"benchmarks/render.ts"
+			],
+			"rules": { "no-console": "off" }
+		}
+	]
+}

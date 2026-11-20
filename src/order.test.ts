@@ -1,5 +1,7 @@
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
-import { Order } from './order';
+import { number } from './comparator/index.js';
+import { Order } from './order.js';
+import { distinctSorts, permutations } from './testing.js';
 
 type Role = 'admin' | 'manager' | 'staff' | 'guest';
 
@@ -130,9 +132,57 @@ describe('Order constructor', () => {
 		expect(composed.compare(a, b)).toBeGreaterThan(0);
 		expect(composed.compare(a, c)).toBeLessThan(0);
 	});
+
+	it('combines orders from another copy of the package', async () => {
+		vi.resetModules();
+		const { Order: OtherOrder } = await import('./order.js');
+		expect(OtherOrder).not.toBe(Order);
+
+		type Item = { value: number; label: string };
+		const byValue = OtherOrder.by((item: Item) => item.value);
+		const byLabel = Order.by((item: Item) => item.label);
+		const items: Item[] = [
+			{ value: 2, label: 'a' },
+			{ value: 1, label: 'b' },
+			{ value: 1, label: 'a' },
+		];
+		const expected = [
+			{ value: 1, label: 'a' },
+			{ value: 1, label: 'b' },
+			{ value: 2, label: 'a' },
+		];
+
+		expect(
+			new Order<Item>(byValue).by((item) => item.label).sort(items),
+		).toEqual(expected);
+		expect(new Order<Item>([byValue, byLabel]).sort(items)).toEqual(
+			expected,
+		);
+		expect(
+			Order.map((item: Item) => item, byValue)
+				.by((item) => item.label)
+				.sort(items),
+		).toEqual(expected);
+		expect(
+			byLabel
+				.reverse()
+				.when(() => true, byValue)
+				.reverse()
+				.sort(items),
+		).toEqual([
+			{ value: 2, label: 'a' },
+			{ value: 1, label: 'a' },
+			{ value: 1, label: 'b' },
+		]);
+	});
 });
 
 describe('Order.compare', () => {
+	it('returns the same comparator on every access', () => {
+		const order = Order.by((value: number) => value);
+		expect(order.compare).toBe(order.compare);
+	});
+
 	it('returns 0 when no steps are defined', () => {
 		const order = new Order<any>();
 		expect(order.compare({ foo: 1 }, { foo: 2 })).toBe(0);
@@ -198,7 +248,7 @@ describe('Order.compare', () => {
 		expect(order.compare(first, first)).toBe(0);
 	});
 
-	it('respects predicate options on individual steps', () => {
+	it('puts the item that passes a step predicate first', () => {
 		type Item = { score: number | null; fallback: number };
 		const keyed = vi.fn((item: Item) => item.score!);
 		const fallback = vi.fn((item: Item) => item.fallback);
@@ -209,11 +259,10 @@ describe('Order.compare', () => {
 		const missing = { score: null, fallback: 0 };
 		const present = { score: 10, fallback: 1 };
 
-		const result = order.compare(missing, present);
-
-		expect(result).toBeLessThan(0);
+		expect(order.compare(missing, present)).toBe(1);
+		expect(order.compare(present, missing)).toBe(-1);
 		expect(keyed).not.toHaveBeenCalled();
-		expect(fallback).toHaveBeenCalledTimes(2);
+		expect(fallback).not.toHaveBeenCalled();
 	});
 	it('does not mutate the original order when chaining with by()', () => {
 		type Item = { primary: number; secondary: number };
@@ -339,6 +388,24 @@ describe('Order.map', () => {
 		expect(mapped.compare(sydney, perth)).toBeGreaterThan(0);
 	});
 
+	it('applies predicates of the sub-order to the mapped value', () => {
+		type Place = { city: string; visible: boolean };
+		type Item = { id: number; place: Place };
+		const byCity = Order.by((place: Place) => place.city, {
+			predicate: (place) => place.visible,
+		});
+		const items: Item[] = [
+			{ id: 1, place: { city: 'a', visible: false } },
+			{ id: 2, place: { city: 'c', visible: true } },
+			{ id: 3, place: { city: 'b', visible: true } },
+		];
+
+		const sorted = Order.map((item: Item) => item.place, byCity).sort(
+			items,
+		);
+		expect(sorted.map((item) => item.id)).toEqual([3, 2, 1]);
+	});
+
 	it('preserves existing steps when using the instance .map()', () => {
 		const addressOrder = Order.by<Address, string>(
 			(address) => address.city,
@@ -412,6 +479,23 @@ describe('Order.sort', () => {
 		expect(result).toStrictEqual([1, 2, 3, 4, 5]);
 		expect(result).not.toBe(items);
 		expect(items).toEqual([5, 1, 4, 3, 2]);
+	});
+
+	it('sorts objects by the number that valueOf() returns', () => {
+		class Money {
+			constructor(readonly cents: number) {}
+			valueOf() {
+				return this.cents;
+			}
+		}
+		const items = [new Money(3), new Money(1), null, new Money(2)];
+
+		expect(Order.by((money: Money | null) => money).sort(items)).toEqual([
+			new Money(1),
+			new Money(2),
+			new Money(3),
+			null,
+		]);
 	});
 
 	it('sorts numbers descending when requested', () => {
@@ -500,7 +584,28 @@ describe('Order.sort', () => {
 		expect(second).toHaveBeenCalledTimes(items.length);
 	});
 
-	it('applies per-step predicates without disturbing stability', () => {
+	it('does not pass the keys of items that fail a predicate to a custom comparator', () => {
+		type Item = { name: string; active: boolean };
+		const custom = vi.fn((a: string, b: string) => a.localeCompare(b));
+		const items: Item[] = [
+			{ name: 'b', active: false },
+			{ name: 'a', active: true },
+			{ name: 'c', active: false },
+		];
+		const byName = Order.by((item: Item) => item.name, {
+			compare: custom,
+			predicate: (item) => item.active,
+		});
+
+		expect(byName.sort(items).map((item) => item.name)).toEqual([
+			'a',
+			'b',
+			'c',
+		]);
+		expect(custom).not.toHaveBeenCalled();
+	});
+
+	it('sorts items that pass a step predicate first, and keeps the input order of the rest', () => {
 		type Item = { id: number; score: number | null };
 		const key = vi.fn((item: Item) => item.score!);
 		const order = Order.by<Item, number>(key, {
@@ -518,7 +623,7 @@ describe('Order.sort', () => {
 		const result = Order.sort(items, order);
 
 		expect(key).toHaveBeenCalledTimes(2);
-		expect(result.map((item) => item.id)).toEqual([1, 3, 2, 4]);
+		expect(result.map((item) => item.id)).toEqual([3, 2, 1, 4]);
 		expect(result.filter((item) => item.score == null)).toStrictEqual([
 			items[0],
 			items[3],
@@ -547,19 +652,16 @@ describe('Order.sort', () => {
 });
 
 describe('Order#sort', () => {
-	it('delegates to the static helper and returns a sorted copy', () => {
+	it('returns a sorted copy and matches the static helper', () => {
 		const order = Order.by<number, number>((value) => value);
 		const items = [3, 1, 2];
-		const spy = vi.spyOn(Order, 'sort');
 
 		const result = order.sort(items);
 
-		expect(spy).toHaveBeenCalledWith(items, order);
 		expect(result).toEqual([1, 2, 3]);
+		expect(result).toEqual(Order.sort(items, order));
 		expect(result).not.toBe(items);
 		expect(items).toEqual([3, 1, 2]);
-
-		spy.mockRestore();
 	});
 
 	it('preserves the input array element type when sorting through a wider order', () => {
@@ -600,11 +702,12 @@ describe('Order.when', () => {
 		expect(key).toHaveBeenCalledTimes(2);
 
 		key.mockClear();
-		expect(guarded.compare(euOne, us)).toBe(0);
+		expect(guarded.compare(euOne, us)).toBe(-1);
+		expect(guarded.compare(us, euOne)).toBe(1);
 		expect(key).not.toHaveBeenCalled();
 
 		key.mockClear();
-		expect(guarded.compare(euOne, euDisabled)).toBe(0);
+		expect(guarded.compare(euOne, euDisabled)).toBe(-1);
 		expect(key).not.toHaveBeenCalled();
 	});
 
@@ -635,7 +738,113 @@ describe('Order.when', () => {
 		expect(key).not.toHaveBeenCalled();
 
 		key.mockClear();
-		expect(combined.compare(euOne, euDisabled)).toBe(0);
+		expect(combined.compare(euOne, euDisabled)).toBe(-1);
 		expect(key).not.toHaveBeenCalled();
+	});
+
+	it('puts items that pass the guard first, even when they fail a wrapped predicate', () => {
+		type Item = { id: number; region: 'eu' | 'us'; enabled: boolean };
+		const items: Item[] = [
+			{ id: 1, region: 'us', enabled: true },
+			{ id: 2, region: 'eu', enabled: false },
+		];
+		const isEu = (item: Item) => item.region === 'eu';
+		const ids = (sorted: Item[]) => sorted.map((item) => item.id);
+
+		const wrapped = Order.by((item: Item) => item.id, {
+			predicate: (item) => item.enabled,
+		});
+		expect(ids(Order.when(isEu, wrapped).sort(items))).toEqual([2, 1]);
+		expect(ids(Order.when(isEu, new Order<Item>()).sort(items))).toEqual([
+			2, 1,
+		]);
+	});
+});
+
+describe('comparators that return NaN', () => {
+	type Item = { id: number; value: number };
+	const items: Item[] = [
+		{ id: 1, value: Infinity },
+		{ id: 2, value: 1 },
+		{ id: 3, value: -Infinity },
+		{ id: 4, value: Infinity },
+		{ id: 5, value: -Infinity },
+		{ id: 6, value: 0 },
+	];
+	// `Infinity - Infinity` is NaN, so equal infinities compare as NaN.
+	const subtract = (a: number, b: number) => a - b;
+
+	it.each(['asc', 'desc'] as const)(
+		'treat a NaN result as a tie in %s order',
+		(direction) => {
+			const order = Order.by((item: Item) => item.value, {
+				compare: subtract,
+				direction,
+			}).by((item) => item.id);
+
+			const viaSort = distinctSorts(items, (p) => order.sort(p));
+			const viaCompare = distinctSorts(items, (p) =>
+				p.sort(order.compare),
+			);
+
+			expect(viaSort.size).toBe(1);
+			expect(viaCompare).toEqual(viaSort);
+			const [a, b] = [items[0]!, items[3]!];
+			expect(order.compare(a, b)).toBe(-order.compare(b, a));
+		},
+	);
+
+	it('sorts infinities with the bundled number comparator', () => {
+		const order = Order.by((item: Item) => item.value, {
+			compare: number,
+		}).by((item) => item.id);
+		const sorts = distinctSorts(items, (p) =>
+			order.sort(p).map((item) => item.id),
+		);
+		expect(sorts).toEqual(new Set([JSON.stringify([3, 5, 6, 2, 1, 4])]));
+	});
+});
+
+describe('predicate steps give one consistent order', () => {
+	type Item = { id: number; region: 'eu' | 'us'; score: number | null };
+	const ids = (items: Item[]) => items.map((item) => item.id);
+
+	it('sorts items that skip a null score after the scored items, from any input order', () => {
+		const items: Item[] = [
+			{ id: 1, region: 'eu', score: null },
+			{ id: 2, region: 'eu', score: 10 },
+			{ id: 3, region: 'eu', score: 5 },
+			{ id: 4, region: 'eu', score: null },
+		];
+		const byScore = Order.by((item: Item) => item.score, {
+			predicate: (item) => item.score != null,
+		});
+
+		const sorts = distinctSorts(items, (p) =>
+			ids(byScore.by((item) => item.id).sort(p)),
+		);
+		expect(sorts).toEqual(new Set([JSON.stringify([3, 2, 1, 4])]));
+		for (const p of permutations(items)) {
+			expect(ids(byScore.sort(p)).slice(0, 2)).toEqual([3, 2]);
+		}
+	});
+
+	it('does not form a cycle when a when() block is followed by a tiebreaker', () => {
+		const a: Item = { id: 3, region: 'eu', score: 1 };
+		const b: Item = { id: 2, region: 'us', score: 0 };
+		const c: Item = { id: 1, region: 'eu', score: 2 };
+		const order = new Order<Item>()
+			.when(
+				(item) => item.region === 'eu',
+				Order.by((item: Item) => item.score),
+			)
+			.by((item) => item.id);
+
+		expect(distinctSorts([a, b, c], (p) => ids(order.sort(p)))).toEqual(
+			new Set([JSON.stringify([3, 1, 2])]),
+		);
+		expect(
+			distinctSorts([a, b, c], (p) => ids(p.sort(order.compare))),
+		).toEqual(new Set([JSON.stringify([3, 1, 2])]));
 	});
 });

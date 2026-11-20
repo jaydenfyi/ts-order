@@ -1,9 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+	A_AFTER_B,
+	A_BEFORE_B,
 	boolean as booleanComparator,
 	by,
 	compare,
 	date as dateComparator,
+	EQUAL,
 	map,
 	nansFirst,
 	nansLast,
@@ -14,7 +17,13 @@ import {
 	reverse,
 	string,
 	when,
-} from './index';
+} from './index.js';
+
+describe('comparator constants', () => {
+	it('are -1, 1 and 0', () => {
+		expect([A_BEFORE_B, A_AFTER_B, EQUAL]).toEqual([-1, 1, 0]);
+	});
+});
 
 describe(reverse, () => {
 	it('swaps comparator arguments to flip the sort order', () => {
@@ -52,6 +61,13 @@ describe(nullsFirst, () => {
 });
 
 describe(nullsLast, () => {
+	it('ties two equal values without calling the base comparator', () => {
+		// This comparator breaks the contract: it never returns 0.
+		const base = vi.fn((a: number, b: number) => (a < b ? -1 : 1));
+		expect(nullsLast(base)(3, 3)).toBe(0);
+		expect(base).not.toHaveBeenCalled();
+	});
+
 	it('orders nullish values after non-null values', () => {
 		const base = vi.fn(compare<number>);
 		const comparator = nullsLast(base);
@@ -132,10 +148,16 @@ describe(string, () => {
 describe(numberComparator, () => {
 	it('orders numbers while handling NaN values', () => {
 		expect(numberComparator(1, 2)).toBe(-1);
-		expect(numberComparator(3, 1)).toBe(2);
+		expect(numberComparator(3, 1)).toBe(1);
 		expect(numberComparator(Number.NaN, Number.NaN)).toBe(0);
-		expect(numberComparator(Number.NaN, 5)).toBe(-1);
-		expect(numberComparator(5, Number.NaN)).toBe(1);
+		expect(numberComparator(Number.NaN, 5)).toBe(1);
+		expect(numberComparator(5, Number.NaN)).toBe(-1);
+	});
+
+	it('treats equal infinities as equal', () => {
+		expect(numberComparator(Infinity, Infinity)).toBe(0);
+		expect(numberComparator(-Infinity, -Infinity)).toBe(0);
+		expect(numberComparator(-Infinity, Infinity)).toBe(-1);
 	});
 });
 
@@ -157,8 +179,8 @@ describe(dateComparator, () => {
 		expect(dateComparator(earlier, later)).toBeLessThan(0);
 		expect(dateComparator(later, earlier)).toBeGreaterThan(0);
 		expect(dateComparator(earlier, earlier)).toBe(0);
-		expect(dateComparator(invalidA, later)).toBe(-1);
-		expect(dateComparator(later, invalidA)).toBe(1);
+		expect(dateComparator(invalidA, later)).toBe(1);
+		expect(dateComparator(later, invalidA)).toBe(-1);
 		expect(dateComparator(invalidA, invalidB)).toBe(0);
 	});
 });
@@ -203,7 +225,7 @@ describe(by, () => {
 		expect(custom).toHaveBeenCalledWith('hi', 'there');
 	});
 
-	it('only compares values when both satisfy the predicate', () => {
+	it('puts the value that passes the predicate first, and compares keys only when both pass', () => {
 		type Item = { label: string; active: boolean };
 		const key = vi.fn((item: Item) => item.label);
 		const base = vi.fn((a: string, b: string) => a.localeCompare(b));
@@ -215,7 +237,7 @@ describe(by, () => {
 		const inactive = { label: 'baker', active: false };
 		const otherActive = { label: 'charlie', active: true };
 
-		expect(comparator(active, inactive)).toBe(0);
+		expect(comparator(active, inactive)).toBe(-1);
 		expect(predicate).toHaveBeenNthCalledWith(1, active);
 		expect(predicate).toHaveBeenNthCalledWith(2, inactive);
 		expect(key).not.toHaveBeenCalled();
@@ -255,6 +277,14 @@ describe(order, () => {
 		expect(first).toHaveBeenCalledTimes(1);
 		expect(second).toHaveBeenCalledTimes(1);
 	});
+
+	it('treats a NaN result as a tie and continues to the next comparator', () => {
+		const comparator = order<number>(
+			() => Number.NaN,
+			(a, b) => a - b,
+		);
+		expect(comparator(1, 2)).toBe(-1);
+	});
 });
 
 describe(map, () => {
@@ -285,18 +315,20 @@ describe(map, () => {
 });
 
 describe(when, () => {
-	it('returns 0 when only one value matches and relies on follow-up comparators', () => {
+	it('puts the value that passes first, and ties values that both fail', () => {
 		const withinBucket = when<string>(
 			(value) => value.startsWith('x'),
 			compare,
 		);
 		const fallback = order(withinBucket, compare);
 
-		expect(withinBucket('xylophone', 'apple')).toBe(0);
-		expect(withinBucket('apple', 'xylophone')).toBe(0);
-		expect(fallback('xylophone', 'apple')).toBeGreaterThan(0);
-		expect(fallback('apple', 'xylophone')).toBeLessThan(0);
+		expect(withinBucket('xylophone', 'apple')).toBe(-1);
+		expect(withinBucket('apple', 'xylophone')).toBe(1);
+		expect(withinBucket('apple', 'banana')).toBe(0);
 		expect(fallback('apple', 'banana')).toBeLessThan(0);
+		expect(['banana', 'xylophone', 'apple', 'xray'].sort(fallback)).toEqual(
+			['xray', 'xylophone', 'apple', 'banana'],
+		);
 	});
 
 	it('delegates to the comparator only when both values satisfy the predicate', () => {
@@ -307,7 +339,8 @@ describe(when, () => {
 		expect(base).toHaveBeenCalledWith(2, 4);
 
 		base.mockClear();
-		expect(comparator(2, 3)).toBe(0);
+		expect(comparator(2, 3)).toBe(-1);
+		expect(comparator(3, 5)).toBe(0);
 		expect(base).not.toHaveBeenCalled();
 	});
 });

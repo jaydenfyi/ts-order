@@ -12,59 +12,84 @@
 		"type": "git",
 		"url": "git+https://github.com/jaydenfyi/ts-order.git"
 	},
+	"sideEffects": [
+		"./dist/compile.js"
+	],
 	"exports": {
-		".": {
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs"
-		},
-		"./comparator": {
-			"import": "./dist/comparator/index.js",
-			"require": "./dist/comparator/index.cjs"
-		},
+		".": "./dist/index.js",
+		"./comparator": "./dist/comparator/index.js",
+		"./compile": "./dist/compile.js",
 		"./package.json": "./package.json"
 	},
-	"main": "./dist/index.cjs",
+	"main": "./dist/index.js",
 	"module": "./dist/index.js",
-	"types": "./dist/index.d.cts",
+	"types": "./dist/index.d.ts",
 	"typesVersions": {
 		"*": {
 			"comparator": [
 				"dist/comparator/index.d.ts"
+			],
+			"compile": [
+				"dist/compile.d.ts"
 			]
 		}
 	},
 	"files": [
 		"dist"
 	],
+	"engines": {
+		"node": ">=20"
+	},
 	"scripts": {
-		"build": "tsdown --format esm --format cjs",
+		"build": "tsdown --format esm",
 		"test": "vitest run",
+		"test:compile": "vitest run --config vitest.compile.config.ts",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
-		"bench": "vitest bench",
-		"bench:snapshot": "vitest bench --outputJson=./benchmarks/bench.json",
-		"bench:compare": "vitest bench --compare ./benchmarks/bench.json",
+		"bench": "bun run build && tsx benchmarks/run.ts",
+		"bench:full": "bun run bench --full",
+		"bench:snapshot": "bun run bench:full",
+		"bench:quick": "bun run bench",
+		"bench:check": "bun run build && tsc -p benchmarks/tsconfig.json && vitest run --config benchmarks/vitest.config.ts",
+		"bench:complex": "bun run build && tsx benchmarks/complex-run.ts",
+		"bench:render": "tsx benchmarks/render.ts",
+		"bench:sizes": "bun run build && tsx benchmarks/sizes.ts",
 		"size": "size-limit",
-		"prettier": "prettier --write .",
-		"lint": "eslint . --ext .ts",
-		"lint:fix": "eslint . --ext .ts --fix",
+		"smoke-test": "sh scripts/smoke-test.sh",
+		"format": "oxfmt .",
+		"lint": "oxlint . --deny-warnings",
+		"lint:fix": "oxlint . --fix --deny-warnings",
+		"typecheck": "tsc -p . --noEmit",
+		"lint:package": "publint && attw --pack . --profile esm-only",
 		"changeset": "changeset",
-		"version-packages": "changeset version",
-		"release": "bun run build && changeset publish"
+		"version-packages": "changeset version"
 	},
 	"devDependencies": {
-		"@antfu/eslint-config": "^6.0.0",
-		"@changesets/cli": "^2.29.7",
-		"@types/node": "^24.8.1",
-		"@vitest/coverage-v8": "^3.2.4",
-		"eslint": "^9.37.0",
-		"execa": "^9.6.0",
-		"magic-string": "^0.30.19",
-		"prettier": "^3.6.2",
-		"rolldown": "^1.0.0-beta.43",
-		"tsdown": "^0.15.7",
-		"typescript": "^5.9.3",
-		"unplugin": "^2.3.10",
-		"vitest": "^3.2.4"
+		"@arethetypeswrong/cli": "^0.18.5",
+		"@changesets/changelog-github": "^1.0.1",
+		"@changesets/cli": "^3.0.3",
+		"@size-limit/preset-small-lib": "^14.3.0",
+		"@types/lodash-es": "4.17.12",
+		"@types/node": "^26.6.6",
+		"@vitest/coverage-v8": "^5.1.0",
+		"effect": "4.1.4",
+		"es-toolkit": "1.53.2",
+		"esbuild": "0.28.2",
+		"fast-check": "^4.10.2",
+		"fast-sort": "3.4.1",
+		"lodash-es": "4.18.1",
+		"oxfmt": "^0.78.0",
+		"oxlint": "1.94.0",
+		"publint": "^0.3.25",
+		"radashi": "13.0.4",
+		"remeda": "2.60.0",
+		"size-limit": "^14.3.0",
+		"thenby": "1.4.1",
+		"tinybench": "6.2.3",
+		"tsdown": "^0.23.7",
+		"tsrs": "7.1.0-beta.tsrs3",
+		"tsx": "4.23.15",
+		"typescript": "^7.0.2",
+		"vitest": "^5.1.0"
 	}
 }

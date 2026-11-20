@@ -5,8 +5,8 @@ import { Order } from './order.js';
 /**
  * Return an order with the same steps as `order`, whose `compare` and `sort`
  * run code generated for those steps. The code is generated with `new Function`
- * on the first use of each. In the package benchmarks it is 1.2 to 2.6 times
- * faster, most for orders with several steps.
+ * immediately, before this function returns. In the package benchmarks it is
+ * 1.2 to 2.6 times faster, most for orders with several steps.
  *
  * Where `new Function` is blocked, such as under a Content Security Policy
  * without `'unsafe-eval'`, on Cloudflare Workers or on edge runtimes, the
@@ -35,19 +35,20 @@ export function compile<T>(order: Order<T>): Order<T> {
 // Bracket access is how a subclass reads the private members of `Order`.
 /* eslint-disable dot-notation */
 class CompiledOrder<T> extends Order<T> {
-	private _sort: ((array: readonly T[]) => T[]) | undefined;
+	private readonly _sort: (array: readonly T[]) => T[];
 
-	// Caches in the `_compare` of `Order`. `super.compare` fills it too, with
-	// the same function that is then stored again.
+	constructor(order: Order<T>) {
+		super(order);
+		this['_compare'] = generateCompare(this['_steps']) ?? super.compare;
+		this._sort =
+			generateSort(this['_steps']) ?? ((input) => super.sort(input));
+	}
+
 	override get compare(): Comparator<T> {
-		return (this['_compare'] ??=
-			generateCompare(this['_steps']) ?? super.compare);
+		return this['_compare']!;
 	}
 
 	override sort<U extends T>(array: readonly U[]): U[] {
-		return (this._sort ??=
-			generateSort(this['_steps']) ?? ((input) => super.sort(input)))(
-			array,
-		) as U[];
+		return this._sort(array) as U[];
 	}
 }

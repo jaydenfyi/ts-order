@@ -45,18 +45,33 @@ describe('compile', () => {
 		expect(compiled.compare).toBe(compiled.compare);
 	});
 
-	it('generates code on first use only, once for each of compare and sort', async () => {
+	it('generates compare and sort eagerly and reuses them', async () => {
 		const compile = await importCompile();
 		const generate = vi.spyOn(globalThis, 'Function');
 		const compiled = compile(byScoreThenId);
-		expect(generate).not.toHaveBeenCalled();
+		expect(generate).toHaveBeenCalledTimes(2);
 		compiled.sort(rows);
 		compiled.sort(rows);
-		expect(generate).toHaveBeenCalledTimes(1);
+		expect(generate).toHaveBeenCalledTimes(2);
 		rows.slice().sort(compiled.compare);
 		rows.slice().sort(compiled.compare);
 		expect(generate).toHaveBeenCalledTimes(2);
 		generate.mockRestore();
+	});
+
+	it('does not invoke selectors, predicates or comparators during compilation', async () => {
+		const compile = await importCompile();
+		const key = vi.fn((r: Row) => r.id);
+		const predicate = vi.fn((r: Row) => r.score !== null);
+		const compare = vi.fn((a: number, b: number) => a - b);
+		const order = new Order<Row>().when(
+			predicate,
+			Order.by(key, { compare }),
+		);
+		compile(order);
+		expect(key).not.toHaveBeenCalled();
+		expect(predicate).not.toHaveBeenCalled();
+		expect(compare).not.toHaveBeenCalled();
 	});
 
 	it('calls a when() predicate once per item in sort', async () => {
@@ -109,7 +124,7 @@ describe('compile', () => {
 		).toEqual(expected);
 		// Only that order falls back. The next order tries again.
 		compile(byScoreThenId).sort(rows);
-		expect(attempts).toBe(3);
+		expect(attempts).toBe(4);
 	});
 
 	it('does not change the input array', async () => {
@@ -156,7 +171,7 @@ describe('compile', () => {
 		expect(attempts).toBe(1);
 	});
 
-	it('rethrows errors other than EvalError', async () => {
+	it('rethrows unexpected errors during compile()', async () => {
 		const compile = await importCompile();
 		vi.stubGlobal(
 			'Function',
@@ -166,6 +181,6 @@ describe('compile', () => {
 				}
 			},
 		);
-		expect(() => compile(byScoreThenId).compare).toThrow(SyntaxError);
+		expect(() => compile(byScoreThenId)).toThrow(SyntaxError);
 	});
 });

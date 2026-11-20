@@ -1,7 +1,8 @@
 // Side-effect-only entry: `import 'ts-order/compile'` makes every `Order`
-// generate code for its `compare` and `sort` on first use, as `compile()`
-// does for one order. It is listed in `sideEffects` in package.json, so
-// bundlers keep it, and apps that never import it do not get the compiler.
+// generate code for its `compare` and `sort` on first use. Unlike the eager
+// `compile()` function, this mode is lazy. It is listed in `sideEffects` in
+// package.json, so bundlers keep it, and apps that never import it do not get
+// the compiler.
 //
 // It replaces `compare` and `sort` on `Order.prototype`, so it also covers
 // orders created before the import. When `new Function` is blocked, it calls

@@ -6,7 +6,6 @@ export function total(): Sorter {
 	const byTotal = compile(
 		new Order<Purchase>().by((purchase) => purchase.totalCents),
 	);
-	byTotal.sort([]); // generates the sort code once, before timing
 	return (purchases) => byTotal.sort(purchases);
 }
 
@@ -17,7 +16,6 @@ export function fulfillment(): Sorter {
 			.by((purchase) => purchase.createdAt, { direction: 'desc' })
 			.by((purchase) => purchase.customer.lastName),
 	);
-	queue.sort([]); // generates the sort code once, before timing
 	return (purchases) => queue.sort(purchases);
 }
 
@@ -25,6 +23,5 @@ export function computed(): Sorter {
 	const byComputedTotal = compile(
 		new Order<Purchase>().by(computedTotal, { direction: 'desc' }),
 	);
-	byComputedTotal.sort([]); // generates the sort code once, before timing
 	return (purchases) => byComputedTotal.sort(purchases);
 }

@@ -338,6 +338,64 @@ users.sort(byStatusThenNewest.compare);
 byStatusThenNewest.sort(users);
 ```
 
+<details>
+<summary>What the generated code looks like</summary>
+
+A plain order's `compare` loops over its steps and reads each step's options on every comparison:
+
+```js
+(a, b) => {
+	for (const step of steps) {
+		// (predicate check, when the step has one)
+		const r = compareKeys(step, step.key(a), step.key(b)); // reads step.direction, step.nulls, step.compare
+		if (r) return r;
+	}
+	return 0;
+};
+```
+
+`compile()` writes the same steps out as straight-line code. For `byStatusThenNewest`, the generated `compare` is equivalent to this (formatted and renamed for reading):
+
+```js
+// statusKey and createdAtKey are your two selectors, passed in as functions.
+// isMissing tests for null, undefined, NaN and invalid dates.
+function compare(a, b) {
+	let x;
+	let y;
+	let missing;
+
+	// Step 1: status, ascending, missing keys last
+	x = statusKey(a);
+	y = statusKey(b);
+	if (x !== y) {
+		if (x !== null && y !== null) {
+			if (x < y) return -1;
+			if (x > y) return 1;
+		}
+		missing = isMissing(x);
+		if (missing !== isMissing(y)) return missing ? 1 : -1;
+	}
+
+	// Step 2: createdAt, descending: the signs are swapped in the code
+	x = createdAtKey(a);
+	y = createdAtKey(b);
+	if (x !== y) {
+		if (x !== null && y !== null) {
+			if (x < y) return 1;
+			if (x > y) return -1;
+		}
+		missing = isMissing(x);
+		if (missing !== isMissing(y)) return missing ? 1 : -1;
+	}
+
+	return 0;
+}
+```
+
+The loop and the option lookups are gone. Each direction and `nulls` setting is a constant, and a step without a predicate or a custom `compare` has no code for one. The generated `sort` uses the same comparison code on keys that it computes once per item.
+
+</details>
+
 - **Compile once.** The first compile in a process takes roughly 0.1 to 1 ms. Later compiles take about 5 µs, which is still slower than sorting a small array with a plain order. Compile an order at module level, not on every render or request.
 - **Use `sort` for large arrays or costly keys.** `sort` computes each key once per item. `compare` computes keys on every comparison, so it is faster only for cheap keys on arrays of up to about 10,000 items.
 - **Compile last.** Steps added to a compiled order with `.by()`, `.when()` or the other builder methods make a normal order.

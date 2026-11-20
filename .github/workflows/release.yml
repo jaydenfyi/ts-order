@@ -65,7 +65,11 @@ jobs:
                     *-*) tag=${version#*-}; tag=${tag%%.*} ;;
                     *) tag=latest ;;
                   esac
-                  if npm view "ts-order@$version" version >/dev/null 2>&1; then
+                  # Skip a version that is on npm, or staged: github-release tags each
+                  # version it stages. To stage again after rejecting it on npm, delete
+                  # its tag and GitHub release.
+                  if npm view "ts-order@$version" version >/dev/null 2>&1 ||
+                    git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null; then
                     publish=false
                   else
                     publish=true

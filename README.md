@@ -65,7 +65,7 @@ These rules apply to `Order` and to the comparator builders in `ts-order/compara
 
 - **Stable.** Items that tie on every step keep their input order. This is true for `order.sort()` and for `Array.prototype.sort` with `order.compare`.
 - **Steps run in order.** The first step that tells two items apart decides. Later steps only break ties.
-- **Default comparison.** Without a `compare` option, a step compares keys with `<` and `>`. The key must be `Comparable`: a `string`, `number`, `bigint`, `boolean` or `Date` (or a missing value). Use one kind of value per key. A key of type `string | number` can sort in an unexpected order.
+- **Default comparison.** Without a `compare` option, a step compares keys with `<` and `>`. The key must be `Comparable`: a `string`, `number`, `bigint`, `boolean`, `Date`, an object whose `valueOf()` returns a number or a bigint (such as a Luxon date), or a missing value. Use one kind of value per key. A key of type `string | number` can sort in an unexpected order.
 - **Missing keys.** `null`, `undefined`, `NaN` and invalid dates are missing keys. They sort after all other keys, in both directions. They tie with each other, so the next step decides their order. The `nulls: 'first'` option puts them first. With a custom `compare` and no `nulls` option, your comparator receives missing keys unchanged.
 - **Predicates.** For a step with a `predicate` (or inside a `when()` block): when both items pass, the step compares their keys. When only one passes, it comes first. When neither passes, the step skips them.
 - **Direction.** `direction: 'desc'` reverses how keys compare. It does not move missing keys or the group of items that pass a predicate.
@@ -572,13 +572,13 @@ const shortFirst: Comparator<string> = (a, b) =>
 
 The main entry exports these types:
 
-| Type                          | Meaning                                                                                                                |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `Comparator<T>`               | `(a: T, b: T) => number`, as used by `Array.prototype.sort`                                                            |
-| `Direction`                   | `'asc' \| 'desc'`                                                                                                      |
-| `KeyOptions<K, T>`            | The options of `by`: `direction`, `compare`, `predicate` and `nulls`                                                   |
-| `KeyOptionsWithCompare<K, T>` | `KeyOptions` with a required `compare`, for a key of any type                                                          |
-| `Comparable`                  | The key types the default comparison supports: `string`, `number`, `bigint`, `boolean`, `Date`, `null` and `undefined` |
+| Type                          | Meaning                                                                                                                                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Comparator<T>`               | `(a: T, b: T) => number`, as used by `Array.prototype.sort`                                                                                                                    |
+| `Direction`                   | `'asc' \| 'desc'`                                                                                                                                                              |
+| `KeyOptions<K, T>`            | The options of `by`: `direction`, `compare`, `predicate` and `nulls`                                                                                                           |
+| `KeyOptionsWithCompare<K, T>` | `KeyOptions` with a required `compare`, for a key of any type                                                                                                                  |
+| `Comparable`                  | The key types the default comparison supports: `string`, `number`, `bigint`, `boolean`, `Date`, objects whose `valueOf()` returns a number or a bigint, `null` and `undefined` |
 
 ## Migrating from 0.0.x to 0.1.0
 

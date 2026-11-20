@@ -463,6 +463,23 @@ describe('Order.sort', () => {
 		expect(items).toEqual([5, 1, 4, 3, 2]);
 	});
 
+	it('sorts objects by the number that valueOf() returns', () => {
+		class Money {
+			constructor(readonly cents: number) {}
+			valueOf() {
+				return this.cents;
+			}
+		}
+		const items = [new Money(3), new Money(1), null, new Money(2)];
+
+		expect(Order.by((money: Money | null) => money).sort(items)).toEqual([
+			new Money(1),
+			new Money(2),
+			new Money(3),
+			null,
+		]);
+	});
+
 	it('sorts numbers descending when requested', () => {
 		const items = [5, 1, 4, 3, 2];
 		const order = Order.by<number, number>((value) => value, {

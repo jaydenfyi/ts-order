@@ -32,6 +32,29 @@ describe('default-compare keys', () => {
 		expectTypeOf(map((user: User) => user.address, byCity)).toBeFunction();
 	});
 
+	it('accepts an object whose valueOf() returns a number or a bigint', () => {
+		class Money {
+			constructor(readonly cents: number) {}
+			valueOf() {
+				return this.cents;
+			}
+		}
+		type Instant = { valueOf: () => bigint };
+		expectTypeOf(Order.by((money: Money) => money)).toEqualTypeOf<Order<Money>>();
+		expectTypeOf(Order.by((instant: Instant) => instant)).toEqualTypeOf<Order<Instant>>();
+		expectTypeOf(by((money: Money) => money)).toBeFunction();
+		expectTypeOf(map((money: Money) => money)).toBeFunction();
+		expectTypeOf(compare(new Money(1), new Money(2))).toBeNumber();
+	});
+
+	it('rejects an object whose valueOf() returns a string, and keys that are arrays', () => {
+		type Decimal = { valueOf: () => string };
+		// @ts-expect-error `<` would compare the strings, so "10" sorts before "9"
+		Order.by((decimal: Decimal) => decimal);
+		// @ts-expect-error an array key needs a compare option
+		Order.by((values: number[]) => values);
+	});
+
 	it('accepts keys that can be missing', () => {
 		expectTypeOf(Order.by((user: User) => user.age)).toEqualTypeOf<Order<User>>();
 		expectTypeOf(Order.by((user: User) => user.lastLogin)).toEqualTypeOf<Order<User>>();

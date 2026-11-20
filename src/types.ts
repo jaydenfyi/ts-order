@@ -23,6 +23,11 @@ export type Comparator<T> = (a: T, b: T) => number;
  * `undefined`, `NaN` and invalid dates are missing keys (see `nulls`). Any
  * other key type needs a `compare` option.
  *
+ * An object whose `valueOf()` returns a number or a bigint is also
+ * `Comparable`, because `<` and `>` compare those numbers. Examples are Luxon,
+ * dayjs and moment dates. An object whose `valueOf()` returns a string, such
+ * as a decimal.js value, needs a `compare` option: `"10" < "9"` is true.
+ *
  * The default comparison expects one kind of value per key. A key of type
  * `string | number` can sort in an unexpected order.
  *
@@ -37,6 +42,7 @@ export type Comparable =
 	| bigint
 	| boolean
 	| Date
+	| { valueOf: () => number | bigint }
 	| null
 	| undefined;
 

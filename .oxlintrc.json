@@ -20,7 +20,11 @@
 	},
 	"overrides": [
 		{
-			"files": ["benchmarks/run.ts", "benchmarks/sizes.ts", "benchmarks/complex-run.ts"],
+			"files": [
+				"benchmarks/run.ts",
+				"benchmarks/sizes.ts",
+				"benchmarks/complex-run.ts"
+			],
 			"rules": { "no-console": "off" }
 		}
 	]

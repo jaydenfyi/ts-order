@@ -25,10 +25,17 @@ describe('default-compare keys', () => {
 	});
 
 	it('accepts an object key with compare', () => {
-		const byCity = (a: { city: string }, b: { city: string }) => a.city.localeCompare(b.city);
-		expectTypeOf(Order.by((user: User) => user.address, { compare: byCity })).toEqualTypeOf<Order<User>>();
-		expectTypeOf(new Order<User>().by((user) => user.address, { compare: byCity })).toEqualTypeOf<Order<User>>();
-		expectTypeOf(by((user: User) => user.address, { compare: byCity })).toBeFunction();
+		const byCity = (a: { city: string }, b: { city: string }) =>
+			a.city.localeCompare(b.city);
+		expectTypeOf(
+			Order.by((user: User) => user.address, { compare: byCity }),
+		).toEqualTypeOf<Order<User>>();
+		expectTypeOf(
+			new Order<User>().by((user) => user.address, { compare: byCity }),
+		).toEqualTypeOf<Order<User>>();
+		expectTypeOf(
+			by((user: User) => user.address, { compare: byCity }),
+		).toBeFunction();
 		expectTypeOf(map((user: User) => user.address, byCity)).toBeFunction();
 	});
 
@@ -40,8 +47,12 @@ describe('default-compare keys', () => {
 			}
 		}
 		type Instant = { valueOf: () => bigint };
-		expectTypeOf(Order.by((money: Money) => money)).toEqualTypeOf<Order<Money>>();
-		expectTypeOf(Order.by((instant: Instant) => instant)).toEqualTypeOf<Order<Instant>>();
+		expectTypeOf(Order.by((money: Money) => money)).toEqualTypeOf<
+			Order<Money>
+		>();
+		expectTypeOf(Order.by((instant: Instant) => instant)).toEqualTypeOf<
+			Order<Instant>
+		>();
 		expectTypeOf(by((money: Money) => money)).toBeFunction();
 		expectTypeOf(map((money: Money) => money)).toBeFunction();
 		expectTypeOf(compare(new Money(1), new Money(2))).toBeNumber();
@@ -56,8 +67,12 @@ describe('default-compare keys', () => {
 	});
 
 	it('accepts keys that can be missing', () => {
-		expectTypeOf(Order.by((user: User) => user.age)).toEqualTypeOf<Order<User>>();
-		expectTypeOf(Order.by((user: User) => user.lastLogin)).toEqualTypeOf<Order<User>>();
+		expectTypeOf(Order.by((user: User) => user.age)).toEqualTypeOf<
+			Order<User>
+		>();
+		expectTypeOf(Order.by((user: User) => user.lastLogin)).toEqualTypeOf<
+			Order<User>
+		>();
 		expectTypeOf(by((user: User) => user.age)).toBeFunction();
 	});
 

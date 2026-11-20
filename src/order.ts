@@ -126,7 +126,10 @@ export class Order<T> {
 		selectorFn: (item: T) => K,
 		options?: KeyOptions<K, T>,
 	): Order<T> {
-		return new Order<T>().by(selectorFn, options as KeyOptionsWithCompare<K, T>);
+		return new Order<T>().by(
+			selectorFn,
+			options as KeyOptionsWithCompare<K, T>,
+		);
 	}
 
 	/**
@@ -198,7 +201,10 @@ export class Order<T> {
 	 */
 	reverse(): Order<T> {
 		return Order._from(
-			this._steps.map((s) => ({ ...s, direction: s.direction === 1 ? -1 : 1 })),
+			this._steps.map((s) => ({
+				...s,
+				direction: s.direction === 1 ? -1 : 1,
+			})),
 		);
 	}
 
@@ -306,7 +312,9 @@ export class Order<T> {
 				const p = step.predicate;
 				return {
 					...step,
-					predicate: p ? (value: T) => p(value) && predicate(value) : predicate,
+					predicate: p
+						? (value: T) => p(value) && predicate(value)
+						: predicate,
 				};
 			}),
 		]);
@@ -411,7 +419,6 @@ export class Order<T> {
 
 		const arrayIndexes: number[] = new Array(arrayLength);
 		for (let i = 0; i < arrayLength; i++) arrayIndexes[i] = i;
-
 
 		// The same rules as `compare`, on the precomputed keys.
 		const compareIndexes = (ia: number, ib: number): number => {

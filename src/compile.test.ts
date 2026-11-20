@@ -17,12 +17,18 @@ async function load() {
 	const { Order } = await import('./order.js');
 	const build = () =>
 		new Order<Row>()
-			.when((row) => row.group === 'a', Order.by((row) => row.id, { direction: 'desc' }))
+			.when(
+				(row) => row.group === 'a',
+				Order.by((row) => row.id, { direction: 'desc' }),
+			)
 			.by((row) => row.score, { direction: 'desc', nulls: 'first' })
 			.by((row) => row.id);
 	// The result of a plain order, taken before the patch.
 	const plain = build();
-	const expected = { sort: ids(plain.sort(rows)), compare: ids(rows.slice().sort(plain.compare)) };
+	const expected = {
+		sort: ids(plain.sort(rows)),
+		compare: ids(rows.slice().sort(plain.compare)),
+	};
 	return { Order, build, expected };
 }
 
@@ -32,12 +38,15 @@ async function patch() {
 
 function blockNewFunction(): { attempts: number } {
 	const counter = { attempts: 0 };
-	vi.stubGlobal('Function', class {
-		constructor() {
-			counter.attempts++;
-			throw new EvalError('Code generation from strings disallowed');
-		}
-	});
+	vi.stubGlobal(
+		'Function',
+		class {
+			constructor() {
+				counter.attempts++;
+				throw new EvalError('Code generation from strings disallowed');
+			}
+		},
+	);
 	return counter;
 }
 
@@ -93,13 +102,18 @@ describe('ts-order/compile', () => {
 	it.each([
 		['allowed', false],
 		['blocked', true],
-	])('works together with compile() when new Function is %s', async (_, block) => {
-		const { build, expected } = await load();
-		await patch();
-		const { compile } = await import('./compiled-order.js');
-		if (block) blockNewFunction();
-		const compiled = compile(build());
-		expect(ids(compiled.sort(rows))).toEqual(expected.sort);
-		expect(ids(rows.slice().sort(compiled.compare))).toEqual(expected.compare);
-	});
+	])(
+		'works together with compile() when new Function is %s',
+		async (_, block) => {
+			const { build, expected } = await load();
+			await patch();
+			const { compile } = await import('./compiled-order.js');
+			if (block) blockNewFunction();
+			const compiled = compile(build());
+			expect(ids(compiled.sort(rows))).toEqual(expected.sort);
+			expect(ids(rows.slice().sort(compiled.compare))).toEqual(
+				expected.compare,
+			);
+		},
+	);
 });

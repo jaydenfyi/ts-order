@@ -14,9 +14,9 @@ import { Order } from './order.js';
 type Sort = (array: readonly unknown[]) => unknown[];
 
 const proto = Order.prototype;
-const plainCompare: (this: Order<unknown>) => Comparator<unknown>
+const plainCompare: (this: Order<unknown>) => Comparator<unknown> =
 	// oxlint-disable-next-line typescript/unbound-method -- invoked with the order as this below
-	= Object.getOwnPropertyDescriptor(proto, 'compare')!.get!;
+	Object.getOwnPropertyDescriptor(proto, 'compare')!.get!;
 // oxlint-disable-next-line typescript/unbound-method -- invoked with the order as this below
 const plainSort = proto.sort;
 const compares = new WeakMap<Order<unknown>, Comparator<unknown>>();
@@ -28,7 +28,8 @@ Object.defineProperty(proto, 'compare', {
 		let compare = compares.get(this);
 		if (!compare) {
 			// eslint-disable-next-line dot-notation -- the steps are private to Order
-			compare = generateCompare(this['_steps']) ?? plainCompare.call(this);
+			compare =
+				generateCompare(this['_steps']) ?? plainCompare.call(this);
 			compares.set(this, compare);
 		}
 		return compare;
@@ -38,10 +39,10 @@ Object.defineProperty(proto, 'compare', {
 proto.sort = function sort<U>(this: Order<unknown>, array: readonly U[]): U[] {
 	let compiled = sorts.get(this);
 	if (!compiled) {
-		compiled
+		compiled =
 			// eslint-disable-next-line dot-notation -- the steps are private to Order
-			= generateSort(this['_steps'])
-				?? ((input: readonly unknown[]) => plainSort.call(this, input));
+			generateSort(this['_steps']) ??
+			((input: readonly unknown[]) => plainSort.call(this, input));
 		sorts.set(this, compiled);
 	}
 	return compiled(array) as U[];

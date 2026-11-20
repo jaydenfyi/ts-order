@@ -45,9 +45,7 @@ interface User {
 	createdAt: Date;
 }
 
-const users: User[] = [
-	/* ... */
-];
+const users: User[] = [/* ... */];
 
 // Sort by isActive DESC, lastName ASC, then firstName ASC, then id ASC (tiebreaker)
 const byActiveAndName = new Order<User>()

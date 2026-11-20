@@ -63,40 +63,60 @@ describe('README examples', () => {
 			.by((u) => u.firstName)
 			.by((u) => u.id);
 		expectTypeOf(byActiveAndName.sort(users)).toEqualTypeOf<User[]>();
-		expectTypeOf(users.slice().sort(byActiveAndName.compare)).toEqualTypeOf<User[]>();
+		expectTypeOf(users.slice().sort(byActiveAndName.compare)).toEqualTypeOf<
+			User[]
+		>();
 	});
 
 	it('order.by', () => {
 		Order.by((u: User) => u.age);
 		const collator = new Intl.Collator('en');
-		Order.by((u: User) => u.lastName, { direction: 'desc', compare: collator.compare });
-		Order.by((i: Item) => i.expiresAt, { compare: (a, b) => a.getTime() - b.getTime() });
+		Order.by((u: User) => u.lastName, {
+			direction: 'desc',
+			compare: collator.compare,
+		});
+		Order.by((i: Item) => i.expiresAt, {
+			compare: (a, b) => a.getTime() - b.getTime(),
+		});
 		Order.by((u: User) => u.age, { nulls: 'first' });
 		Order.by((c: Customer) => c.address, {
 			compare: (a, b) => a.city.localeCompare(b.city),
 		});
-		Order.by((u: User) => u.age, { predicate: (u) => u.age != null }).by((u) => u.lastName);
+		Order.by((u: User) => u.age, { predicate: (u) => u.age != null }).by(
+			(u) => u.lastName,
+		);
 		new Order<User>().by((u) => u.createdAt).by((u) => u.id);
 	});
 
 	it('reverse, map, when, compare, sort', () => {
 		Order.by((u: User) => u.createdAt).reverse();
-		const byAddress = Order.by((a: Address) => a.city).by((a) => a.postcode);
+		const byAddress = Order.by((a: Address) => a.city).by(
+			(a) => a.postcode,
+		);
 		Order.map((c: Customer) => c.address, byAddress);
 		new Order<Customer>().by((c) => c.id).map((c) => c.address, byAddress);
 		new Order<User>()
 			.by((u) => u.region)
-			.when((u) => u.region === 'eu', Order.by((u) => u.score, { direction: 'desc' }))
+			.when(
+				(u) => u.region === 'eu',
+				Order.by((u) => u.score, { direction: 'desc' }),
+			)
 			.by((u) => u.id);
-		items.sort(Order.by((i: Item) => i.score, { direction: 'desc' }).compare);
+		items.sort(
+			Order.by((i: Item) => i.score, { direction: 'desc' }).compare,
+		);
 		const byName = Order.by((u: User) => u.lastName);
 		Order.sort(users, byName);
 		byName.sort(users);
 	});
 
 	it('reusing orders across types', () => {
-		const byName = <T extends { name: string }>() => Order.by((x: T) => x.name);
-		const byRoleThenName = new Order<Staff>([Order.by((s: Staff) => s.role), byName<Staff>()]);
+		const byName = <T extends { name: string }>() =>
+			Order.by((x: T) => x.name);
+		const byRoleThenName = new Order<Staff>([
+			Order.by((s: Staff) => s.role),
+			byName<Staff>(),
+		]);
 		expectTypeOf(byRoleThenName).toEqualTypeOf<Order<Staff>>();
 		Order.by((s: Staff) => s.team).when((s) => s.isActive, byName());
 		// @ts-expect-error Customer has no name
@@ -113,22 +133,38 @@ describe('README examples', () => {
 		['b', 'a'].sort(localeString);
 		[true, false].sort(boolean);
 		[new Date()].sort(date);
-		['file10', 'file2'].sort(new Intl.Collator(undefined, { numeric: true }).compare);
+		['file10', 'file2'].sort(
+			new Intl.Collator(undefined, { numeric: true }).compare,
+		);
 		items.sort(by((item) => item.label));
-		users.sort(order(by((u) => u.lastName), by((u) => u.firstName)));
+		users.sort(
+			order(
+				by((u) => u.lastName),
+				by((u) => u.firstName),
+			),
+		);
 		items.sort(map((item) => item.nested.score));
 		[new Date()].sort(reverse(date));
-		const evenNumbersFirst = order<number>(when((value) => value % 2 === 0, number), number);
+		const evenNumbersFirst = order<number>(
+			when((value) => value % 2 === 0, number),
+			number,
+		);
 		[3, 2, 1, 4].sort(evenNumbersFirst);
 		const shortFirst: Comparator<string> = (a, b) =>
-			a.length < b.length ? A_BEFORE_B : a.length > b.length ? A_AFTER_B : EQUAL;
+			a.length < b.length
+				? A_BEFORE_B
+				: a.length > b.length
+					? A_AFTER_B
+					: EQUAL;
 		['aa', 'b'].sort(shortFirst);
 	});
 
 	it('migration notes', () => {
 		Order.by((u: User) => u.score, { predicate: (u) => u.score != null });
 		Order.by((x: { v?: number }) => x.v).sort([{ v: 3 }, {}, { v: 1 }]);
-		const byValue = Order.by((x: number) => x, { compare: (a, b) => a - b });
+		const byValue = Order.by((x: number) => x, {
+			compare: (a, b) => a - b,
+		});
 		byValue.compare(Infinity, Infinity);
 		// @ts-expect-error an object key needs a compare option
 		Order.by((c: Customer) => c.address);

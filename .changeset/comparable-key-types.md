@@ -7,6 +7,6 @@
 `KeyOptions` now accepts explicit `undefined` values, such as `{ direction: undefined }`, under `exactOptionalPropertyTypes`. The `Comparable` and `KeyOptionsWithCompare` types are exported from the main entry.
 
 ```ts
-Order.by((user: User) => user.address);                      // now a type error
+Order.by((user: User) => user.address); // now a type error
 Order.by((user: User) => user.address, { compare: byCity }); // OK
 ```

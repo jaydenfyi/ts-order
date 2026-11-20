@@ -7,7 +7,9 @@
 Before, the step was skipped when either item failed. An item that failed then tied with every other item, so the result could depend on the input order, and a `when()` block followed by a tiebreaker could even form a cycle. This applies to `Order.by`, `Order.when` and the comparator `by` and `when`.
 
 ```ts
-const byScore = Order.by((u: User) => u.score, { predicate: (u) => u.score != null });
+const byScore = Order.by((u: User) => u.score, {
+	predicate: (u) => u.score != null,
+});
 // before: users without a score stayed where they were in the input
 // after:  users with a score come first, then users without one
 ```

@@ -79,7 +79,11 @@ const isNullish = (value: unknown): boolean => value == null;
 export function nullsFirst<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T | null | undefined> {
-	return placeWhere(isNullish, -1, compareFn as Comparator<T | null | undefined>);
+	return placeWhere(
+		isNullish,
+		-1,
+		compareFn as Comparator<T | null | undefined>,
+	);
 }
 
 /**
@@ -93,7 +97,11 @@ export function nullsFirst<T>(
 export function nullsLast<T>(
 	compareFn: Comparator<T>,
 ): Comparator<T | null | undefined> {
-	return placeWhere(isNullish, 1, compareFn as Comparator<T | null | undefined>);
+	return placeWhere(
+		isNullish,
+		1,
+		compareFn as Comparator<T | null | undefined>,
+	);
 }
 
 /**
@@ -251,8 +259,8 @@ export function by<T, K>(
 		options?.direction === 'desc' ? reverse(compareFn) : compareFn;
 	// Handle missing keys before the direction applies, so `desc` does not move them.
 	// A custom comparator with no `nulls` option receives missing keys unchanged.
-	const nulls
-		= options?.nulls === 'first' ? -1 : options?.nulls || !custom ? 1 : 0;
+	const nulls =
+		options?.nulls === 'first' ? -1 : options?.nulls || !custom ? 1 : 0;
 	const compareKeys = nulls
 		? placeWhere<K>(isMissing, nulls, compareFnWithDirection)
 		: compareFnWithDirection;

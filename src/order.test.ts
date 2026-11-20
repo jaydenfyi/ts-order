@@ -152,10 +152,24 @@ describe('Order constructor', () => {
 			{ value: 2, label: 'a' },
 		];
 
-		expect(new Order<Item>(byValue).by((item) => item.label).sort(items)).toEqual(expected);
-		expect(new Order<Item>([byValue, byLabel]).sort(items)).toEqual(expected);
-		expect(Order.map((item: Item) => item, byValue).by((item) => item.label).sort(items)).toEqual(expected);
-		expect(byLabel.reverse().when(() => true, byValue).reverse().sort(items)).toEqual([
+		expect(
+			new Order<Item>(byValue).by((item) => item.label).sort(items),
+		).toEqual(expected);
+		expect(new Order<Item>([byValue, byLabel]).sort(items)).toEqual(
+			expected,
+		);
+		expect(
+			Order.map((item: Item) => item, byValue)
+				.by((item) => item.label)
+				.sort(items),
+		).toEqual(expected);
+		expect(
+			byLabel
+				.reverse()
+				.when(() => true, byValue)
+				.reverse()
+				.sort(items),
+		).toEqual([
 			{ value: 2, label: 'a' },
 			{ value: 1, label: 'a' },
 			{ value: 1, label: 'b' },
@@ -377,14 +391,18 @@ describe('Order.map', () => {
 	it('applies predicates of the sub-order to the mapped value', () => {
 		type Place = { city: string; visible: boolean };
 		type Item = { id: number; place: Place };
-		const byCity = Order.by((place: Place) => place.city, { predicate: (place) => place.visible });
+		const byCity = Order.by((place: Place) => place.city, {
+			predicate: (place) => place.visible,
+		});
 		const items: Item[] = [
 			{ id: 1, place: { city: 'a', visible: false } },
 			{ id: 2, place: { city: 'c', visible: true } },
 			{ id: 3, place: { city: 'b', visible: true } },
 		];
 
-		const sorted = Order.map((item: Item) => item.place, byCity).sort(items);
+		const sorted = Order.map((item: Item) => item.place, byCity).sort(
+			items,
+		);
 		expect(sorted.map((item) => item.id)).toEqual([3, 2, 1]);
 	});
 
@@ -579,7 +597,11 @@ describe('Order.sort', () => {
 			predicate: (item) => item.active,
 		});
 
-		expect(byName.sort(items).map((item) => item.name)).toEqual(['a', 'b', 'c']);
+		expect(byName.sort(items).map((item) => item.name)).toEqual([
+			'a',
+			'b',
+			'c',
+		]);
 		expect(custom).not.toHaveBeenCalled();
 	});
 
@@ -729,9 +751,13 @@ describe('Order.when', () => {
 		const isEu = (item: Item) => item.region === 'eu';
 		const ids = (sorted: Item[]) => sorted.map((item) => item.id);
 
-		const wrapped = Order.by((item: Item) => item.id, { predicate: (item) => item.enabled });
+		const wrapped = Order.by((item: Item) => item.id, {
+			predicate: (item) => item.enabled,
+		});
 		expect(ids(Order.when(isEu, wrapped).sort(items))).toEqual([2, 1]);
-		expect(ids(Order.when(isEu, new Order<Item>()).sort(items))).toEqual([2, 1]);
+		expect(ids(Order.when(isEu, new Order<Item>()).sort(items))).toEqual([
+			2, 1,
+		]);
 	});
 });
 
@@ -748,26 +774,33 @@ describe('comparators that return NaN', () => {
 	// `Infinity - Infinity` is NaN, so equal infinities compare as NaN.
 	const subtract = (a: number, b: number) => a - b;
 
-	it.each(['asc', 'desc'] as const)('treat a NaN result as a tie in %s order', (direction) => {
-		const order = Order.by((item: Item) => item.value, {
-			compare: subtract,
-			direction,
-		}).by((item) => item.id);
+	it.each(['asc', 'desc'] as const)(
+		'treat a NaN result as a tie in %s order',
+		(direction) => {
+			const order = Order.by((item: Item) => item.value, {
+				compare: subtract,
+				direction,
+			}).by((item) => item.id);
 
-		const viaSort = distinctSorts(items, (p) => order.sort(p));
-		const viaCompare = distinctSorts(items, (p) => p.sort(order.compare));
+			const viaSort = distinctSorts(items, (p) => order.sort(p));
+			const viaCompare = distinctSorts(items, (p) =>
+				p.sort(order.compare),
+			);
 
-		expect(viaSort.size).toBe(1);
-		expect(viaCompare).toEqual(viaSort);
-		const [a, b] = [items[0]!, items[3]!];
-		expect(order.compare(a, b)).toBe(-order.compare(b, a));
-	});
+			expect(viaSort.size).toBe(1);
+			expect(viaCompare).toEqual(viaSort);
+			const [a, b] = [items[0]!, items[3]!];
+			expect(order.compare(a, b)).toBe(-order.compare(b, a));
+		},
+	);
 
 	it('sorts infinities with the bundled number comparator', () => {
-		const order = Order.by((item: Item) => item.value, { compare: number }).by(
-			(item) => item.id,
+		const order = Order.by((item: Item) => item.value, {
+			compare: number,
+		}).by((item) => item.id);
+		const sorts = distinctSorts(items, (p) =>
+			order.sort(p).map((item) => item.id),
 		);
-		const sorts = distinctSorts(items, (p) => order.sort(p).map((item) => item.id));
 		expect(sorts).toEqual(new Set([JSON.stringify([3, 5, 6, 2, 1, 4])]));
 	});
 });
@@ -787,7 +820,9 @@ describe('predicate steps give one consistent order', () => {
 			predicate: (item) => item.score != null,
 		});
 
-		const sorts = distinctSorts(items, (p) => ids(byScore.by((item) => item.id).sort(p)));
+		const sorts = distinctSorts(items, (p) =>
+			ids(byScore.by((item) => item.id).sort(p)),
+		);
 		expect(sorts).toEqual(new Set([JSON.stringify([3, 2, 1, 4])]));
 		for (const p of permutations(items)) {
 			expect(ids(byScore.sort(p)).slice(0, 2)).toEqual([3, 2]);
@@ -799,14 +834,17 @@ describe('predicate steps give one consistent order', () => {
 		const b: Item = { id: 2, region: 'us', score: 0 };
 		const c: Item = { id: 1, region: 'eu', score: 2 };
 		const order = new Order<Item>()
-			.when((item) => item.region === 'eu', Order.by((item: Item) => item.score))
+			.when(
+				(item) => item.region === 'eu',
+				Order.by((item: Item) => item.score),
+			)
 			.by((item) => item.id);
 
 		expect(distinctSorts([a, b, c], (p) => ids(order.sort(p)))).toEqual(
 			new Set([JSON.stringify([3, 1, 2])]),
 		);
-		expect(distinctSorts([a, b, c], (p) => ids(p.sort(order.compare)))).toEqual(
-			new Set([JSON.stringify([3, 1, 2])]),
-		);
+		expect(
+			distinctSorts([a, b, c], (p) => ids(p.sort(order.compare))),
+		).toEqual(new Set([JSON.stringify([3, 1, 2])]));
 	});
 });

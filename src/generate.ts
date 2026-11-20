@@ -6,7 +6,9 @@ import { isMissing } from './missing.js';
 let evalBlocked = false;
 
 /** Generated `compare` for `steps`. Undefined when the platform blocks `new Function`. */
-export function generateCompare<T>(steps: readonly OrderStep<T>[]): Comparator<T> | undefined {
+export function generateCompare<T>(
+	steps: readonly OrderStep<T>[],
+): Comparator<T> | undefined {
 	return generate(
 		`return function(a,b){var x,y,r,m,f;${compareStepsSource(steps, false)}return 0}`,
 		steps,
@@ -27,9 +29,9 @@ export function generateSort<T>(
 				: `var K${i}=new Array(n);for(i=0;i<n;i++)K${i}[i]=k${i}(array[i]);`;
 	});
 	return generate(
-		`return function(array){var n=array.length,i,t;if(n<=1)return array.slice();${ 
-			decorate.join('') 
-			}var ix=new Array(n);for(i=0;i<n;i++)ix[i]=i;` +
+		`return function(array){var n=array.length,i,t;if(n<=1)return array.slice();${decorate.join(
+			'',
+		)}var ix=new Array(n);for(i=0;i<n;i++)ix[i]=i;` +
 			`ix.sort(function(a,b){var x,y,r,m,f;${compareStepsSource(steps, true)}return 0});` +
 			`var out=new Array(n);for(i=0;i<n;i++)out[i]=array[ix[i]];return out}`,
 		steps,
@@ -93,11 +95,15 @@ function compareKeysSource(i: number, step: OrderStep<any>): string {
  * The steps of a comparator of `a` and `b`. They are items for `compare`, and
  * indexes into the decorated arrays `K<i>` and `P<i>` for `sort`.
  */
-function compareStepsSource(steps: readonly OrderStep<any>[], sort: boolean): string {
+function compareStepsSource(
+	steps: readonly OrderStep<any>[],
+	sort: boolean,
+): string {
 	return steps
 		.map((step, i) => {
 			const keys =
-				(sort ? `x=K${i}[a];y=K${i}[b];` : `x=k${i}(a);y=k${i}(b);`) + compareKeysSource(i, step);
+				(sort ? `x=K${i}[a];y=K${i}[b];` : `x=k${i}(a);y=k${i}(b);`) +
+				compareKeysSource(i, step);
 			// The item that passes comes first. When neither passes, skip the step.
 			// When an earlier step checked the same predicate, both items gave the
 			// same result there, or the comparator would have returned.
@@ -118,7 +124,10 @@ function compareStepsSource(steps: readonly OrderStep<any>[], sort: boolean): st
  * earlier step shares it. `when()` gives its guard step and the steps it
  * appends one predicate, so `sort` calls it once per item, not once per step.
  */
-function firstWithPredicate(steps: readonly OrderStep<any>[], i: number): number {
+function firstWithPredicate(
+	steps: readonly OrderStep<any>[],
+	i: number,
+): number {
 	const p = steps[i]!.predicate;
 	return p ? steps.findIndex((step) => step.predicate === p) : i;
 }

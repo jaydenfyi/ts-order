@@ -279,7 +279,10 @@ describe(order, () => {
 	});
 
 	it('treats a NaN result as a tie and continues to the next comparator', () => {
-		const comparator = order<number>(() => Number.NaN, (a, b) => a - b);
+		const comparator = order<number>(
+			() => Number.NaN,
+			(a, b) => a - b,
+		);
 		expect(comparator(1, 2)).toBe(-1);
 	});
 });
@@ -323,12 +326,9 @@ describe(when, () => {
 		expect(withinBucket('apple', 'xylophone')).toBe(1);
 		expect(withinBucket('apple', 'banana')).toBe(0);
 		expect(fallback('apple', 'banana')).toBeLessThan(0);
-		expect(['banana', 'xylophone', 'apple', 'xray'].sort(fallback)).toEqual([
-			'xray',
-			'xylophone',
-			'apple',
-			'banana',
-		]);
+		expect(['banana', 'xylophone', 'apple', 'xray'].sort(fallback)).toEqual(
+			['xray', 'xylophone', 'apple', 'banana'],
+		);
 	});
 
 	it('delegates to the comparator only when both values satisfy the predicate', () => {

@@ -25,7 +25,10 @@ type Item = {
 	b: boolean;
 	g: number;
 };
-type Step = { key: (item: Item) => Comparable; options: KeyOptions<Comparable, Item> };
+type Step = {
+	key: (item: Item) => Comparable;
+	options: KeyOptions<Comparable, Item>;
+};
 
 const sign = (x: number) => (x > 0 ? 1 : x < 0 ? -1 : 0);
 const ids = (items: Item[]) => items.map((item) => item.id);
@@ -59,7 +62,10 @@ const itemsArb = fc
 const collator = new Intl.Collator(undefined, { numeric: true });
 
 // Each field has its key and a custom comparator that is consistent for its values.
-const fields: Record<string, { key: Step['key']; compare: Comparator<any>; mayMiss: boolean }> = {
+const fields: Record<
+	string,
+	{ key: Step['key']; compare: Comparator<any>; mayMiss: boolean }
+> = {
 	n: { key: (item) => item.n, compare: number, mayMiss: true },
 	s: { key: (item) => item.s, compare: collator.compare, mayMiss: true },
 	d: { key: (item) => item.d, compare: date, mayMiss: true },
@@ -79,7 +85,9 @@ const stepArb: fc.Arbitrary<Step> = fc
 		direction: fc.constantFrom(undefined, 'asc' as const, 'desc' as const),
 		nulls: fc.constantFrom(undefined, 'first' as const, 'last' as const),
 		custom: fc.boolean(),
-		predicate: fc.option(fc.constantFrom(...predicates), { nil: undefined }),
+		predicate: fc.option(fc.constantFrom(...predicates), {
+			nil: undefined,
+		}),
 	})
 	.map(({ field, direction, nulls, custom, predicate }) => {
 		const { key, compare, mayMiss } = fields[field]!;
@@ -97,15 +105,19 @@ const stepArb: fc.Arbitrary<Step> = fc
 const stepsArb = fc.array(stepArb, { minLength: 1, maxLength: 4 });
 
 const toOrder = (steps: Step[]) =>
-	steps.reduce((result, step) => result.by(step.key, step.options), new Order<Item>());
-const toComparator = (steps: Step[]) => order(...steps.map((step) => by(step.key, step.options)));
+	steps.reduce(
+		(result, step) => result.by(step.key, step.options),
+		new Order<Item>(),
+	);
+const toComparator = (steps: Step[]) =>
+	order(...steps.map((step) => by(step.key, step.options)));
 
 function isConsistent<T>(compareFn: Comparator<T>, a: T, b: T, c: T): boolean {
 	const ab = compareFn(a, b);
 	return (
-		compareFn(a, a) === 0
-		&& sign(ab) === -sign(compareFn(b, a))
-		&& !(ab <= 0 && compareFn(b, c) <= 0 && compareFn(a, c) > 0)
+		compareFn(a, a) === 0 &&
+		sign(ab) === -sign(compareFn(b, a)) &&
+		!(ab <= 0 && compareFn(b, c) <= 0 && compareFn(a, c) > 0)
 	);
 }
 
@@ -122,7 +134,9 @@ describe('Order properties', () => {
 		fc.assert(
 			fc.property(stepsArb, itemsArb, (steps, items) => {
 				const sortOrder = toOrder(steps);
-				expect(ids(sortOrder.sort(items))).toEqual(ids(items.slice().sort(sortOrder.compare)));
+				expect(ids(sortOrder.sort(items))).toEqual(
+					ids(items.slice().sort(sortOrder.compare)),
+				);
 			}),
 		);
 	});
@@ -151,11 +165,14 @@ describe('Order properties', () => {
 		fc.assert(
 			fc.property(
 				stepsArb,
-				fc.array(itemArb, { minLength: 64, maxLength: 300 })
+				fc
+					.array(itemArb, { minLength: 64, maxLength: 300 })
 					.map((items) => items.map((item, id) => ({ ...item, id }))),
 				(steps, items) => {
 					const sorted = toOrder(steps).sort(items);
-					const expected = items.slice().sort(toOrder(steps).by((item) => item.id).compare);
+					const expected = items
+						.slice()
+						.sort(toOrder(steps).by((item) => item.id).compare);
 					expect(ids(sorted)).toEqual(ids(expected));
 				},
 			),
@@ -167,13 +184,20 @@ describe('Order properties', () => {
 		fc.assert(
 			fc.property(
 				stepsArb,
-				itemsArb.chain((items) => fc.tuple(fc.constant(items), fc.shuffledSubarray(items, {
-					minLength: items.length,
-					maxLength: items.length,
-				}))),
+				itemsArb.chain((items) =>
+					fc.tuple(
+						fc.constant(items),
+						fc.shuffledSubarray(items, {
+							minLength: items.length,
+							maxLength: items.length,
+						}),
+					),
+				),
 				(steps, [items, shuffled]) => {
 					const sortOrder = toOrder(steps).by((item) => item.id);
-					expect(ids(sortOrder.sort(shuffled))).toEqual(ids(sortOrder.sort(items)));
+					expect(ids(sortOrder.sort(shuffled))).toEqual(
+						ids(sortOrder.sort(items)),
+					);
 				},
 			),
 		);
@@ -208,7 +232,9 @@ describe('Order properties', () => {
 					const missing = Order.by(key, { direction, nulls })
 						.sort(items)
 						.map((item) => isMissing(key(item)));
-					const expected = missing.slice().sort((a, b) => (+b - +a) * (nulls ? 1 : -1));
+					const expected = missing
+						.slice()
+						.sort((a, b) => (+b - +a) * (nulls ? 1 : -1));
 					expect(missing).toEqual(expected);
 				},
 			),
@@ -217,11 +243,20 @@ describe('Order properties', () => {
 
 	it('puts items that pass the when() guard first', () => {
 		fc.assert(
-			fc.property(fc.array(stepArb, { maxLength: 4 }), itemsArb, (steps, items) => {
-				const guarded = new Order<Item>().when((item) => item.b, toOrder(steps));
-				const passes = guarded.sort(items).map((item) => item.b);
-				expect(passes).toEqual(passes.slice().sort((a, b) => +b - +a));
-			}),
+			fc.property(
+				fc.array(stepArb, { maxLength: 4 }),
+				itemsArb,
+				(steps, items) => {
+					const guarded = new Order<Item>().when(
+						(item) => item.b,
+						toOrder(steps),
+					);
+					const passes = guarded.sort(items).map((item) => item.b);
+					expect(passes).toEqual(
+						passes.slice().sort((a, b) => +b - +a),
+					);
+				},
+			),
 		);
 	});
 
@@ -232,9 +267,16 @@ describe('Order properties', () => {
 					...step,
 					options: { ...step.options, predicate: undefined },
 				}));
-				fc.pre(plain.every((step) => !isMissing(step.key(a)) && !isMissing(step.key(b))));
+				fc.pre(
+					plain.every(
+						(step) =>
+							!isMissing(step.key(a)) && !isMissing(step.key(b)),
+					),
+				);
 				const sortOrder = toOrder(plain);
-				expect(sign(sortOrder.reverse().compare(a, b))).toBe(sign(sortOrder.compare(b, a)));
+				expect(sign(sortOrder.reverse().compare(a, b))).toBe(
+					sign(sortOrder.compare(b, a)),
+				);
 			}),
 		);
 	});
@@ -244,18 +286,29 @@ describe('Order and the comparator module agree', () => {
 	it('chained by() steps match order(by(), ...)', () => {
 		fc.assert(
 			fc.property(stepsArb, itemArb, itemArb, (steps, a, b) => {
-				expect(sign(toComparator(steps)(a, b))).toBe(sign(toOrder(steps).compare(a, b)));
+				expect(sign(toComparator(steps)(a, b))).toBe(
+					sign(toOrder(steps).compare(a, b)),
+				);
 			}),
 		);
 	});
 
 	it('Order#when matches the when comparator', () => {
 		fc.assert(
-			fc.property(fc.array(stepArb, { maxLength: 4 }), itemArb, itemArb, (steps, a, b) => {
-				const guard = (item: Item) => item.b;
-				const viaOrder = new Order<Item>().when(guard, toOrder(steps)).compare(a, b);
-				expect(sign(when(guard, toComparator(steps))(a, b))).toBe(sign(viaOrder));
-			}),
+			fc.property(
+				fc.array(stepArb, { maxLength: 4 }),
+				itemArb,
+				itemArb,
+				(steps, a, b) => {
+					const guard = (item: Item) => item.b;
+					const viaOrder = new Order<Item>()
+						.when(guard, toOrder(steps))
+						.compare(a, b);
+					expect(sign(when(guard, toComparator(steps))(a, b))).toBe(
+						sign(viaOrder),
+					);
+				},
+			),
 		);
 	});
 });
@@ -265,7 +318,9 @@ describe('compile() matches Order', () => {
 		fc.assert(
 			fc.property(stepsArb, itemArb, itemArb, (steps, a, b) => {
 				const sortOrder = toOrder(steps);
-				expect(sign(compile(sortOrder).compare(a, b))).toBe(sign(sortOrder.compare(a, b)));
+				expect(sign(compile(sortOrder).compare(a, b))).toBe(
+					sign(sortOrder.compare(a, b)),
+				);
 			}),
 		);
 	});
@@ -274,22 +329,31 @@ describe('compile() matches Order', () => {
 		fc.assert(
 			fc.property(stepsArb, itemsArb, (steps, items) => {
 				const sortOrder = toOrder(steps);
-				expect(ids(compile(sortOrder).sort(items))).toEqual(ids(sortOrder.sort(items)));
+				expect(ids(compile(sortOrder).sort(items))).toEqual(
+					ids(sortOrder.sort(items)),
+				);
 			}),
 		);
 	});
 
 	it('matches after when(), map() and reverse()', () => {
 		fc.assert(
-			fc.property(fc.array(stepArb, { maxLength: 4 }), stepsArb, itemsArb, (inner, outer, items) => {
-				const sortOrder = toOrder(outer)
-					.when((item) => item.b, toOrder(inner))
-					.map((item) => item, toOrder(inner).reverse());
-				expect(ids(compile(sortOrder).sort(items))).toEqual(ids(sortOrder.sort(items)));
-				expect(ids(items.slice().sort(compile(sortOrder).compare))).toEqual(
-					ids(items.slice().sort(sortOrder.compare)),
-				);
-			}),
+			fc.property(
+				fc.array(stepArb, { maxLength: 4 }),
+				stepsArb,
+				itemsArb,
+				(inner, outer, items) => {
+					const sortOrder = toOrder(outer)
+						.when((item) => item.b, toOrder(inner))
+						.map((item) => item, toOrder(inner).reverse());
+					expect(ids(compile(sortOrder).sort(items))).toEqual(
+						ids(sortOrder.sort(items)),
+					);
+					expect(
+						ids(items.slice().sort(compile(sortOrder).compare)),
+					).toEqual(ids(items.slice().sort(sortOrder.compare)));
+				},
+			),
 		);
 	});
 });
@@ -299,20 +363,36 @@ describe('comparators are consistent and return finite numbers', () => {
 		['compare with numbers', compare, numberKey],
 		['compare with strings', compare, stringKey],
 		['compare with dates', compare, dateKey],
-		['compare with bigints', compare, fc.option(fc.bigInt(), { nil: undefined })],
+		[
+			'compare with bigints',
+			compare,
+			fc.option(fc.bigInt(), { nil: undefined }),
+		],
 		['number', number, fc.double()],
 		['date', date, fc.date({ noInvalidDate: false })],
 		['boolean', boolean, fc.boolean()],
 		['localeString', localeString, fc.string({ maxLength: 4 })],
 		['nullsFirst', nullsFirst(number), numberKey],
 		['nansLast', nansLast(compare), numberKey],
-		['when', when((item: Item) => item.b, by((item: Item) => item.n)), itemArb],
+		[
+			'when',
+			when(
+				(item: Item) => item.b,
+				by((item: Item) => item.n),
+			),
+			itemArb,
+		],
 	];
 
 	it.each(cases)('%s', (_, compareFn, valueArb) => {
 		fc.assert(
-			fc.property(valueArb, valueArb, valueArb, (a, b, c) =>
-				isConsistent(compareFn, a, b, c) && Number.isFinite(compareFn(a, b)),
+			fc.property(
+				valueArb,
+				valueArb,
+				valueArb,
+				(a, b, c) =>
+					isConsistent(compareFn, a, b, c) &&
+					Number.isFinite(compareFn(a, b)),
 			),
 		);
 	});

@@ -40,11 +40,13 @@ class CompiledOrder<T> extends Order<T> {
 	// Caches in the `_compare` of `Order`. `super.compare` fills it too, with
 	// the same function that is then stored again.
 	override get compare(): Comparator<T> {
-		return (this['_compare'] ??= generateCompare(this['_steps']) ?? super.compare);
+		return (this['_compare'] ??=
+			generateCompare(this['_steps']) ?? super.compare);
 	}
 
 	override sort<U extends T>(array: readonly U[]): U[] {
-		return (this._sort ??= generateSort(this['_steps']) ?? ((input) => super.sort(input)))(
+		return (this._sort ??=
+			generateSort(this['_steps']) ?? ((input) => super.sort(input)))(
 			array,
 		) as U[];
 	}

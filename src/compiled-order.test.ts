@@ -8,7 +8,9 @@ const rows: Row[] = [
 	{ id: 3, score: 1 },
 	{ id: 4, score: 2 },
 ];
-const byScoreThenId = Order.by((r: Row) => r.score, { direction: 'desc' }).by((r) => r.id);
+const byScoreThenId = Order.by((r: Row) => r.score, { direction: 'desc' }).by(
+	(r) => r.id,
+);
 const expected = [1, 4, 3, 2];
 
 // Each test imports a fresh module, so that one test's blocked `new Function`
@@ -27,7 +29,12 @@ describe('compile', () => {
 		const compile = await importCompile();
 		const compiled = compile(byScoreThenId);
 
-		expect(rows.slice().sort(compiled.compare).map((r) => r.id)).toEqual(expected);
+		expect(
+			rows
+				.slice()
+				.sort(compiled.compare)
+				.map((r) => r.id),
+		).toEqual(expected);
 		expect(compiled.sort(rows).map((r) => r.id)).toEqual(expected);
 		expect(Order.sort(rows, compiled).map((r) => r.id)).toEqual(expected);
 	});
@@ -56,7 +63,10 @@ describe('compile', () => {
 		const compile = await importCompile();
 		const hasScore = vi.fn((r: Row) => r.score !== null);
 		const order = new Order<Row>()
-			.when(hasScore, Order.by((r: Row) => r.score).by((r) => -r.id))
+			.when(
+				hasScore,
+				Order.by((r: Row) => r.score).by((r) => -r.id),
+			)
 			.by((r) => r.id);
 		const plain = order.sort(rows);
 		hasScore.mockClear();
@@ -67,22 +77,36 @@ describe('compile', () => {
 
 	it('sorts an order with 60,000 steps', async () => {
 		const compile = await importCompile();
-		const many = new Order(Array.from({ length: 30_000 }, () => byScoreThenId));
-		expect(compile(many).sort(rows).map((r) => r.id)).toEqual(expected);
+		const many = new Order(
+			Array.from({ length: 30_000 }, () => byScoreThenId),
+		);
+		expect(
+			compile(many)
+				.sort(rows)
+				.map((r) => r.id),
+		).toEqual(expected);
 	});
 
 	it('uses the normal compare and sort for an order too large to generate', async () => {
 		const compile = await importCompile();
 		let attempts = 0;
-		vi.stubGlobal('Function', class {
-			constructor() {
-				attempts++;
-				throw new RangeError('Maximum call stack size exceeded');
-			}
-		});
+		vi.stubGlobal(
+			'Function',
+			class {
+				constructor() {
+					attempts++;
+					throw new RangeError('Maximum call stack size exceeded');
+				}
+			},
+		);
 		const compiled = compile(byScoreThenId);
 		expect(compiled.sort(rows).map((r) => r.id)).toEqual(expected);
-		expect(rows.slice().sort(compiled.compare).map((r) => r.id)).toEqual(expected);
+		expect(
+			rows
+				.slice()
+				.sort(compiled.compare)
+				.map((r) => r.id),
+		).toEqual(expected);
 		// Only that order falls back. The next order tries again.
 		compile(byScoreThenId).sort(rows);
 		expect(attempts).toBe(3);
@@ -97,23 +121,35 @@ describe('compile', () => {
 
 	it('keeps the steps, so chaining appends to them', async () => {
 		const compile = await importCompile();
-		const chained = compile(Order.by((r: Row) => r.score)).by((r) => r.id, { direction: 'desc' });
+		const chained = compile(Order.by((r: Row) => r.score)).by((r) => r.id, {
+			direction: 'desc',
+		});
 		expect(chained.sort(rows).map((r) => r.id)).toEqual([3, 4, 1, 2]);
 	});
 
 	it('uses the normal compare and sort when new Function is blocked', async () => {
 		const compile = await importCompile();
 		let attempts = 0;
-		vi.stubGlobal('Function', class {
-			constructor() {
-				attempts++;
-				throw new EvalError('Code generation from strings disallowed');
-			}
-		});
+		vi.stubGlobal(
+			'Function',
+			class {
+				constructor() {
+					attempts++;
+					throw new EvalError(
+						'Code generation from strings disallowed',
+					);
+				}
+			},
+		);
 		const first = compile(byScoreThenId);
 		const second = compile(byScoreThenId);
 
-		expect(rows.slice().sort(first.compare).map((r) => r.id)).toEqual(expected);
+		expect(
+			rows
+				.slice()
+				.sort(first.compare)
+				.map((r) => r.id),
+		).toEqual(expected);
 		expect(first.sort(rows).map((r) => r.id)).toEqual(expected);
 		expect(second.sort(rows).map((r) => r.id)).toEqual(expected);
 		// After the first EvalError, compile() stops trying.
@@ -122,11 +158,14 @@ describe('compile', () => {
 
 	it('rethrows errors other than EvalError', async () => {
 		const compile = await importCompile();
-		vi.stubGlobal('Function', class {
-			constructor() {
-				throw new SyntaxError('unexpected');
-			}
-		});
+		vi.stubGlobal(
+			'Function',
+			class {
+				constructor() {
+					throw new SyntaxError('unexpected');
+				}
+			},
+		);
 		expect(() => compile(byScoreThenId).compare).toThrow(SyntaxError);
 	});
 });

@@ -5,5 +5,12 @@
 	"printWidth": 80,
 	"trailingComma": "all",
 	"sortPackageJson": false,
-	"ignorePatterns": []
+	"ignorePatterns": [
+		"BENCHMARKS.md",
+		"BENCHMARKS.html",
+		"benchmarks/results.json",
+		"benchmarks/full.*",
+		"benchmarks/complex.json",
+		"benchmarks/complex.md"
+	]
 }

@@ -10,6 +10,7 @@ A tiny ([879 B](https://bundlejs.com/?q=ts-order) minified and gzipped), type-sa
 - Type-safe with full inference
 - Consistent results: missing keys and predicates follow fixed rules, so the output never depends on the input order
 - DSU-optimized for costly key computations
+- Optional compiled orders for faster sorting: `compile()` for one order, or `import 'ts-order/compile'` for every order
 - Zero dependencies
 
 ## Installation
@@ -310,6 +311,57 @@ const activeByName = Order.by((s: Staff) => s.team).when(
 
 An identity `map` also works: `order.map((s) => s, byNameForAnyShape)`.
 
+## Compiled orders
+
+### `compile(order)`
+
+<details>
+<summary>Signature</summary>
+
+```ts
+function compile<T>(order: Order<T>): Order<T>;
+```
+
+</details>
+
+Return an order with the same steps, whose `compare` and `sort` run code generated for those steps with `new Function`. The code is generated on the first use of each. In the [benchmarks](BENCHMARKS.md) it is 1.2 to 2.6 times faster: most for orders with several plain keys, least when a custom `compare` does most of the work.
+
+```ts
+import { compile, Order } from 'ts-order';
+
+const byStatusThenNewest = compile(
+	Order.by((u: User) => u.status).by((u) => u.createdAt, {
+		direction: 'desc',
+	}),
+);
+
+users.sort(byStatusThenNewest.compare);
+byStatusThenNewest.sort(users);
+```
+
+- **Compile once.** The first compile in a process takes roughly 0.1 to 1 ms. Later compiles take about 5 µs once warm, but a plain order is still faster for small arrays, so compile an order at module level, not on every render or request.
+- **Use `sort` for large arrays or costly keys.** `sort` computes each key once per item. `compare` computes keys on every comparison, so it is faster only for cheap keys on arrays of up to about 10,000 items.
+- **Compile last.** Steps added to a compiled order with `.by()`, `.when()` or the other builder methods make a normal order.
+- **No `new Function`, no problem.** Where it is blocked, such as under a Content Security Policy without `'unsafe-eval'`, on Cloudflare Workers or on edge runtimes, the compiled order uses the normal `compare` and `sort`. Results are the same either way. Only the step options are written into the generated code. Your selectors and comparators are passed to it as functions.
+- **Only when used.** Bundlers drop the code generator from apps that import `Order` but not `compile`. `require('ts-order')` from CommonJS always loads it, which adds about 600 B.
+
+### `import 'ts-order/compile'`
+
+Compile every `Order` in an app with one import. Each order generates its code on the first use of its `compare` or its `sort`, as `compile()` does for one order. Results do not change.
+
+```ts
+// app entry point
+import 'ts-order/compile';
+```
+
+- **For applications, not libraries.** It changes every `Order` in the app, including orders that your dependencies create.
+- **Import it anywhere.** It also covers orders created before the import.
+- **No need for `compile()`.** You can still call it; the results are the same.
+- **Orders only.** It does not change the comparator functions from `ts-order/comparator`, such as `by()` and `order()`.
+- **One copy of ts-order.** It changes the copy it imports. If an app loads ts-order from both ESM (`import`) and CommonJS (`require`), orders from the other copy are not compiled. Their results are the same; only the speed differs.
+- **Blocked `new Function`.** It uses the normal `compare` and `sort`, and stops trying after the first failure. Under a Content Security Policy, that first attempt can send a violation report.
+- **Bundle size.** Only apps that import it get the code generator: about 700 B gzipped. The main entry does not change.
+
 ---
 
 ## `ts-order/comparator` subpackage
@@ -567,6 +619,8 @@ import { A_AFTER_B, A_BEFORE_B, EQUAL } from 'ts-order/comparator';
 const shortFirst: Comparator<string> = (a, b) =>
 	a.length < b.length ? A_BEFORE_B : a.length > b.length ? A_AFTER_B : EQUAL;
 ```
+
+---
 
 ## Types
 

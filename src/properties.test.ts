@@ -14,6 +14,7 @@ import {
 	order,
 	when,
 } from './comparator/index.js';
+import { compile } from './compiled-order.js';
 import { isMissing } from './missing.js';
 import { Order } from './order.js';
 
@@ -143,6 +144,24 @@ describe('Order properties', () => {
 		);
 	});
 
+	// V8 sorts fewer than 64 items by insertion only. Longer arrays also merge
+	// runs, which is where an unstable tie would show.
+	it('sort is stable for arrays long enough to merge runs', () => {
+		fc.assert(
+			fc.property(
+				stepsArb,
+				fc.array(itemArb, { minLength: 64, maxLength: 300 })
+					.map((items) => items.map((item, id) => ({ ...item, id }))),
+				(steps, items) => {
+					const sorted = toOrder(steps).sort(items);
+					const expected = items.slice().sort(toOrder(steps).by((item) => item.id).compare);
+					expect(ids(sorted)).toEqual(ids(expected));
+				},
+			),
+			{ numRuns: 50 },
+		);
+	});
+
 	it('sort gives one result for any input order', () => {
 		fc.assert(
 			fc.property(
@@ -235,6 +254,40 @@ describe('Order and the comparator module agree', () => {
 				const guard = (item: Item) => item.b;
 				const viaOrder = new Order<Item>().when(guard, toOrder(steps)).compare(a, b);
 				expect(sign(when(guard, toComparator(steps))(a, b))).toBe(sign(viaOrder));
+			}),
+		);
+	});
+});
+
+describe('compile() matches Order', () => {
+	it('compare gives the same sign', () => {
+		fc.assert(
+			fc.property(stepsArb, itemArb, itemArb, (steps, a, b) => {
+				const sortOrder = toOrder(steps);
+				expect(sign(compile(sortOrder).compare(a, b))).toBe(sign(sortOrder.compare(a, b)));
+			}),
+		);
+	});
+
+	it('sort gives the same result', () => {
+		fc.assert(
+			fc.property(stepsArb, itemsArb, (steps, items) => {
+				const sortOrder = toOrder(steps);
+				expect(ids(compile(sortOrder).sort(items))).toEqual(ids(sortOrder.sort(items)));
+			}),
+		);
+	});
+
+	it('matches after when(), map() and reverse()', () => {
+		fc.assert(
+			fc.property(fc.array(stepArb, { maxLength: 4 }), stepsArb, itemsArb, (inner, outer, items) => {
+				const sortOrder = toOrder(outer)
+					.when((item) => item.b, toOrder(inner))
+					.map((item) => item, toOrder(inner).reverse());
+				expect(ids(compile(sortOrder).sort(items))).toEqual(ids(sortOrder.sort(items)));
+				expect(ids(items.slice().sort(compile(sortOrder).compare))).toEqual(
+					ids(items.slice().sort(sortOrder.compare)),
+				);
 			}),
 		);
 	});

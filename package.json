@@ -12,7 +12,10 @@
 		"type": "git",
 		"url": "git+https://github.com/jaydenfyi/ts-order.git"
 	},
-	"sideEffects": false,
+	"sideEffects": [
+		"./dist/compile.js",
+		"./dist/compile.cjs"
+	],
 	"exports": {
 		".": {
 			"import": "./dist/index.js",
@@ -21,6 +24,10 @@
 		"./comparator": {
 			"import": "./dist/comparator/index.js",
 			"require": "./dist/comparator/index.cjs"
+		},
+		"./compile": {
+			"import": "./dist/compile.js",
+			"require": "./dist/compile.cjs"
 		},
 		"./package.json": "./package.json"
 	},
@@ -31,6 +38,9 @@
 		"*": {
 			"comparator": [
 				"dist/comparator/index.d.ts"
+			],
+			"compile": [
+				"dist/compile.d.ts"
 			]
 		}
 	},
@@ -43,6 +53,7 @@
 	"scripts": {
 		"build": "tsdown --format esm --format cjs",
 		"test": "vitest run",
+		"test:compile": "vitest run --config vitest.compile.config.ts",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
 		"bench": "vitest bench",

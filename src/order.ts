@@ -12,7 +12,7 @@ import { isMissing } from './missing.js';
 type DirectionSign = 1 | -1;
 
 /** Internal representation of a single order step. */
-type OrderStep<T> = {
+export type OrderStep<T> = {
 	key: (t: T) => unknown;
 	direction: DirectionSign;
 	compare?: Comparator<unknown> | undefined;

@@ -90,6 +90,23 @@ describe('compile', () => {
 		expect(hasScore).toHaveBeenCalledTimes(rows.length);
 	});
 
+	it('calls keys in sort only for items that pass their predicate', async () => {
+		const compile = await importCompile();
+		const score = vi.fn((r: Row) => r.score);
+		const negatedId = vi.fn((r: Row) => -r.id);
+		const order = new Order<Row>()
+			.when((r) => r.score !== null, Order.by(score).by(negatedId))
+			.by((r) => r.id);
+		const plain = order.sort(rows);
+		score.mockClear();
+		negatedId.mockClear();
+
+		expect(compile(order).sort(rows)).toEqual(plain);
+		const passing = rows.filter((r) => r.score !== null);
+		expect(score.mock.calls.map(([r]) => r)).toEqual(passing);
+		expect(negatedId.mock.calls.map(([r]) => r)).toEqual(passing);
+	});
+
 	it('calls a predicate shared by several when() calls once per item in sort', async () => {
 		const compile = await importCompile();
 		const hasScore = vi.fn((r: Row) => r.score !== null);

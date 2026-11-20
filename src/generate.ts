@@ -15,26 +15,29 @@ export function generateCompare<T>(
 	);
 }
 
-/** Generated `sort` for `steps`: the same DSU sort as `Order#sort`, with the keys of step `i` in `K<i>`. Undefined when the platform blocks `new Function`. */
+/** Generated `sort` for `steps`: the same DSU sort as `Order#sort`, on one entry per item. Undefined when the platform blocks `new Function`. */
 export function generateSort<T>(
 	steps: readonly OrderStep<T>[],
 ): ((array: readonly T[]) => T[]) | undefined {
 	const first = firstWithPredicate(steps);
-	const decorate = steps.map((step, i) => {
+	// Each item becomes an entry `{v, p<i>, k<i>}`: the item, then each step's
+	// predicate result and key. The comparator reads both straight off the
+	// entries, which is faster than indexes into one array per step, most when
+	// the sort makes many comparisons. `F<i>` holds a predicate result while its
+	// entry is built, for later steps that share the predicate.
+	const flags: string[] = [];
+	const fields = steps.map((step, i) => {
 		const j = first[i]!;
-		return j < i
-			? `var K${i}=new Array(n);for(i=0;i<n;i++)if(P${j}[i])K${i}[i]=k${i}(array[i]);`
-			: step.predicate
-				? `var P${i}=new Array(n),K${i}=new Array(n);` +
-					`for(i=0;i<n;i++)if(P${i}[i]=!!p${i}(t=array[i]))K${i}[i]=k${i}(t);`
-				: `var K${i}=new Array(n);for(i=0;i<n;i++)K${i}[i]=k${i}(array[i]);`;
+		if (j < i) return `k${i}:F${j}?k${i}(t):void 0`;
+		if (!step.predicate) return `k${i}:k${i}(t)`;
+		flags.push(`F${i}`);
+		return `p${i}:F${i}=!!p${i}(t),k${i}:F${i}?k${i}(t):void 0`;
 	});
 	return generate(
-		`return function(array){var n=array.length,i,t;if(n<=1)return array.slice();${decorate.join(
-			'',
-		)}var ix=new Array(n);for(i=0;i<n;i++)ix[i]=i;` +
-			`ix.sort(function(a,b){var x,y,r,m,f;${compareStepsSource(steps, first)}return 0});` +
-			`var out=new Array(n);for(i=0;i<n;i++)out[i]=array[ix[i]];return out}`,
+		`return function(array){var n=array.length,i,t${flags.map((f) => `,${f}`).join('')};if(n<=1)return array.slice();` +
+			`var E=new Array(n);for(i=0;i<n;i++){t=array[i];E[i]={v:t,${fields.join(',')}}}` +
+			`E.sort(function(a,b){var x,y,r,m,f;${compareStepsSource(steps, first)}return 0});` +
+			`var out=new Array(n);for(i=0;i<n;i++)out[i]=E[i].v;return out}`,
 		steps,
 	);
 }
@@ -94,7 +97,7 @@ function compareKeysSource(i: number, step: OrderStep<any>): string {
 
 /**
  * The steps of a comparator of `a` and `b`. They are items for `compare`, and
- * indexes into the decorated arrays `K<i>` and `P<i>` for `sort`, which
+ * entries with keys `k<i>` and predicate results `p<i>` for `sort`, which
  * passes `first` from `firstWithPredicate`.
  */
 function compareStepsSource(
@@ -105,7 +108,7 @@ function compareStepsSource(
 	return steps
 		.map((step, i) => {
 			const keys =
-				(sort ? `x=K${i}[a];y=K${i}[b];` : `x=k${i}(a);y=k${i}(b);`) +
+				(sort ? `x=a.k${i};y=b.k${i};` : `x=k${i}(a);y=k${i}(b);`) +
 				compareKeysSource(i, step);
 			// The item that passes comes first. When neither passes, skip the step.
 			// When an earlier step checked the same predicate, both items gave the
@@ -114,9 +117,9 @@ function compareStepsSource(
 			return !step.predicate
 				? keys
 				: j < i
-					? `if(P${j}[a]){${keys}}`
+					? `if(a.p${j}){${keys}}`
 					: sort
-						? `f=P${i}[a];if(f!==P${i}[b])return f?-1:1;if(f){${keys}}`
+						? `f=a.p${i};if(f!==b.p${i})return f?-1:1;if(f){${keys}}`
 						: `f=!p${i}(a);if(f!==!p${i}(b))return f?1:-1;if(!f){${keys}}`;
 		})
 		.join('');

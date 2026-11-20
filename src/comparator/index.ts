@@ -157,7 +157,8 @@ export { compare as string };
 
 /**
  * Locale-aware string comparator using `String.prototype.localeCompare` with
- * the default locale. Use `collate` for a specific locale or for options.
+ * the default locale. For a specific locale or options, create one
+ * `Intl.Collator` and use its `compare` function.
  *
  * @example
  * ```ts
@@ -166,23 +167,6 @@ export { compare as string };
  */
 export function localeString(a: string, b: string): number {
 	return a.localeCompare(b);
-}
-
-/**
- * Builds a locale-aware string comparator from one `Intl.Collator`. The
- * collator is created once, when `collate` is called.
- *
- * @example
- * ```ts
- * ['file10', 'file2', 'file1'].sort(collate(undefined, { numeric: true }));
- * // ['file1', 'file2', 'file10']
- * ```
- */
-export function collate(
-	locales?: string | string[],
-	options?: Intl.CollatorOptions,
-): Comparator<string> {
-	return new Intl.Collator(locales, options).compare;
 }
 
 /**

@@ -4,7 +4,6 @@ import {
 	A_BEFORE_B,
 	boolean as booleanComparator,
 	by,
-	collate,
 	compare,
 	date as dateComparator,
 	EQUAL,
@@ -343,26 +342,5 @@ describe(when, () => {
 		expect(comparator(2, 3)).toBe(-1);
 		expect(comparator(3, 5)).toBe(0);
 		expect(base).not.toHaveBeenCalled();
-	});
-});
-
-describe(collate, () => {
-	it('sorts with the given collator options', () => {
-		expect(['file10', 'file2', 'file1'].sort(collate(undefined, { numeric: true }))).toEqual([
-			'file1',
-			'file2',
-			'file10',
-		]);
-		expect(['b', 'A', 'a'].sort(collate('en', { caseFirst: 'upper' }))).toEqual(['A', 'a', 'b']);
-	});
-
-	it('creates one collator when it is called, not one per comparison', () => {
-		const spy = vi.spyOn(Intl, 'Collator');
-		const comparator = collate('en');
-		['c', 'a', 'b', 'e', 'd'].sort(comparator);
-		comparator('x', 'y');
-
-		expect(spy).toHaveBeenCalledTimes(1);
-		spy.mockRestore();
 	});
 });

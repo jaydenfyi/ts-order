@@ -6,7 +6,6 @@ import {
 	A_BEFORE_B,
 	boolean,
 	by,
-	collate,
 	compare,
 	date,
 	EQUAL,
@@ -69,7 +68,8 @@ describe('README examples', () => {
 
 	it('order.by', () => {
 		Order.by((u: User) => u.age);
-		Order.by((u: User) => u.lastName, { direction: 'desc', compare: collate('en') });
+		const collator = new Intl.Collator('en');
+		Order.by((u: User) => u.lastName, { direction: 'desc', compare: collator.compare });
 		Order.by((i: Item) => i.expiresAt, { compare: (a, b) => a.getTime() - b.getTime() });
 		Order.by((u: User) => u.age, { nulls: 'first' });
 		Order.by((c: Customer) => c.address, {
@@ -113,7 +113,7 @@ describe('README examples', () => {
 		['b', 'a'].sort(localeString);
 		[true, false].sort(boolean);
 		[new Date()].sort(date);
-		['file10', 'file2'].sort(collate(undefined, { numeric: true }));
+		['file10', 'file2'].sort(new Intl.Collator(undefined, { numeric: true }).compare);
 		items.sort(by((item) => item.label));
 		users.sort(order(by((u) => u.lastName), by((u) => u.firstName)));
 		items.sort(map((item) => item.nested.score));

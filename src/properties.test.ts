@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 import {
 	boolean,
 	by,
-	collate,
 	compare,
 	date,
 	localeString,
@@ -57,10 +56,12 @@ const itemsArb = fc
 	.array(itemArb, { maxLength: 40 })
 	.map((items) => items.map((item, id) => ({ ...item, id })));
 
+const collator = new Intl.Collator(undefined, { numeric: true });
+
 // Each field has its key and a custom comparator that is consistent for its values.
 const fields: Record<string, { key: Step['key']; compare: Comparator<any>; mayMiss: boolean }> = {
 	n: { key: (item) => item.n, compare: number, mayMiss: true },
-	s: { key: (item) => item.s, compare: collate(undefined, { numeric: true }), mayMiss: true },
+	s: { key: (item) => item.s, compare: collator.compare, mayMiss: true },
 	d: { key: (item) => item.d, compare: date, mayMiss: true },
 	b: { key: (item) => item.b, compare: boolean, mayMiss: false },
 	g: { key: (item) => item.g, compare: number, mayMiss: false },
@@ -303,7 +304,6 @@ describe('comparators are consistent and return finite numbers', () => {
 		['date', date, fc.date({ noInvalidDate: false })],
 		['boolean', boolean, fc.boolean()],
 		['localeString', localeString, fc.string({ maxLength: 4 })],
-		['collate', collate(undefined, { numeric: true }), fc.string({ maxLength: 4 })],
 		['nullsFirst', nullsFirst(number), numberKey],
 		['nansLast', nansLast(compare), numberKey],
 		['when', when((item: Item) => item.b, by((item: Item) => item.n)), itemArb],

@@ -1,6 +1,6 @@
 # 🔢 ts-order
 
-A tiny ([879 B](https://bundlejs.com/?q=ts-order) minified and gzipped), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
+A tiny ([under 1 kB](https://bundlejs.com/?q=ts-order) minified and gzipped), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
 
 ## Features
 
@@ -120,8 +120,7 @@ Create a new order with a single sort step. Defaults to an ascending direction a
 const byAgeAsc = Order.by((u: User) => u.age);
 ```
 
-You can optionally provide a custom `compare` and `direction` property.
-Note: The `compare` property expects a comparator that sorts in an ascending direction; the `direction` property will flip the compare result when set to `'desc'`.
+Pass `compare` for a custom comparison and `direction: 'desc'` to reverse the step. `compare` must sort in ascending order, and `direction` flips its result.
 
 ```ts
 const collator = new Intl.Collator('en');
@@ -156,7 +155,7 @@ const byAgeThenName = Order.by((u: User) => u.age, {
 }).by((u) => u.lastName);
 ```
 
-Every Order instance also exposes a chainable `.by()` method to append additional sort steps.
+The instance method `.by()` appends a step to an existing order.
 
 ```ts
 const byCreatedThenId = new Order<User>()
@@ -284,7 +283,7 @@ class Order<T> {
 
 Sort an array and return a **new** array. The input array does not change.
 
-This method implements the [Schwartzian Transform](https://en.wikipedia.org/wiki/Schwartzian_transform) or DSU (decorate-sort-undecorate) technique, which ensures that each key selector is only invoked once per element per step. For larger arrays or costly key computations, this can yield significant performance improvements over repeatedly calling the selector during comparisons.
+`sort` uses the [Schwartzian transform](https://en.wikipedia.org/wiki/Schwartzian_transform), also called decorate-sort-undecorate (DSU). It calls each key selector once per item per step and then sorts the stored keys. `compare` calls the selector on every comparison, so `sort` can be much faster for large arrays and costly keys.
 
 ```ts
 const out = Order.sort(users, byName);
@@ -324,7 +323,7 @@ function compile<T>(order: Order<T>): Order<T>;
 
 </details>
 
-Return an order with the same steps, whose `compare` and `sort` run code generated for those steps with `new Function`. The code is generated on the first use of each. In the [benchmarks](BENCHMARKS.md) it is 1.2 to 2.6 times faster: most for orders with several plain keys, least when a custom `compare` does most of the work.
+Return an order with the same steps, whose `compare` and `sort` run code generated for those steps with `new Function`. The code is generated on the first use of each. It is faster in the [benchmarks](BENCHMARKS.md), most for orders with several plain keys and least when a custom `compare` does most of the work.
 
 ```ts
 import { compile, Order } from 'ts-order';
@@ -339,10 +338,10 @@ users.sort(byStatusThenNewest.compare);
 byStatusThenNewest.sort(users);
 ```
 
-- **Compile once.** The first compile in a process takes roughly 0.1 to 1 ms. Later compiles take about 5 µs once warm, but a plain order is still faster for small arrays, so compile an order at module level, not on every render or request.
+- **Compile once.** The first compile in a process takes roughly 0.1 to 1 ms. Later compiles take about 5 µs, which is still slower than sorting a small array with a plain order. Compile an order at module level, not on every render or request.
 - **Use `sort` for large arrays or costly keys.** `sort` computes each key once per item. `compare` computes keys on every comparison, so it is faster only for cheap keys on arrays of up to about 10,000 items.
 - **Compile last.** Steps added to a compiled order with `.by()`, `.when()` or the other builder methods make a normal order.
-- **No `new Function`, no problem.** Where it is blocked, such as under a Content Security Policy without `'unsafe-eval'`, on Cloudflare Workers or on edge runtimes, the compiled order uses the normal `compare` and `sort`. Results are the same either way. Only the step options are written into the generated code. Your selectors and comparators are passed to it as functions.
+- **Blocked `new Function`.** Where `new Function` is blocked, such as under a Content Security Policy without `'unsafe-eval'`, on Cloudflare Workers or on edge runtimes, the compiled order uses the normal `compare` and `sort`. Results are the same either way. The generated code contains only the step options. `compile` passes your selectors and comparators to it as functions.
 - **Only when used.** Bundlers drop the code generator from apps that import `Order` but not `compile`.
 
 ### `import 'ts-order/compile'`
@@ -356,17 +355,17 @@ import 'ts-order/compile';
 
 - **For applications, not libraries.** It changes every `Order` in the app, including orders that your dependencies create.
 - **Import it anywhere.** It also covers orders created before the import.
-- **No need for `compile()`.** You can still call it; the results are the same.
+- **No need for `compile()`.** You can still call it, and the results are the same.
 - **Orders only.** It does not change the comparator functions from `ts-order/comparator`, such as `by()` and `order()`.
-- **One copy of ts-order.** It changes the copy it imports. If an app bundles a second copy of ts-order, orders from that copy are not compiled. Their results are the same; only the speed differs.
+- **One copy of ts-order.** It changes the copy it imports. If an app bundles a second copy of ts-order, orders from that copy are not compiled. Their results are the same, and only the speed differs.
 - **Blocked `new Function`.** It uses the normal `compare` and `sort`, and stops trying after the first failure. Under a Content Security Policy, that first attempt can send a violation report.
-- **Bundle size.** Only apps that import it get the code generator: about 700 B gzipped. The main entry does not change.
+- **Bundle size.** Only apps that import it get the code generator. The main entry stays the same size.
 
 ---
 
 ## `ts-order/comparator` subpackage
 
-The comparator subpackage offers a collection of standalone utilities you can use directly with native array sorting, or alongside `Order` when you need fine-grained control.
+`ts-order/comparator` exports standalone comparators and comparator builders. Use them with `Array.prototype.sort`, or as the `compare` option of an `Order` step.
 
 ```ts
 import {
@@ -480,7 +479,7 @@ const collator = new Intl.Collator('en', { numeric: true });
 files.sort(collator.compare); // ['file1', 'file2', 'file10']
 ```
 
-Create the collator once, outside the comparator. `a.localeCompare(b, 'en', { numeric: true })` builds a new collator on every call: sorting 100,000 strings that way took 5 s in Node, against 0.34 s with one collator.
+Create the collator once, outside the comparator. `a.localeCompare(b, 'en', { numeric: true })` builds a new collator on every call, which makes a large sort many times slower.
 
 ### Comparator builders & combinators
 
@@ -625,57 +624,13 @@ The main entry exports these types:
 | `KeyOptionsWithCompare<K, T>` | `KeyOptions` with a required `compare`, for a key of any type                                                                                                                  |
 | `Comparable`                  | The key types the default comparison supports: `string`, `number`, `bigint`, `boolean`, `Date`, objects whose `valueOf()` returns a number or a bigint, `null` and `undefined` |
 
-## Migrating from 0.0.x to 0.1.0
+## Upgrading
 
-0.1.0 fixes several cases where the sort result depended on the input order. Each fix changes behaviour, so check the cases below.
-
-**Predicates and `when()`.** When only one of two items passes, it now comes first. Before, the step was skipped, so the failing item tied with every other item. For example, the `evenNumbersFirst` comparator from the `when` docs returned `[1, 2, 3, 4]` for `[3, 2, 1, 4]`. It now returns `[2, 4, 1, 3]`. In `Order.when()`, items that pass the guard now come first even when they fail a wrapped step's own predicate, as with the `when` comparator.
-
-```ts
-const byScore = Order.by((u: User) => u.score, {
-	predicate: (u) => u.score != null,
-});
-// before: users without a score stayed where they were in the input
-// after:  users with a score first (by score), then users without one
-```
-
-**Missing keys.** `null`, `undefined`, `NaN` and invalid dates now sort last in both directions. Before, `undefined` and `NaN` tied with every key, and `null` sorted as 0. Use `nulls: 'first'` for the other end.
-
-```ts
-Order.by((x: { v?: number }) => x.v).sort([{ v: 3 }, {}, { v: 1 }]);
-// before: [{ v: 3 }, {}, { v: 1 }] (depends on the input order)
-// after:  [{ v: 1 }, { v: 3 }, {}]
-```
-
-**`number` and `date` comparators.** `NaN` and invalid dates now sort last instead of first. Wrap with `nansFirst(number)` for the old order of `number`.
-
-```ts
-[3, Number.NaN, 1].sort(number);
-// before: [NaN, 1, 3]
-// after:  [1, 3, NaN]
-```
-
-**`NaN` comparator results.** A `compare` option that returns `NaN` now counts as a tie. `number(Infinity, Infinity)` returns 0 instead of `NaN`.
-
-```ts
-const byValue = Order.by((x: number) => x, { compare: (a, b) => a - b });
-byValue.compare(Infinity, Infinity);
-// before: -1 both ways round, so a sort could put either item first
-// after:  0
-```
-
-**Key types.** A key without a `compare` option must be `Comparable`. Object keys and `unknown` keys are now type errors, because they need a comparator.
-
-```ts
-Order.by((c: Customer) => c.address); // before: compiled, all keys tied. after: type error
-Order.by((c: Customer) => c.address, { compare: byCity }); // OK
-```
-
-**Node.js.** The package now declares `engines.node >=20`.
+[UPGRADING.md](UPGRADING.md) lists the changes that affect sort results between versions. [CHANGELOG.md](CHANGELOG.md) lists every change.
 
 ## Benchmarks
 
-See [BENCHMARKS.md](BENCHMARKS.md) (or the [interactive report](BENCHMARKS.html)) for reproducible runtime and browser bundle-size comparisons against native sorting, Lodash, es-toolkit, fast-sort, Remeda, thenby, Effect and Radashi. The class-based, comparator, compiled-sort and compiled-compare APIs are measured separately. Compiled orders are prepared before timing; compilation cost and environments that block dynamic code generation are not represented by those steady-state timings. Effect Order / cached `Array.sortWith` and es-toolkit core / cached compatibility `orderBy` are also separate entries, so no library silently changes strategy between workloads.
+See [BENCHMARKS.md](BENCHMARKS.md) (or the [interactive report](BENCHMARKS.html)) for runtime and browser bundle-size comparisons with native sorting, Lodash, es-toolkit, fast-sort, Remeda, thenby, Effect and Radashi. The report times the class API, the comparator API, compiled `sort` and compiled `compare` separately. It compiles orders before timing, so the timings leave out compile cost and do not cover environments that block `new Function`.
 
 [benchmarks/complex.md](benchmarks/complex.md) covers orderings that plain keys leave out: `when()` rules, custom ranks, missing values, locale collation, a reused nested order and a computed key. It compares ts-order code and timings with handwritten native comparators. Run it with `bun run bench:complex`.
 
@@ -685,7 +640,7 @@ bun run bench      # shuffled inputs: 10, 100, 1k, 10k and 100k records
 bun run bench:full # exhaustive run: same sizes, all four input shapes
 ```
 
-The short run writes `BENCHMARKS.md`, interactive ranked charts in `BENCHMARKS.html`, and raw data in `benchmarks/results.json`. It shows observed winners, readable µs/ms units, and time relative to the fastest entry. Heatmap colours run from teal (best) to orange (worst) within each runtime or bundle-size chart; exact values and rankings remain visible. Code examples are available in the expandable section below the results. Expect roughly one to two minutes with the 100k-record cases. The exhaustive run is kept separately in `benchmarks/full.md`, `full.html` and `full.json`; it can take 10–15 minutes on a laptop. The retained exhaustive artifacts are historical pre-review results until that profile is rerun.
+`bun run bench` writes `BENCHMARKS.md`, interactive charts in `BENCHMARKS.html` and raw data in `benchmarks/results.json`. It takes about one to two minutes. `bun run bench:full` writes `benchmarks/full.md`, `full.html` and `full.json`, and can take 10 to 15 minutes on a laptop.
 
 ## License
 

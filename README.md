@@ -29,7 +29,7 @@ pnpm add ts-order
 bun add ts-order
 ```
 
-0.1.0 is ESM-only. Use `import` (or dynamic `import()` from CommonJS); `require()` is no longer supported. See [Upgrading to 0.1.0](UPGRADING.md).
+ts-order is ESM-only and needs Node.js 20 or later. Bundlers and ESM code load it directly. CommonJS code can `require('ts-order')` on Node.js 20.19 or later, 22.12 or later, or 23 and later. On older versions, use `await import('ts-order')`.
 
 ## Quickstart
 

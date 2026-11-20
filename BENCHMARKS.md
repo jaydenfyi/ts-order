@@ -1,74 +1,201 @@
 # Sorting benchmarks
 
+## Summary
+
+Time to sort **1,000 shuffled records**, a typical list or table. Lower is faster. **(2.0×)** means the sort takes twice as long as compiled ts-order `sort()`. 🥇🥈🥉 mark the three fastest in each column. Each library, and native code, wins at most one medal, with its fastest entry.
+
+![Bar chart of the time to sort 1,000 shuffled records, by library and workload. The table below has every value.](benchmarks/runtime.svg)
+
+| | 1 key | 3 keys | Computed key |
+| --- | ---: | ---: | ---: |
+| **Native `Array.prototype.sort`** |  |  |  |
+| Cached keys | 115 µs (0.9×) | 161 µs (1.0×) | 🥇 146 µs (0.9×) |
+| Handwritten comparator | 🥇 111 µs (0.8×) | 🥇 154 µs (1.0×) | 461 µs (2.9×) |
+| **ts-order** |  |  |  |
+| `compile()` + `sort()` | 133 µs (1.0×) | 🥈 159 µs (1.0×) | 🥈 160 µs (1.0×) |
+| `compile()` + `compare` | 🥉 120 µs (0.9×) | 243 µs (1.5×)† | 465 µs (2.9×) |
+| `Order` (not compiled) | 217 µs (1.6×) | 324 µs (2.0×) | 246 µs (1.5×) |
+| `ts-order/comparator` | 301 µs (2.3×) | 477 µs (3.0×) | 652 µs (4.1×) |
+| **Other libraries** |  |  |  |
+| Radashi sort | 🥈 120 µs (0.9×) | 433 µs (2.7×) | 457 µs (2.9×) |
+| Effect Array.sortWith (cached) | 206 µs (1.6×) | 413 µs (2.6×) | 294 µs (1.8×) |
+| es-toolkit compat (cached) | 246 µs (1.9×) | 429 µs (2.7×) | 🥉 277 µs (1.7×) |
+| Lodash (lodash-es) | 271 µs (2.0×) | 🥉 365 µs (2.3×) | 296 µs (1.9×) |
+| thenby | 227 µs (1.7×) | 530 µs (3.3×) | 578 µs (3.6×) |
+| es-toolkit core | 265 µs (2.0×) | 460 µs (2.9×) | 635 µs (4.0×) |
+| Remeda | 297 µs (2.2×) | 493 µs (3.1×) | 649 µs (4.1×) |
+| fast-sort | 263 µs (2.0×) | 656 µs (4.1×) | 621 µs (3.9×) |
+| Effect Order | 338 µs (2.5×) | 682 µs (4.3×) | 767 µs (4.8×) |
+
+- **1 key:** stored order total, ascending.
+- **3 keys:** fulfillment queue: status ↑, newest first, customer surname ↑.
+- **Computed key:** computed line-item total after discounts, descending.
+- **†:** more than 20% variation between rounds. Treat close results in that cell with caution.
+
+<details>
+<summary>10 records</summary>
+
+| | 1 key | 3 keys | Computed key |
+| --- | ---: | ---: | ---: |
+| **Native `Array.prototype.sort`** |  |  |  |
+| Cached keys | 0.399 µs (1.0×) | 0.407 µs (1.0×) | 🥇 0.508 µs (1.0×) |
+| Handwritten comparator | 🥇 0.289 µs (0.7×) | 🥈 0.331 µs (0.8×) | 1.02 µs (1.9×) |
+| **ts-order** |  |  |  |
+| `compile()` + `sort()` | 0.388 µs (1.0×) | 0.428 µs (1.0×) | 🥈 0.531 µs (1.0×) |
+| `compile()` + `compare` | 🥈 0.298 µs (0.8×) | 🥇 0.319 µs (0.7×) | 1 µs (1.9×) |
+| `Order` (not compiled) | 0.594 µs (1.5×)† | 1.04 µs (2.4×) | 0.862 µs (1.6×) |
+| `ts-order/comparator` | 1.01 µs (2.6×)† | 1.21 µs (2.8×) | 1.47 µs (2.8×) |
+| **Other libraries** |  |  |  |
+| Radashi sort | 🥉 0.4 µs (1.0×) | 🥉 0.584 µs (1.4×)† | 1.38 µs (2.6×)† |
+| Effect Array.sortWith (cached) | 0.547 µs (1.4×) | 1.09 µs (2.5×) | 1.03 µs (1.9×) |
+| thenby | 0.468 µs (1.2×)† | 1.09 µs (2.5×) | 1.24 µs (2.3×) |
+| es-toolkit core | 0.618 µs (1.6×)† | 0.997 µs (2.3×) | 1.38 µs (2.6×) |
+| Remeda | 0.572 µs (1.5×)† | 1.07 µs (2.5×) | 1.41 µs (2.7×) |
+| Lodash (lodash-es) | 1.04 µs (2.7×)† | 1.33 µs (3.1×) | 1.15 µs (2.2×) |
+| es-toolkit compat (cached) | 0.835 µs (2.2×) | 1.98 µs (4.6×) | 🥉 1.02 µs (1.9×) |
+| fast-sort | 0.64 µs (1.6×)† | 1.99 µs (4.6×) | 1.57 µs (3.0×) |
+| Effect Order | 0.707 µs (1.8×)† | 1.6 µs (3.7×) | 1.79 µs (3.4×) |
+
+</details>
+
+<details>
+<summary>100 records</summary>
+
+| | 1 key | 3 keys | Computed key |
+| --- | ---: | ---: | ---: |
+| **Native `Array.prototype.sort`** |  |  |  |
+| Cached keys | 5.99 µs (0.9×) | 6.88 µs (0.7×) | 🥇 7.2 µs (0.9×) |
+| Handwritten comparator | 🥇 5.26 µs (0.8×) | 🥇 6.01 µs (0.6×) | 21.7 µs (2.7×) |
+| **ts-order** |  |  |  |
+| `compile()` + `sort()` | 6.87 µs (1.0×) | 10.1 µs (1.0×)† | 🥈 7.93 µs (1.0×) |
+| `compile()` + `compare` | 🥉 5.87 µs (0.9×) | 🥈 6.7 µs (0.7×)† | 21.7 µs (2.7×) |
+| `Order` (not compiled) | 13.3 µs (1.9×) | 20.4 µs (2.0×) | 15.1 µs (1.9×) |
+| `ts-order/comparator` | 18.5 µs (2.7×) | 27.9 µs (2.8×) | 34.4 µs (4.3×) |
+| **Other libraries** |  |  |  |
+| Radashi sort | 🥈 5.84 µs (0.9×) | 🥉 23.2 µs (2.3×) | 21.7 µs (2.7×) |
+| Effect Array.sortWith (cached) | 12.7 µs (1.8×) | 28.6 µs (2.8×) | 18.3 µs (2.3×) |
+| es-toolkit compat (cached) | 15.7 µs (2.3×) | 28.2 µs (2.8×) | 🥉 17.5 µs (2.2×) |
+| Lodash (lodash-es) | 17.7 µs (2.6×) | 23.5 µs (2.3×) | 19.1 µs (2.4×) |
+| es-toolkit core | 15.9 µs (2.3×) | 25.7 µs (2.5×) | 31.8 µs (4.0×) |
+| thenby | 13.1 µs (1.9×) | 35.5 µs (3.5×) | 29 µs (3.7×) |
+| Remeda | 19.2 µs (2.8×) | 27.3 µs (2.7×) | 33.7 µs (4.3×) |
+| fast-sort | 17 µs (2.5×) | 37.6 µs (3.7×) | 32.3 µs (4.1×) |
+| Effect Order | 21.3 µs (3.1×) | 39.3 µs (3.9×) | 42.4 µs (5.3×) |
+
+</details>
+
+<details>
+<summary>10,000 records</summary>
+
+| | 1 key | 3 keys | Computed key |
+| --- | ---: | ---: | ---: |
+| **Native `Array.prototype.sort`** |  |  |  |
+| Cached keys | 1.67 ms (0.9×) | 🥈 2.49 ms (1.0×) | 🥇 2.21 ms (0.9×) |
+| Handwritten comparator | 🥇 1.66 ms (0.9×) | 2.57 ms (1.1×) | 7.42 ms (3.1×) |
+| **ts-order** |  |  |  |
+| `compile()` + `sort()` | 🥉 1.87 ms (1.0×) | 🥇 2.43 ms (1.0×) | 🥈 2.36 ms (1.0×) |
+| `compile()` + `compare` | 1.9 ms (1.0×) | 2.8 ms (1.2×) | 7.39 ms (3.1×) |
+| `Order` (not compiled) | 2.93 ms (1.6×) | 4.79 ms (2.0×) | 3.49 ms (1.5×) |
+| `ts-order/comparator` | 4.66 ms (2.5×) | 7.76 ms (3.2×) | 10.8 ms (4.6×) |
+| **Other libraries** |  |  |  |
+| Effect Array.sortWith (cached) | 3.03 ms (1.6×) | 6 ms (2.5×) | 4.29 ms (1.8×) |
+| es-toolkit compat (cached) | 3.45 ms (1.8×) | 6.13 ms (2.5×) | 🥉 4.21 ms (1.8×) |
+| Radashi sort | 🥈 1.8 ms (1.0×) | 6.72 ms (2.8×) | 7.41 ms (3.1×) |
+| Lodash (lodash-es) | 3.9 ms (2.1×) | 🥉 5.42 ms (2.2×) | 4.54 ms (1.9×) |
+| thenby | 3.19 ms (1.7×) | 8.29 ms (3.4×) | 9.57 ms (4.0×) |
+| es-toolkit core | 3.82 ms (2.0×) | 7.26 ms (3.0×) | 10.1 ms (4.3×) |
+| Remeda | 4.05 ms (2.2×) | 8.08 ms (3.3×) | 10.3 ms (4.3×) |
+| fast-sort | 3.79 ms (2.0×) | 10.7 ms (4.4×) | 9.93 ms (4.2×) |
+| Effect Order | 4.78 ms (2.6×) | 10.5 ms (4.3×) | 12.3 ms (5.2×) |
+
+</details>
+
+<details>
+<summary>100,000 records</summary>
+
+| | 1 key | 3 keys | Computed key |
+| --- | ---: | ---: | ---: |
+| **Native `Array.prototype.sort`** |  |  |  |
+| Cached keys | 31.8 ms (1.3×) | 🥈 45.9 ms (1.3×) | 🥈 52 ms (1.1×)† |
+| Handwritten comparator | 🥈 31.6 ms (1.3×)† | 59.1 ms (1.7×) | 205 ms (4.4×) |
+| **ts-order** |  |  |  |
+| `compile()` + `sort()` | 🥇 25.1 ms (1.0×) | 🥇 34.3 ms (1.0×) | 🥇 46.9 ms (1.0×) |
+| `compile()` + `compare` | 34.9 ms (1.4×)† | 75.2 ms (2.2×)† | 207 ms (4.4×) |
+| `Order` (not compiled) | 40.9 ms (1.6×) | 74.5 ms (2.2×) | 63.8 ms (1.4×) |
+| `ts-order/comparator` | 71 ms (2.8×) | 139 ms (4.1×) | 256 ms (5.5×) |
+| **Other libraries** |  |  |  |
+| Effect Array.sortWith (cached) | 45.2 ms (1.8×) | 🥉 96.3 ms (2.8×) | 🥉 74 ms (1.6×) |
+| Lodash (lodash-es) | 66 ms (2.6×) | 103 ms (3.0×) | 93.2 ms (2.0×) |
+| es-toolkit compat (cached) | 64.1 ms (2.6×) | 117 ms (3.4×) | 87.5 ms (1.9×) |
+| Radashi sort | 🥉 34.5 ms (1.4×) | 141 ms (4.1×) | 210 ms (4.5×) |
+| thenby | 54.6 ms (2.2×) | 159 ms (4.6×) | 238 ms (5.1×) |
+| es-toolkit core | 69.9 ms (2.8×)† | 146 ms (4.3×) | 241 ms (5.1×) |
+| fast-sort | 62.5 ms (2.5×) | 193 ms (5.6×) | 265 ms (5.6×)† |
+| Remeda | 74.1 ms (3.0×) | 159 ms (4.7×) | 294 ms (6.3×) |
+| Effect Order | 79.6 ms (3.2×) | 183 ms (5.4×) | 277 ms (5.9×) |
+
+</details>
+
 [Interactive ranked charts](BENCHMARKS.html) · [Historical exhaustive run, before review fixes](benchmarks/full.md)
 
 Measured sizes: **10, 100, 1,000, 10,000, 100,000** records · 2 rounds · shuffled input.
 
 **Short profile:** lower sampling budgets. Use for iteration, not definitive performance claims.
 
-## Fastest observed at a glance
-
-For **shuffled** input. Each cell names the fastest observed entry and its time per complete sort. “Library” excludes the two native baselines. These are observations, not statistically proven winners.
-
-| Workload / comparison | 10 | 100 | 1,000 | 10,000 | 100,000 |
-| --- | --- | --- | --- | --- | --- |
-| total · overall | Native handwritten — 0.278 µs | Native handwritten — 5.32 µs | Native cached keys — 116 µs | Native cached keys — 1.65 ms | ts-order compiled sort — 25.3 ms |
-| total · library | ts-order compiled compare — 0.288 µs | ts-order compiled compare — 5.63 µs | Radashi sort — 120 µs | Radashi sort — 1.85 ms | ts-order compiled sort — 25.3 ms |
-| fulfillment · overall | ts-order compiled compare — 0.318 µs | ts-order compiled compare — 5.92 µs | ts-order compiled compare — 155 µs | ts-order compiled sort — 2.46 ms | ts-order compiled sort — 38 ms |
-| fulfillment · library | ts-order compiled compare — 0.318 µs | ts-order compiled compare — 5.92 µs | ts-order compiled compare — 155 µs | ts-order compiled sort — 2.46 ms | ts-order compiled sort — 38 ms |
-| computed · overall | ts-order compiled sort — 0.52 µs | ts-order compiled sort — 8.23 µs | Native cached keys — 146 µs | Native cached keys — 2.24 ms | ts-order compiled sort — 53.7 ms |
-| computed · library | ts-order compiled sort — 0.52 µs | ts-order compiled sort — 8.23 µs | ts-order compiled sort — 160 µs | ts-order compiled sort — 2.52 ms | ts-order compiled sort — 53.7 ms |
-
-µs = microseconds; **1,000 µs = 1 ms**. Lower is better. **†** marks more than 20% variation between round means; treat that ranking with caution.
-
 ## Runtime results
 
 The code behind every row is listed under [Sorting code](#sorting-code).
 
-**Time · relative time.** 1.00× is the fastest observed in that column; larger ratios are slower. Rows are ranked by the largest measured array. Native baselines are included. Expand the variation table before interpreting close results.
+Same format as the summary: time per sort, then the time relative to compiled ts-order `sort()`. 🥇🥈🥉 mark the three fastest in each column, one medal per library. Expand the variation table before you trust a close result.
 
 ### Stored order total, ascending
 
 #### shuffled
 
-| Implementation | 10 (µs) | 100 (µs) | 1,000 (µs) | 10,000 (ms) | 100,000 (ms) |
+| | 10 | 100 | 1,000 | 10,000 | 100,000 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ts-order compiled sort | 0.35 · 1.26× | 6.75 · 1.27× | 132 · 1.14× | 1.87 · 1.14× | **25.3 · 1.00×** |
-| Native cached keys | 0.336 · 1.21× | 5.99 · 1.13× | **116 · 1.00×** | **1.65 · 1.00×** | 29.7 · 1.18×† |
-| Native handwritten | **0.278 · 1.00×** | **5.32 · 1.00×** | 297 · 2.56×† | 1.82 · 1.11× | 39.1 · 1.55× |
-| ts-order compiled compare | 0.288 · 1.03× | 5.63 · 1.06× | 123 · 1.06× | 1.92 · 1.16× | 40.9 · 1.62× |
-| ts-order class | 0.58 · 2.08×† | 13.2 · 2.49× | 218 · 1.88× | 2.99 · 1.81× | 41.5 · 1.64× |
-| Radashi sort | 0.307 · 1.10× | 5.97 · 1.12× | 120 · 1.04× | 1.85 · 1.12× | 45.4 · 1.80× |
-| Effect Array.sortWith (cached) | 0.538 · 1.93× | 12.5 · 2.35× | 205 · 1.77× | 3.12 · 1.89× | 46.3 · 1.83× |
-| Remeda | 0.448 · 1.61×† | 21.4 · 4.02×† | 222 · 1.92× | 3.38 · 2.05× | 62.1 · 2.45× |
-| thenby | 0.437 · 1.57×† | 13.4 · 2.51× | 228 · 1.97× | 3.44 · 2.08× | 62.2 · 2.46× |
-| es-toolkit compat (cached) | 0.764 · 2.74× | 15.6 · 2.94× | 246 · 2.13× | 3.83 · 2.33× | 62.7 · 2.48× |
-| fast-sort | 0.576 · 2.07×† | 16.6 · 3.12× | 264 · 2.29× | 3.74 · 2.27× | 70 · 2.77× |
-| Lodash (lodash-es) | 0.853 · 3.07×† | 17.7 · 3.33× | 273 · 2.36× | 4.01 · 2.44× | 76.3 · 3.02× |
-| es-toolkit core | 0.552 · 1.98×† | 15.7 · 2.94× | 263 · 2.27× | 3.76 · 2.28× | 79.7 · 3.15× |
-| ts-order comparator | 0.582 · 2.09×† | 22.3 · 4.19× | 358 · 3.09× | 4.5 · 2.73× | 84.7 · 3.35× |
-| Effect Order | 0.7 · 2.51×† | 21.6 · 4.05× | 351 · 3.03× | 4.74 · 2.87× | 92.1 · 3.64× |
+| **Native `Array.prototype.sort`** |  |  |  |  |  |
+| Cached keys | 0.399 µs (1.0×) | 5.99 µs (0.9×) | 115 µs (0.9×) | 1.67 ms (0.9×) | 31.8 ms (1.3×) |
+| Handwritten comparator | 🥇 0.289 µs (0.7×) | 🥇 5.26 µs (0.8×) | 🥇 111 µs (0.8×) | 🥇 1.66 ms (0.9×) | 🥈 31.6 ms (1.3×)† |
+| **ts-order** |  |  |  |  |  |
+| `compile()` + `sort()` | 0.388 µs (1.0×) | 6.87 µs (1.0×) | 133 µs (1.0×) | 🥉 1.87 ms (1.0×) | 🥇 25.1 ms (1.0×) |
+| `compile()` + `compare` | 🥈 0.298 µs (0.8×) | 🥉 5.87 µs (0.9×) | 🥉 120 µs (0.9×) | 1.9 ms (1.0×) | 34.9 ms (1.4×)† |
+| `Order` (not compiled) | 0.594 µs (1.5×)† | 13.3 µs (1.9×) | 217 µs (1.6×) | 2.93 ms (1.6×) | 40.9 ms (1.6×) |
+| `ts-order/comparator` | 1.01 µs (2.6×)† | 18.5 µs (2.7×) | 301 µs (2.3×) | 4.66 ms (2.5×) | 71 ms (2.8×) |
+| **Other libraries** |  |  |  |  |  |
+| Radashi sort | 🥉 0.4 µs (1.0×) | 🥈 5.84 µs (0.9×) | 🥈 120 µs (0.9×) | 🥈 1.8 ms (1.0×) | 🥉 34.5 ms (1.4×) |
+| Effect Array.sortWith (cached) | 0.547 µs (1.4×) | 12.7 µs (1.8×) | 206 µs (1.6×) | 3.03 ms (1.6×) | 45.2 ms (1.8×) |
+| thenby | 0.468 µs (1.2×)† | 13.1 µs (1.9×) | 227 µs (1.7×) | 3.19 ms (1.7×) | 54.6 ms (2.2×) |
+| fast-sort | 0.64 µs (1.6×)† | 17 µs (2.5×) | 263 µs (2.0×) | 3.79 ms (2.0×) | 62.5 ms (2.5×) |
+| es-toolkit core | 0.618 µs (1.6×)† | 15.9 µs (2.3×) | 265 µs (2.0×) | 3.82 ms (2.0×) | 69.9 ms (2.8×)† |
+| es-toolkit compat (cached) | 0.835 µs (2.2×) | 15.7 µs (2.3×) | 246 µs (1.9×) | 3.45 ms (1.8×) | 64.1 ms (2.6×) |
+| Remeda | 0.572 µs (1.5×)† | 19.2 µs (2.8×) | 297 µs (2.2×) | 4.05 ms (2.2×) | 74.1 ms (3.0×) |
+| Lodash (lodash-es) | 1.04 µs (2.7×)† | 17.7 µs (2.6×) | 271 µs (2.0×) | 3.9 ms (2.1×) | 66 ms (2.6×) |
+| Effect Order | 0.707 µs (1.8×)† | 21.3 µs (3.1×) | 338 µs (2.5×) | 4.78 ms (2.6×) | 79.6 ms (3.2×) |
 
 <details>
 <summary>Round-to-round variation (not confidence intervals)</summary>
 
 | Implementation | 10 | 100 | 1,000 | 10,000 | 100,000 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ts-order compiled sort | ±3% | ±2% | ±1% | ±1% | ±1% |
-| Native cached keys | ±5% | ±1% | ±0% | ±0% | ±22% |
-| Native handwritten | ±2% | ±1% | ±63% | ±8% | ±2% |
-| ts-order compiled compare | ±2% | ±7% | ±1% | ±2% | ±2% |
-| ts-order class | ±25% | ±4% | ±0% | ±1% | ±2% |
-| Radashi sort | ±4% | ±0% | ±0% | ±1% | ±9% |
-| Effect Array.sortWith (cached) | ±19% | ±2% | ±0% | ±8% | ±11% |
-| Remeda | ±36% | ±36% | ±0% | ±4% | ±2% |
-| thenby | ±34% | ±4% | ±0% | ±7% | ±3% |
-| es-toolkit compat (cached) | ±15% | ±4% | ±1% | ±7% | ±8% |
-| fast-sort | ±39% | ±3% | ±3% | ±6% | ±1% |
-| Lodash (lodash-es) | ±20% | ±0% | ±0% | ±0% | ±10% |
-| es-toolkit core | ±30% | ±4% | ±1% | ±1% | ±3% |
-| ts-order comparator | ±54% | ±19% | ±14% | ±4% | ±8% |
-| Effect Order | ±39% | ±0% | ±3% | ±2% | ±1% |
+| **Native `Array.prototype.sort`** |  |  |  |  |  |
+| Cached keys | ±2% | ±2% | ±0% | ±1% | ±12% |
+| Handwritten comparator | ±4% | ±0% | ±0% | ±3% | ±21% |
+| **ts-order** |  |  |  |  |  |
+| `compile()` + `sort()` | ±9% | ±1% | ±1% | ±1% | ±1% |
+| `compile()` + `compare` | ±1% | ±1% | ±0% | ±7% | ±21% |
+| `Order` (not compiled) | ±24% | ±4% | ±1% | ±2% | ±0% |
+| `ts-order/comparator` | ±41% | ±3% | ±0% | ±12% | ±14% |
+| **Other libraries** |  |  |  |  |  |
+| Radashi sort | ±14% | ±1% | ±1% | ±5% | ±17% |
+| Effect Array.sortWith (cached) | ±19% | ±0% | ±1% | ±7% | ±11% |
+| thenby | ±35% | ±4% | ±1% | ±2% | ±10% |
+| fast-sort | ±44% | ±0% | ±3% | ±8% | ±10% |
+| es-toolkit core | ±24% | ±3% | ±0% | ±2% | ±24% |
+| es-toolkit compat (cached) | ±18% | ±3% | ±0% | ±4% | ±10% |
+| Remeda | ±44% | ±4% | ±4% | ±4% | ±2% |
+| Lodash (lodash-es) | ±28% | ±0% | ±1% | ±5% | ±1% |
+| Effect Order | ±44% | ±1% | ±1% | ±3% | ±10% |
 
 </details>
 
@@ -76,42 +203,50 @@ The code behind every row is listed under [Sorting code](#sorting-code).
 
 #### shuffled
 
-| Implementation | 10 (µs) | 100 (µs) | 1,000 (µs) | 10,000 (ms) | 100,000 (ms) |
+| | 10 | 100 | 1,000 | 10,000 | 100,000 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ts-order compiled sort | 0.404 · 1.27× | 7.23 · 1.22× | 158 · 1.02× | **2.46 · 1.00×** | **38 · 1.00×** |
-| Native cached keys | 0.392 · 1.23× | 7.47 · 1.26× | 167 · 1.07× | 2.59 · 1.06× | 44.6 · 1.17× |
-| Native handwritten | 0.318 · 1.00× | 5.99 · 1.01× | 156 · 1.01× | 2.73 · 1.11× | 61.2 · 1.61× |
-| ts-order compiled compare | **0.318 · 1.00×** | **5.92 · 1.00×** | **155 · 1.00×** | 2.85 · 1.16× | 67.9 · 1.79× |
-| ts-order class | 1.04 · 3.28× | 19.1 · 3.23× | 325 · 2.09× | 4.89 · 1.99× | 101 · 2.65× |
-| Lodash (lodash-es) | 1.32 · 4.15× | 22.5 · 3.79× | 366 · 2.36× | 5.78 · 2.35× | 106 · 2.78× |
-| Remeda | 0.802 · 2.52× | 21.7 · 3.67× | 391 · 2.51× | 6.68 · 2.72× | 133 · 3.50× |
-| ts-order comparator | 1.12 · 3.52× | 31.5 · 5.32× | 489 · 3.15× | 7.59 · 3.09× | 144 · 3.79× |
-| es-toolkit core | 0.942 · 2.96× | 26.2 · 4.42× | 466 · 3.00× | 7.62 · 3.10× | 149 · 3.91× |
-| es-toolkit compat (cached) | 1.9 · 5.97× | 28.2 · 4.77× | 417 · 2.69× | 6.61 · 2.69× | 171 · 4.50×† |
-| Effect Order | 1.39 · 4.36× | 40.8 · 6.88× | 696 · 4.48× | 11 · 4.47× | 189 · 4.99× |
-| fast-sort | 1.95 · 6.14× | 40.2 · 6.79× | 663 · 4.27× | 10.7 · 4.37× | 192 · 5.06× |
-| thenby | 1.01 · 3.18× | 29.7 · 5.02× | 527 · 3.39× | 8.29 · 3.38× | 213 · 5.59× |
-| Effect Array.sortWith (cached) | — | — | — | — | — |
-| Radashi sort | — | — | — | — | — |
+| **Native `Array.prototype.sort`** |  |  |  |  |  |
+| Cached keys | 0.407 µs (1.0×) | 6.88 µs (0.7×) | 161 µs (1.0×) | 🥈 2.49 ms (1.0×) | 🥈 45.9 ms (1.3×) |
+| Handwritten comparator | 🥈 0.331 µs (0.8×) | 🥇 6.01 µs (0.6×) | 🥇 154 µs (1.0×) | 2.57 ms (1.1×) | 59.1 ms (1.7×) |
+| **ts-order** |  |  |  |  |  |
+| `compile()` + `sort()` | 0.428 µs (1.0×) | 10.1 µs (1.0×)† | 🥈 159 µs (1.0×) | 🥇 2.43 ms (1.0×) | 🥇 34.3 ms (1.0×) |
+| `compile()` + `compare` | 🥇 0.319 µs (0.7×) | 🥈 6.7 µs (0.7×)† | 243 µs (1.5×)† | 2.8 ms (1.2×) | 75.2 ms (2.2×)† |
+| `Order` (not compiled) | 1.04 µs (2.4×) | 20.4 µs (2.0×) | 324 µs (2.0×) | 4.79 ms (2.0×) | 74.5 ms (2.2×) |
+| `ts-order/comparator` | 1.21 µs (2.8×) | 27.9 µs (2.8×) | 477 µs (3.0×) | 7.76 ms (3.2×) | 139 ms (4.1×) |
+| **Other libraries** |  |  |  |  |  |
+| Radashi sort | 🥉 0.584 µs (1.4×)† | 🥉 23.2 µs (2.3×) | 433 µs (2.7×) | 6.72 ms (2.8×) | 141 ms (4.1×) |
+| Lodash (lodash-es) | 1.33 µs (3.1×) | 23.5 µs (2.3×) | 🥉 365 µs (2.3×) | 🥉 5.42 ms (2.2×) | 103 ms (3.0×) |
+| Effect Array.sortWith (cached) | 1.09 µs (2.5×) | 28.6 µs (2.8×) | 413 µs (2.6×) | 6 ms (2.5×) | 🥉 96.3 ms (2.8×) |
+| es-toolkit core | 0.997 µs (2.3×) | 25.7 µs (2.5×) | 460 µs (2.9×) | 7.26 ms (3.0×) | 146 ms (4.3×) |
+| es-toolkit compat (cached) | 1.98 µs (4.6×) | 28.2 µs (2.8×) | 429 µs (2.7×) | 6.13 ms (2.5×) | 117 ms (3.4×) |
+| Remeda | 1.07 µs (2.5×) | 27.3 µs (2.7×) | 493 µs (3.1×) | 8.08 ms (3.3×) | 159 ms (4.7×) |
+| thenby | 1.09 µs (2.5×) | 35.5 µs (3.5×) | 530 µs (3.3×) | 8.29 ms (3.4×) | 159 ms (4.6×) |
+| Effect Order | 1.6 µs (3.7×) | 39.3 µs (3.9×) | 682 µs (4.3×) | 10.5 ms (4.3×) | 183 ms (5.4×) |
+| fast-sort | 1.99 µs (4.6×) | 37.6 µs (3.7×) | 656 µs (4.1×) | 10.7 ms (4.4×) | 193 ms (5.6×) |
 
 <details>
 <summary>Round-to-round variation (not confidence intervals)</summary>
 
 | Implementation | 10 | 100 | 1,000 | 10,000 | 100,000 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ts-order compiled sort | ±1% | ±3% | ±1% | ±1% | ±12% |
-| Native cached keys | ±3% | ±5% | ±2% | ±6% | ±5% |
-| Native handwritten | ±2% | ±3% | ±2% | ±1% | ±3% |
-| ts-order compiled compare | ±4% | ±12% | ±1% | ±6% | ±4% |
-| ts-order class | ±2% | ±1% | ±0% | ±1% | ±19% |
-| Lodash (lodash-es) | ±3% | ±3% | ±1% | ±0% | ±1% |
-| Remeda | ±9% | ±4% | ±0% | ±6% | ±6% |
-| ts-order comparator | ±4% | ±13% | ±2% | ±6% | ±1% |
-| es-toolkit core | ±1% | ±3% | ±1% | ±5% | ±5% |
-| es-toolkit compat (cached) | ±2% | ±0% | ±1% | ±6% | ±28% |
-| Effect Order | ±6% | ±7% | ±1% | ±6% | ±2% |
-| fast-sort | ±4% | ±10% | ±1% | ±1% | ±2% |
-| thenby | ±7% | ±3% | ±1% | ±3% | ±8% |
+| **Native `Array.prototype.sort`** |  |  |  |  |  |
+| Cached keys | ±3% | ±4% | ±0% | ±2% | ±3% |
+| Handwritten comparator | ±4% | ±4% | ±1% | ±2% | ±5% |
+| **ts-order** |  |  |  |  |  |
+| `compile()` + `sort()` | ±1% | ±31% | ±0% | ±0% | ±1% |
+| `compile()` + `compare` | ±0% | ±22% | ±36% | ±4% | ±21% |
+| `Order` (not compiled) | ±1% | ±9% | ±1% | ±3% | ±7% |
+| `ts-order/comparator` | ±12% | ±3% | ±0% | ±2% | ±4% |
+| **Other libraries** |  |  |  |  |  |
+| Radashi sort | ±35% | ±4% | ±4% | ±2% | ±5% |
+| Lodash (lodash-es) | ±4% | ±6% | ±2% | ±2% | ±0% |
+| Effect Array.sortWith (cached) | ±4% | ±16% | ±0% | ±3% | ±3% |
+| es-toolkit core | ±4% | ±2% | ±1% | ±1% | ±0% |
+| es-toolkit compat (cached) | ±1% | ±0% | ±1% | ±3% | ±3% |
+| Remeda | ±8% | ±4% | ±0% | ±4% | ±0% |
+| thenby | ±4% | ±19% | ±1% | ±5% | ±2% |
+| Effect Order | ±4% | ±3% | ±0% | ±1% | ±2% |
+| fast-sort | ±5% | ±3% | ±2% | ±3% | ±2% |
 
 </details>
 
@@ -119,44 +254,50 @@ The code behind every row is listed under [Sorting code](#sorting-code).
 
 #### shuffled
 
-| Implementation | 10 (µs) | 100 (µs) | 1,000 (µs) | 10,000 (ms) | 100,000 (ms) |
+| | 10 | 100 | 1,000 | 10,000 | 100,000 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ts-order compiled sort | **0.52 · 1.00×** | **8.23 · 1.00×** | 160 · 1.10× | 2.52 · 1.13× | **53.7 · 1.00×** |
-| Native cached keys | 0.532 · 1.02× | 10 · 1.22×† | **146 · 1.00×** | **2.24 · 1.00×** | 55.5 · 1.03× |
-| ts-order class | 0.875 · 1.68× | 15.4 · 1.87× | 255 · 1.75× | 3.53 · 1.58× | 62.9 · 1.17× |
-| Effect Array.sortWith (cached) | 0.976 · 1.88× | 18.5 · 2.25× | 295 · 2.03× | 4.06 · 1.82× | 83.1 · 1.55× |
-| es-toolkit compat (cached) | 1.05 · 2.01× | 18.3 · 2.23× | 280 · 1.92× | 4.34 · 1.94× | 86.5 · 1.61× |
-| Lodash (lodash-es) | 1.14 · 2.19× | 19.2 · 2.33× | 301 · 2.06× | 4.75 · 2.12× | 93.1 · 1.73× |
-| Native handwritten | 0.996 · 1.91× | 23.4 · 2.85× | 465 · 3.19× | 8.1 · 3.62× | 233 · 4.33× |
-| Radashi sort | 0.993 · 1.91× | 21.9 · 2.67× | 467 · 3.21× | 8.85 · 3.96× | 251 · 4.66× |
-| ts-order compiled compare | 0.995 · 1.91× | 21.9 · 2.67× | 474 · 3.25× | 8.41 · 3.76× | 251 · 4.67× |
-| Remeda | 1.25 · 2.40× | 33.1 · 4.02× | 592 · 4.06× | 12.2 · 5.44× | 273 · 5.07× |
-| es-toolkit core | 1.41 · 2.72× | 34 · 4.13× | 652 · 4.47× | 10.1 · 4.51× | 279 · 5.19× |
-| Effect Order | 1.82 · 3.50× | 42.2 · 5.13× | 1,060 · 7.25×† | 12 · 5.37× | 290 · 5.39× |
-| fast-sort | 1.42 · 2.73× | 46.8 · 5.68×† | 716 · 4.91× | 9.92 · 4.44× | 297 · 5.52× |
-| ts-order comparator | 1.46 · 2.80× | 34.8 · 4.22× | 659 · 4.52× | 10.9 · 4.87× | 312 · 5.80× |
-| thenby | 1.27 · 2.44× | 29.4 · 3.57× | 608 · 4.17× | 9.75 · 4.36× | 312 · 5.80× |
+| **Native `Array.prototype.sort`** |  |  |  |  |  |
+| Cached keys | 🥇 0.508 µs (1.0×) | 🥇 7.2 µs (0.9×) | 🥇 146 µs (0.9×) | 🥇 2.21 ms (0.9×) | 🥈 52 ms (1.1×)† |
+| Handwritten comparator | 1.02 µs (1.9×) | 21.7 µs (2.7×) | 461 µs (2.9×) | 7.42 ms (3.1×) | 205 ms (4.4×) |
+| **ts-order** |  |  |  |  |  |
+| `compile()` + `sort()` | 🥈 0.531 µs (1.0×) | 🥈 7.93 µs (1.0×) | 🥈 160 µs (1.0×) | 🥈 2.36 ms (1.0×) | 🥇 46.9 ms (1.0×) |
+| `compile()` + `compare` | 1 µs (1.9×) | 21.7 µs (2.7×) | 465 µs (2.9×) | 7.39 ms (3.1×) | 207 ms (4.4×) |
+| `Order` (not compiled) | 0.862 µs (1.6×) | 15.1 µs (1.9×) | 246 µs (1.5×) | 3.49 ms (1.5×) | 63.8 ms (1.4×) |
+| `ts-order/comparator` | 1.47 µs (2.8×) | 34.4 µs (4.3×) | 652 µs (4.1×) | 10.8 ms (4.6×) | 256 ms (5.5×) |
+| **Other libraries** |  |  |  |  |  |
+| Effect Array.sortWith (cached) | 1.03 µs (1.9×) | 18.3 µs (2.3×) | 294 µs (1.8×) | 4.29 ms (1.8×) | 🥉 74 ms (1.6×) |
+| es-toolkit compat (cached) | 🥉 1.02 µs (1.9×) | 🥉 17.5 µs (2.2×) | 🥉 277 µs (1.7×) | 🥉 4.21 ms (1.8×) | 87.5 ms (1.9×) |
+| Lodash (lodash-es) | 1.15 µs (2.2×) | 19.1 µs (2.4×) | 296 µs (1.9×) | 4.54 ms (1.9×) | 93.2 ms (2.0×) |
+| Radashi sort | 1.38 µs (2.6×)† | 21.7 µs (2.7×) | 457 µs (2.9×) | 7.41 ms (3.1×) | 210 ms (4.5×) |
+| thenby | 1.24 µs (2.3×) | 29 µs (3.7×) | 578 µs (3.6×) | 9.57 ms (4.0×) | 238 ms (5.1×) |
+| es-toolkit core | 1.38 µs (2.6×) | 31.8 µs (4.0×) | 635 µs (4.0×) | 10.1 ms (4.3×) | 241 ms (5.1×) |
+| fast-sort | 1.57 µs (3.0×) | 32.3 µs (4.1×) | 621 µs (3.9×) | 9.93 ms (4.2×) | 265 ms (5.6×)† |
+| Remeda | 1.41 µs (2.7×) | 33.7 µs (4.3×) | 649 µs (4.1×) | 10.3 ms (4.3×) | 294 ms (6.3×) |
+| Effect Order | 1.79 µs (3.4×) | 42.4 µs (5.3×) | 767 µs (4.8×) | 12.3 ms (5.2×) | 277 ms (5.9×) |
 
 <details>
 <summary>Round-to-round variation (not confidence intervals)</summary>
 
 | Implementation | 10 | 100 | 1,000 | 10,000 | 100,000 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ts-order compiled sort | ±1% | ±0% | ±1% | ±3% | ±4% |
-| Native cached keys | ±6% | ±29% | ±1% | ±10% | ±11% |
-| ts-order class | ±3% | ±1% | ±3% | ±5% | ±4% |
-| Effect Array.sortWith (cached) | ±1% | ±2% | ±1% | ±3% | ±9% |
-| es-toolkit compat (cached) | ±4% | ±3% | ±3% | ±4% | ±12% |
-| Lodash (lodash-es) | ±0% | ±1% | ±2% | ±6% | ±1% |
-| Native handwritten | ±4% | ±8% | ±1% | ±9% | ±11% |
-| Radashi sort | ±3% | ±4% | ±1% | ±15% | ±4% |
-| ts-order compiled compare | ±3% | ±2% | ±3% | ±10% | ±6% |
-| Remeda | ±5% | ±11% | ±1% | ±12% | ±12% |
-| es-toolkit core | ±1% | ±3% | ±1% | ±4% | ±8% |
-| Effect Order | ±8% | ±1% | ±28% | ±1% | ±6% |
-| fast-sort | ±3% | ±31% | ±13% | ±5% | ±7% |
-| ts-order comparator | ±5% | ±2% | ±1% | ±9% | ±3% |
-| thenby | ±2% | ±1% | ±2% | ±6% | ±17% |
+| **Native `Array.prototype.sort`** |  |  |  |  |  |
+| Cached keys | ±2% | ±0% | ±2% | ±9% | ±25% |
+| Handwritten comparator | ±2% | ±3% | ±3% | ±3% | ±19% |
+| **ts-order** |  |  |  |  |  |
+| `compile()` + `sort()` | ±0% | ±1% | ±2% | ±4% | ±12% |
+| `compile()` + `compare` | ±2% | ±3% | ±1% | ±2% | ±13% |
+| `Order` (not compiled) | ±3% | ±1% | ±3% | ±7% | ±16% |
+| `ts-order/comparator` | ±6% | ±1% | ±1% | ±8% | ±19% |
+| **Other libraries** |  |  |  |  |  |
+| Effect Array.sortWith (cached) | ±2% | ±0% | ±1% | ±2% | ±12% |
+| es-toolkit compat (cached) | ±2% | ±1% | ±2% | ±3% | ±9% |
+| Lodash (lodash-es) | ±0% | ±1% | ±1% | ±6% | ±11% |
+| Radashi sort | ±26% | ±3% | ±2% | ±1% | ±20% |
+| thenby | ±5% | ±3% | ±2% | ±7% | ±19% |
+| es-toolkit core | ±1% | ±1% | ±0% | ±1% | ±18% |
+| fast-sort | ±7% | ±4% | ±3% | ±5% | ±23% |
+| Remeda | ±5% | ±1% | ±0% | ±4% | ±2% |
+| Effect Order | ±5% | ±1% | ±1% | ±6% | ±18% |
 
 </details>
 
@@ -166,65 +307,56 @@ Each result is a **complete working sorting example**, not an npm install size o
 
 esbuild bundles for browser ESM / ES2022 with minification, tree shaking and legal comments removed; gzip uses level 9. No source maps, external packages, runtime polyfills, data fixtures or benchmark runner are included. ts-order resolves to its built public exports. Application glue and selector code are included; native rows show the no-library cost. Each example is written for its workload, with the selectors inline, as an application would write it. The code is listed under **Sorting code**.
 
-Each workload is ranked by **gzip total**, smallest first. **Extra gzip** is the difference from the no-library handwritten example. B = bytes; KiB = 1,024 bytes. Deltas are example overhead, not context-independent library sizes: compression and shared application code are non-additive.
+![Bar chart of the gzip size of each complete sorting example, by library and workload. The table below has every value.](benchmarks/bundle.svg)
 
-### Stored order total, ascending
+Each cell is the **gzip size** of the whole example, then in brackets the extra gzip over the no-library handwritten example. 🥇🥈🥉 mark the three smallest in each column, one medal per library. B = bytes; KiB = 1,024 bytes. Deltas are example overhead, not context-independent library sizes: compression and shared application code are non-additive.
 
-| Implementation | Gzip total | Extra gzip vs native | Minified |
+| | 1 key | 3 keys | Computed key |
 | --- | ---: | ---: | ---: |
-| Native handwritten | 108 B | 0 B | 103 B |
-| Native cached keys | 133 B | +25 B | 138 B |
-| es-toolkit core | 326 B | +218 B | 491 B |
-| Radashi sort | 332 B | +224 B | 570 B |
-| Remeda | 340 B | +232 B | 567 B |
-| ts-order comparator | 368 B | +260 B | 607 B |
-| thenby | 390 B | +282 B | 695 B |
-| Effect Order | 411 B | +303 B | 840 B |
-| Effect Array.sortWith (cached) | 444 B | +336 B | 902 B |
-| fast-sort | 770 B | +662 B | 1.61 KiB |
-| ts-order class | 1005 B | +897 B | 2.26 KiB |
-| es-toolkit compat (cached) | 1.27 KiB | +1.16 KiB | 2.72 KiB |
-| ts-order compiled sort | 1.66 KiB | +1.55 KiB | 4.09 KiB |
-| ts-order compiled compare | 1.66 KiB | +1.55 KiB | 4.09 KiB |
-| Lodash (lodash-es) | 6.41 KiB | +6.30 KiB | 16.81 KiB |
+| **Native `Array.prototype.sort`** |  |  |  |
+| Cached keys | 133 B (+25 B) | 181 B (+30 B) | 196 B (+26 B) |
+| Handwritten comparator | 🥇 108 B (0 B) | 🥇 151 B (0 B) | 🥇 170 B (0 B) |
+| **ts-order** |  |  |  |
+| `compile()` + `sort()` | 1.67 KiB (+1.56 KiB) | 1.69 KiB (+1.54 KiB) | 1.74 KiB (+1.57 KiB) |
+| `compile()` + `compare` | 1.67 KiB (+1.56 KiB) | 1.69 KiB (+1.54 KiB) | 1.74 KiB (+1.57 KiB) |
+| `Order` (not compiled) | 1005 B (+897 B) | 1.01 KiB (+880 B) | 1.05 KiB (+903 B) |
+| `ts-order/comparator` | 368 B (+260 B) | 442 B (+291 B) | 436 B (+266 B) |
+| **Other libraries** |  |  |  |
+| es-toolkit core | 🥈 326 B (+218 B) | 🥈 350 B (+199 B) | 🥈 386 B (+216 B) |
+| Radashi sort | 🥉 332 B (+224 B) | 428 B (+277 B) | 🥉 400 B (+230 B) |
+| thenby | 390 B (+282 B) | 🥉 416 B (+265 B) | 459 B (+289 B) |
+| Remeda | 395 B (+287 B) | 419 B (+268 B) | 463 B (+293 B) |
+| Effect Order | 411 B (+303 B) | 505 B (+354 B) | 482 B (+312 B) |
+| Effect Array.sortWith (cached) | 444 B (+336 B) | 542 B (+391 B) | 516 B (+346 B) |
+| fast-sort | 770 B (+662 B) | 800 B (+649 B) | 832 B (+662 B) |
+| es-toolkit compat (cached) | 1.27 KiB (+1.16 KiB) | 1.29 KiB (+1.15 KiB) | 1.33 KiB (+1.16 KiB) |
+| Lodash (lodash-es) | 6.41 KiB (+6.30 KiB) | 6.43 KiB (+6.29 KiB) | 6.47 KiB (+6.30 KiB) |
 
-### Fulfillment queue: status ↑, newest first, customer surname ↑
+<details>
+<summary>Minified sizes, before gzip</summary>
 
-| Implementation | Gzip total | Extra gzip vs native | Minified |
+| | 1 key | 3 keys | Computed key |
 | --- | ---: | ---: | ---: |
-| Native handwritten | 151 B | 0 B | 210 B |
-| Native cached keys | 181 B | +30 B | 273 B |
-| es-toolkit core | 350 B | +199 B | 538 B |
-| Remeda | 365 B | +214 B | 610 B |
-| thenby | 416 B | +265 B | 752 B |
-| ts-order comparator | 442 B | +291 B | 768 B |
-| Effect Order | 505 B | +354 B | 1.04 KiB |
-| fast-sort | 800 B | +649 B | 1.66 KiB |
-| ts-order class | 1.01 KiB | +880 B | 2.32 KiB |
-| es-toolkit compat (cached) | 1.29 KiB | +1.15 KiB | 2.76 KiB |
-| ts-order compiled sort | 1.68 KiB | +1.53 KiB | 4.15 KiB |
-| ts-order compiled compare | 1.68 KiB | +1.54 KiB | 4.15 KiB |
-| Lodash (lodash-es) | 6.43 KiB | +6.29 KiB | 16.86 KiB |
+| **Native `Array.prototype.sort`** |  |  |  |
+| Cached keys | 138 B | 273 B | 242 B |
+| Handwritten comparator | 103 B | 210 B | 199 B |
+| **ts-order** |  |  |  |
+| `compile()` + `sort()` | 4.09 KiB | 4.15 KiB | 4.20 KiB |
+| `compile()` + `compare` | 4.09 KiB | 4.15 KiB | 4.21 KiB |
+| `Order` (not compiled) | 2.26 KiB | 2.32 KiB | 2.37 KiB |
+| `ts-order/comparator` | 607 B | 768 B | 724 B |
+| **Other libraries** |  |  |  |
+| es-toolkit core | 491 B | 538 B | 590 B |
+| Radashi sort | 570 B | 740 B | 675 B |
+| thenby | 695 B | 752 B | 800 B |
+| Remeda | 671 B | 714 B | 778 B |
+| Effect Order | 840 B | 1.04 KiB | 979 B |
+| Effect Array.sortWith (cached) | 902 B | 1.09 KiB | 1.02 KiB |
+| fast-sort | 1.61 KiB | 1.66 KiB | 1.70 KiB |
+| es-toolkit compat (cached) | 2.72 KiB | 2.76 KiB | 2.82 KiB |
+| Lodash (lodash-es) | 16.81 KiB | 16.86 KiB | 16.91 KiB |
 
-### Computed line-item total after discounts, descending
-
-| Implementation | Gzip total | Extra gzip vs native | Minified |
-| --- | ---: | ---: | ---: |
-| Native handwritten | 170 B | 0 B | 199 B |
-| Native cached keys | 196 B | +26 B | 242 B |
-| es-toolkit core | 386 B | +216 B | 590 B |
-| Radashi sort | 400 B | +230 B | 675 B |
-| Remeda | 407 B | +237 B | 674 B |
-| ts-order comparator | 436 B | +266 B | 724 B |
-| thenby | 459 B | +289 B | 800 B |
-| Effect Order | 482 B | +312 B | 979 B |
-| Effect Array.sortWith (cached) | 516 B | +346 B | 1.02 KiB |
-| fast-sort | 833 B | +663 B | 1.70 KiB |
-| ts-order class | 1.05 KiB | +903 B | 2.37 KiB |
-| es-toolkit compat (cached) | 1.33 KiB | +1.16 KiB | 2.82 KiB |
-| ts-order compiled sort | 1.73 KiB | +1.56 KiB | 4.20 KiB |
-| ts-order compiled compare | 1.73 KiB | +1.57 KiB | 4.20 KiB |
-| Lodash (lodash-es) | 6.47 KiB | +6.30 KiB | 16.91 KiB |
+</details>
 
 ## Sorting code
 
@@ -410,7 +542,7 @@ export function total(): Sorter {
 #### Radashi sort
 
 ```ts
-import { sort } from 'radashi';
+import { castComparator, sort } from 'radashi';
 
 export function total(): Sorter {
 	return (purchases) => sort(purchases, (purchase) => purchase.totalCents);
@@ -647,7 +779,48 @@ export function fulfillment(): Sorter {
 }
 ```
 
-Not measured: Effect Array.sortWith (cached), Radashi sort. Their APIs take one numeric key.
+#### Effect Array.sortWith (cached)
+
+```ts
+import * as EffectArray from 'effect/Array';
+import * as Order from 'effect/Order';
+
+export function fulfillment(): Sorter {
+	return EffectArray.sortWith<
+		readonly Purchase[],
+		readonly [number, number, string]
+	>(
+		(purchase) => [
+			purchase.status,
+			purchase.createdAt,
+			purchase.customer.lastName,
+		],
+		Order.Tuple([Order.Number, Order.flip(Order.Number), Order.String]),
+	);
+}
+```
+
+#### Radashi sort
+
+```ts
+import { castComparator, sort } from 'radashi';
+
+export function fulfillment(): Sorter {
+	const byStatus = castComparator((purchase: Purchase) => purchase.status);
+	const byNewest = castComparator(
+		(purchase: Purchase) => purchase.createdAt,
+		null,
+		true,
+	);
+	const bySurname = castComparator(
+		(purchase: Purchase) => purchase.customer.lastName,
+	);
+	return (purchases) =>
+		purchases.toSorted(
+			(a, b) => byStatus(a, b) || byNewest(a, b) || bySurname(a, b),
+		);
+}
+```
 
 ### Computed line-item total after discounts, descending
 
@@ -812,7 +985,7 @@ export function computed(): Sorter {
 #### Radashi sort
 
 ```ts
-import { sort } from 'radashi';
+import { castComparator, sort } from 'radashi';
 
 export function computed(): Sorter {
 	return (purchases) => sort(purchases, computedTotal, 'desc');
@@ -853,13 +1026,13 @@ The exhaustive profile runs each workload with shuffled, already sorted, reverse
 - The handwritten native baseline short-circuits directly on the workload fields. A separate native decorate–sort–undecorate baseline computes keys once per item into a flat object with one field per key. This distinguishes library overhead from the benefits and costs of caching.
 - Orders, comparator chains, selectors and rule arrays are prepared once outside timing for **every** implementation that supports reuse. Per-call work imposed by a library API remains timed. This measures repeated sorting with a reused definition, not one-shot construction or module startup.
 - ts-order class means `Order.sort()` (cached keys); compiled sort means `compile(order).sort()` with the same keys. The compiled compare row uses `compile(order).compare`. Code generation is completed outside timing. These are steady-state measurements, not compile-time or break-even measurements. ts-order comparator means `by()` directly for one key, or `order()` for multiple keys. They import separate public entry points. ts-order uses the local production build, not the previously published npm version. The runner requires Node with `new Function` available and stops if code generation is blocked. The library itself falls back to normal ordering in such environments; these compiled timings do not predict that fallback’s performance.
-- Lodash uses the tree-shakable `lodash-es` ESM distribution, rather than charging for the entire CommonJS library. es-toolkit core and compatibility `orderBy` are separate rows; the compatibility variant caches extracted keys. Effect Order uses its public primitive orders and mapped/composed comparators. A separate Effect `Array.sortWith` variant caches single numeric keys. Neither Effect entry needs an Effect runtime. Existing core/comparator rows are retained rather than silently switching algorithms by workload.
-- Radashi uses its built-in numeric `sort` only for the two single-key workloads. The cached Effect variant is also restricted to one numeric key in this suite. Unsupported multi-key cells are **—**, not custom wrappers presented as built-in features. Natural sorting, locale collation, missing keys, heterogeneous values, conditional rules and invalid numbers are outside this comparison; they have different semantics across libraries. [benchmarks/complex.md](benchmarks/complex.md) compares ts-order with native comparators on those.
+- Lodash uses the tree-shakable `lodash-es` ESM distribution, rather than charging for the entire CommonJS library. es-toolkit core and compatibility `orderBy` are separate rows; the compatibility variant caches extracted keys, as Lodash `orderBy` does. es-toolkit core, Remeda, fast-sort, thenby and Radashi call the key functions on every comparison. Effect Order uses its public primitive orders and mapped/composed comparators. A separate Effect `Array.sortWith` variant caches single numeric keys. Neither Effect entry needs an Effect runtime. Existing core/comparator rows are retained rather than silently switching algorithms by workload.
+- Every library runs every workload with its own public API. Radashi `sort` takes one numeric key and Radashi has no way to chain comparators, so its fulfillment queue joins one `castComparator` per key with `||`. Effect `Array.sortWith` computes one key per item; its fulfillment queue makes that key a tuple, compared with `Order.Tuple`. Natural sorting, locale collation, missing keys, heterogeneous values, conditional rules and invalid numbers are outside this comparison; they have different semantics across libraries. [benchmarks/complex.md](benchmarks/complex.md) compares ts-order with native comparators on those.
 - Correctness checks compare every output object against an independent handwritten reference, including exact tie order, before timing and after each warmup/measurement phase. Tests additionally freeze nested data and cover empty, singleton, tied, negative and zero-valued keys.
 
 ## Measurement method
 
-Each cell is the **median of 2 round means**, per complete sort. A column uses **µs** if its fastest entry is below 1 ms, otherwise **ms**; all entries within that column use the same unit. Each cell also shows its time divided by the fastest entry’s time: **1.00×** is fastest, **2.00×** takes twice as long. Bold marks the lowest observed time, not a proven statistical win. A † flags over 20% round-to-round variation. Exact variation percentages are in the collapsed tables; they are **not confidence intervals**. Raw JSON also records each round’s sample count, mean, median, p99 and Tinybench relative margin of error.
+Each cell is the **median of 2 round means**, per complete sort. A column uses **µs** if its fastest entry is below 1 ms, otherwise **ms**; all entries within that column use the same unit. Each cell also shows its time divided by the time of compiled ts-order `sort()`: **2.0×** takes twice as long. A medal marks one of the three lowest observed times, not a proven statistical win. A † flags over 20% round-to-round variation. Exact variation percentages are in the collapsed tables; they are **not confidence intervals**. Raw JSON also records each round’s sample count, mean, median, p99 and Tinybench relative margin of error.
 
 Tinybench runs synchronously and sequentially: at least 50 ms and 3 samples per implementation per cell, preceded by at least 20 ms and three warmup iterations. Implementation order is deterministically shuffled for each group and round. Seeds start at 20261119. No outliers are removed; no forced garbage collection runs between samples.
 
@@ -867,11 +1040,11 @@ With only two rounds, the displayed center averages the two round means; the dev
 
 ## Environment
 
-- Measured: 2026-11-20T05:41:04.996Z
+- Measured: 2026-11-20T12:33:02.618Z
 - Node: v24.22.3; V8: 13.6.233.17-node.63
 - System: darwin 24.5.0 arm64; CPU: Apple M1 Pro; RAM: 16 GiB
-- Base commit: `533ee99441631ce25396ef69b4f02147bc4fc608`; working tree dirty: **true**
-- Benchmark source SHA-256: `bdfd0a2544a1f6501922710aa626401bfacdcda56d52935092914ce356985720` (library and benchmark TypeScript, package.json and bun.lock; generated reports excluded)
+- Base commit: `064cca93ac1baff992f5ee5c76e6f61e50db2097`; working tree dirty: **true**
+- Benchmark source SHA-256: `fa54fa0161257c12ae8d18ba76edb1369b2c236c35d4b37deb3851f97fd313f7` (library and benchmark TypeScript, package.json and bun.lock; generated reports excluded)
 
 | Package | Version |
 | --- | --- |
@@ -879,11 +1052,11 @@ With only two rounds, the displayed center averages the two round means; the dev
 | lodash-es | 4.18.1 |
 | es-toolkit | 1.53.2 |
 | fast-sort | 3.4.1 |
-| remeda | 2.62.2 |
+| remeda | 2.60.0 |
 | thenby | 1.4.1 |
 | effect | 4.1.4 |
-| radashi | 13.1.0 |
-| tinybench | 6.2.4 |
+| radashi | 13.0.4 |
+| tinybench | 6.2.3 |
 | esbuild | 0.28.2 |
 | tsx | 4.23.15 |
 

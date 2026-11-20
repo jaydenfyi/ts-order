@@ -21,923 +21,963 @@ code{font-family:var(--font-mono,ui-monospace,monospace);font-size:.94em}
 <h2>Less time is better</h2>
 <p class="note muted">One complete non-mutating sort. 1,000 µs = 1 ms. 1.00× is fastest; 2.00× takes twice as long. Bars start at zero; scales reset for each selection. † = over 20% round variation; small or noisy differences are not reliable wins.</p>
 <figure data-runtime="total/shuffled/10" hidden>
-					<figcaption><strong>Native handwritten has the lowest observed time.</strong><br>Fastest library: ts-order compiled compare, 0.288 µs. Native baselines remain in the comparison.</figcaption>
+					<figcaption><strong>Native handwritten has the lowest observed time.</strong><br>Fastest library: ts-order compiled compare, 0.298 µs. Native baselines remain in the comparison.</figcaption>
 					<div class="bars" style="--rows:15" role="group" aria-label="Stored order total, ascending; 10 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
 			<div class="name">1. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:32.62567729299986%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">0.278 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:162.7">
+			<div class="track" aria-hidden="true"><i style="width:27.90410575977707%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">0.289 µs<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:163.4">
 			<div class="name">2. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:33.75254407986368%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">0.288 µs<small>1.03× time</small></div>
-		</div><div class="row " style="--heat:158.1">
-			<div class="name">3. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:35.950301427567524%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">0.307 µs<small>1.10× time</small></div>
-		</div><div class="row " style="--heat:150.9">
+			<div class="track" aria-hidden="true"><i style="width:28.744414295002407%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">0.298 µs<small>1.03× time</small></div>
+		</div><div class="row " style="--heat:146.4">
+			<div class="name">3. ts-order compiled sort</div>
+			<div class="track" aria-hidden="true"><i style="width:37.49195361322368%"></i></div>
+			<div class="value" title="Round variation ±9%; not a confidence interval">0.388 µs<small>1.34× time</small></div>
+		</div><div class="row " style="--heat:144.3">
 			<div class="name">4. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:39.42851409850532%"></i></div>
-			<div class="value" title="Round variation ±5%; not a confidence interval">0.336 µs<small>1.21× time</small></div>
-		</div><div class="row " style="--heat:147.7">
-			<div class="name">5. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:40.964072267228815%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">0.35 µs<small>1.26× time</small></div>
-		</div><div class="row " style="--heat:126.4">
+			<div class="track" aria-hidden="true"><i style="width:38.55786262786697%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">0.399 µs<small>1.38× time</small></div>
+		</div><div class="row " style="--heat:144.1">
+			<div class="name">5. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:38.66778969050018%"></i></div>
+			<div class="value" title="Round variation ±14%; not a confidence interval">0.4 µs<small>1.39× time</small></div>
+		</div><div class="row " style="--heat:131.4">
 			<div class="name">6. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:51.208383974411596%"></i></div>
-			<div class="value" title="Round variation ±34%; not a confidence interval">0.437 µs<small>1.57× time · noisy †</small></div>
-		</div><div class="row " style="--heat:123.7">
-			<div class="name">7. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:52.48185714975282%"></i></div>
-			<div class="value" title="Round variation ±36%; not a confidence interval">0.448 µs<small>1.61× time · noisy †</small></div>
-		</div><div class="row " style="--heat:101.8">
-			<div class="name">8. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:63.02443987134869%"></i></div>
-			<div class="value" title="Round variation ±19%; not a confidence interval">0.538 µs<small>1.93× time</small></div>
-		</div><div class="row " style="--heat:98.4">
-			<div class="name">9. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:64.69635396017257%"></i></div>
-			<div class="value" title="Round variation ±30%; not a confidence interval">0.552 µs<small>1.98× time · noisy †</small></div>
-		</div><div class="row " style="--heat:92.6">
-			<div class="name">10. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:67.48228124606246%"></i></div>
-			<div class="value" title="Round variation ±39%; not a confidence interval">0.576 µs<small>2.07× time · noisy †</small></div>
-		</div><div class="row " style="--heat:91.5">
-			<div class="name">11. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:67.9847237303185%"></i></div>
-			<div class="value" title="Round variation ±25%; not a confidence interval">0.58 µs<small>2.08× time · noisy †</small></div>
-		</div><div class="row " style="--heat:91.2">
-			<div class="name">12. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:68.13958940758654%"></i></div>
-			<div class="value" title="Round variation ±54%; not a confidence interval">0.582 µs<small>2.09× time · noisy †</small></div>
-		</div><div class="row " style="--heat:62.4">
-			<div class="name">13. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:82.00957853700268%"></i></div>
-			<div class="value" title="Round variation ±39%; not a confidence interval">0.7 µs<small>2.51× time · noisy †</small></div>
-		</div><div class="row " style="--heat:46.8">
-			<div class="name">14. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:89.48751744321495%"></i></div>
-			<div class="value" title="Round variation ±15%; not a confidence interval">0.764 µs<small>2.74× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:45.21307425705977%"></i></div>
+			<div class="value" title="Round variation ±35%; not a confidence interval">0.468 µs<small>1.62× time · noisy †</small></div>
+		</div><div class="row " style="--heat:116.7">
+			<div class="name">7. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:52.78532569505131%"></i></div>
+			<div class="value" title="Round variation ±19%; not a confidence interval">0.547 µs<small>1.89× time</small></div>
+		</div><div class="row " style="--heat:111.9">
+			<div class="name">8. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:55.25907639900821%"></i></div>
+			<div class="value" title="Round variation ±44%; not a confidence interval">0.572 µs<small>1.98× time · noisy †</small></div>
+		</div><div class="row " style="--heat:107.8">
+			<div class="name">9. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:57.38335025781927%"></i></div>
+			<div class="value" title="Round variation ±24%; not a confidence interval">0.594 µs<small>2.06× time · noisy †</small></div>
+		</div><div class="row " style="--heat:103.4">
+			<div class="name">10. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:59.6448473281323%"></i></div>
+			<div class="value" title="Round variation ±24%; not a confidence interval">0.618 µs<small>2.14× time · noisy †</small></div>
+		</div><div class="row " style="--heat:99.1">
+			<div class="name">11. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:61.828889162151555%"></i></div>
+			<div class="value" title="Round variation ±44%; not a confidence interval">0.64 µs<small>2.22× time · noisy †</small></div>
+		</div><div class="row " style="--heat:86.6">
+			<div class="name">12. Effect Order</div>
+			<div class="track" aria-hidden="true"><i style="width:68.28774563329829%"></i></div>
+			<div class="value" title="Round variation ±44%; not a confidence interval">0.707 µs<small>2.45× time · noisy †</small></div>
+		</div><div class="row " style="--heat:62.6">
+			<div class="name">13. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:80.65009421291829%"></i></div>
+			<div class="value" title="Round variation ±18%; not a confidence interval">0.835 µs<small>2.89× time</small></div>
+		</div><div class="row " style="--heat:29.7">
+			<div class="name">14. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:97.5934675485253%"></i></div>
+			<div class="value" title="Round variation ±41%; not a confidence interval">1.01 µs<small>3.50× time · noisy †</small></div>
 		</div><div class="row " style="--heat:25.0">
 			<div class="name">15. Lodash (lodash-es)</div>
 			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±20%; not a confidence interval">0.853 µs<small>3.07× time · noisy †</small></div>
+			<div class="value" title="Round variation ±28%; not a confidence interval">1.04 µs<small>3.58× time · noisy †</small></div>
 		</div></div>
 				</figure>
 <figure data-runtime="total/shuffled/100" hidden>
-					<figcaption><strong>Native handwritten has the lowest observed time.</strong><br>Fastest library: ts-order compiled compare, 5.63 µs. Native baselines remain in the comparison.</figcaption>
+					<figcaption><strong>Native handwritten has the lowest observed time.</strong><br>Fastest library: Radashi sort, 5.84 µs. Native baselines remain in the comparison.</figcaption>
 					<div class="bars" style="--rows:15" role="group" aria-label="Stored order total, ascending; 100 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
 			<div class="name">1. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:23.87976816324103%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">5.32 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:162.5">
-			<div class="name">2. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:25.231636243926708%"></i></div>
-			<div class="value" title="Round variation ±7%; not a confidence interval">5.63 µs<small>1.06× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:24.690740058448473%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">5.26 µs<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:160.0">
+			<div class="name">2. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:27.397279807202718%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">5.84 µs<small>1.11× time</small></div>
 		</div><div class="row " style="--heat:159.7">
-			<div class="name">3. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:26.781602487082317%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">5.97 µs<small>1.12× time</small></div>
-		</div><div class="row " style="--heat:159.5">
+			<div class="name">3. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:27.55332933217316%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">5.87 µs<small>1.12× time</small></div>
+		</div><div class="row " style="--heat:158.6">
 			<div class="name">4. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:26.881357673086033%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">5.99 µs<small>1.13× time</small></div>
-		</div><div class="row " style="--heat:153.2">
+			<div class="track" aria-hidden="true"><i style="width:28.116714430135143%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">5.99 µs<small>1.14× time</small></div>
+		</div><div class="row " style="--heat:151.0">
 			<div class="name">5. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:30.268536723554362%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">6.75 µs<small>1.27× time</small></div>
-		</div><div class="row " style="--heat:105.8">
+			<div class="track" aria-hidden="true"><i style="width:32.21272074196223%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">6.87 µs<small>1.30× time</small></div>
+		</div><div class="row " style="--heat:100.5">
 			<div class="name">6. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:56.09280370114473%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">12.5 µs<small>2.35× time</small></div>
-		</div><div class="row " style="--heat:99.7">
-			<div class="name">7. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:59.36530216039218%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">13.2 µs<small>2.49× time</small></div>
-		</div><div class="row " style="--heat:98.5">
-			<div class="name">8. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:60.02365312091236%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">13.4 µs<small>2.51× time</small></div>
-		</div><div class="row " style="--heat:79.9">
+			<div class="track" aria-hidden="true"><i style="width:59.41358433002784%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">12.7 µs<small>2.41× time</small></div>
+		</div><div class="row " style="--heat:96.8">
+			<div class="name">7. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:61.35411959155627%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">13.1 µs<small>2.48× time</small></div>
+		</div><div class="row " style="--heat:95.1">
+			<div class="name">8. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:62.30799141140516%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">13.3 µs<small>2.52× time</small></div>
+		</div><div class="row " style="--heat:73.7">
 			<div class="name">9. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:70.16032798318238%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">15.6 µs<small>2.94× time</small></div>
-		</div><div class="row " style="--heat:79.8">
+			<div class="track" aria-hidden="true"><i style="width:73.82255974863035%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">15.7 µs<small>2.99× time</small></div>
+		</div><div class="row " style="--heat:72.3">
 			<div class="name">10. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:70.20073382213545%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">15.7 µs<small>2.94× time</small></div>
-		</div><div class="row " style="--heat:72.1">
+			<div class="track" aria-hidden="true"><i style="width:74.5566230250767%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">15.9 µs<small>3.02× time</small></div>
+		</div><div class="row " style="--heat:62.4">
 			<div class="name">11. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:74.40031684625833%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">16.6 µs<small>3.12× time</small></div>
-		</div><div class="row " style="--heat:62.9">
+			<div class="track" aria-hidden="true"><i style="width:79.8754596573394%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">17 µs<small>3.24× time</small></div>
+		</div><div class="row " style="--heat:56.3">
 			<div class="name">12. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:79.41948099827721%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">17.7 µs<small>3.33× time</small></div>
-		</div><div class="row " style="--heat:32.3">
-			<div class="name">13. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:96.04147090493966%"></i></div>
-			<div class="value" title="Round variation ±36%; not a confidence interval">21.4 µs<small>4.02× time · noisy †</small></div>
-		</div><div class="row " style="--heat:31.0">
-			<div class="name">14. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:96.74095593353242%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">21.6 µs<small>4.05× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:83.16719678750914%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">17.7 µs<small>3.37× time</small></div>
+		</div><div class="row " style="--heat:49.9">
+			<div class="name">13. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:86.61357717575076%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">18.5 µs<small>3.51× time</small></div>
+		</div><div class="row " style="--heat:43.8">
+			<div class="name">14. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:89.86736817780996%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">19.2 µs<small>3.64× time</small></div>
 		</div><div class="row " style="--heat:25.0">
-			<div class="name">15. ts-order comparator</div>
+			<div class="name">15. Effect Order</div>
 			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±19%; not a confidence interval">22.3 µs<small>4.19× time</small></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">21.3 µs<small>4.05× time</small></div>
 		</div></div>
 				</figure>
 <figure data-runtime="total/shuffled/1000" hidden>
-					<figcaption><strong>Native cached keys has the lowest observed time.</strong><br>Fastest library: Radashi sort, 120 µs. Native baselines remain in the comparison.</figcaption>
+					<figcaption><strong>Native handwritten has the lowest observed time.</strong><br>Fastest library: Radashi sort, 120 µs. Native baselines remain in the comparison.</figcaption>
 					<div class="bars" style="--rows:15" role="group" aria-label="Stored order total, ascending; 1000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
-			<div class="name">1. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:32.33962786554475%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">116 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:162.3">
-			<div class="name">2. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:33.64270161763595%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">120 µs<small>1.04× time</small></div>
-		</div><div class="row " style="--heat:161.0">
-			<div class="name">3. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:34.27745591461721%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">123 µs<small>1.06× time</small></div>
-		</div><div class="row " style="--heat:155.8">
-			<div class="name">4. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:36.77903320692367%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">132 µs<small>1.14× time</small></div>
-		</div><div class="row " style="--heat:113.4">
-			<div class="name">5. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:57.26976241970685%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">205 µs<small>1.77× time</small></div>
-		</div><div class="row " style="--heat:105.8">
-			<div class="name">6. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:60.940125831736715%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">218 µs<small>1.88× time</small></div>
-		</div><div class="row " style="--heat:103.4">
-			<div class="name">7. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:62.095497430158545%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">222 µs<small>1.92× time</small></div>
-		</div><div class="row " style="--heat:100.3">
+			<div class="name">1. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:32.79076707301353%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">111 µs<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:162.4">
+			<div class="name">2. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:34.04042012635762%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">115 µs<small>1.04× time</small></div>
+		</div><div class="row " style="--heat:159.6">
+			<div class="name">3. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:35.369548218585884%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">120 µs<small>1.08× time</small></div>
+		</div><div class="row " style="--heat:159.5">
+			<div class="name">4. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:35.451361683879426%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">120 µs<small>1.08× time</small></div>
+		</div><div class="row " style="--heat:151.6">
+			<div class="name">5. ts-order compiled sort</div>
+			<div class="track" aria-hidden="true"><i style="width:39.226908355301745%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">133 µs<small>1.20× time</small></div>
+		</div><div class="row " style="--heat:106.2">
+			<div class="name">6. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:60.99870040104667%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">206 µs<small>1.86× time</small></div>
+		</div><div class="row " style="--heat:100.0">
+			<div class="name">7. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:63.98019435384323%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">217 µs<small>1.95× time</small></div>
+		</div><div class="row " style="--heat:93.6">
 			<div class="name">8. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:63.5979013589581%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">228 µs<small>1.97× time</small></div>
-		</div><div class="row " style="--heat:89.6">
+			<div class="track" aria-hidden="true"><i style="width:67.05029321643552%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">227 µs<small>2.04× time</small></div>
+		</div><div class="row " style="--heat:82.1">
 			<div class="name">9. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:68.76083825582432%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">246 µs<small>2.13× time</small></div>
-		</div><div class="row " style="--heat:80.0">
-			<div class="name">10. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:73.43843644991269%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">263 µs<small>2.27× time</small></div>
-		</div><div class="row " style="--heat:79.0">
-			<div class="name">11. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:73.90281946395682%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">264 µs<small>2.29× time</small></div>
-		</div><div class="row " style="--heat:73.9">
+			<div class="track" aria-hidden="true"><i style="width:72.58310234568248%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">246 µs<small>2.21× time</small></div>
+		</div><div class="row " style="--heat:71.5">
+			<div class="name">10. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:77.66562883144924%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">263 µs<small>2.37× time</small></div>
+		</div><div class="row " style="--heat:70.5">
+			<div class="name">11. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:78.15999571233412%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">265 µs<small>2.38× time</small></div>
+		</div><div class="row " style="--heat:66.6">
 			<div class="name">12. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:76.38965965370598%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">273 µs<small>2.36× time</small></div>
-		</div><div class="row " style="--heat:60.3">
-			<div class="name">13. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:82.91693979508985%"></i></div>
-			<div class="value" title="Round variation ±63%; not a confidence interval">297 µs<small>2.56× time · noisy †</small></div>
-		</div><div class="row " style="--heat:29.1">
-			<div class="name">14. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:98.01783544047197%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">351 µs<small>3.03× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:80.04611093706822%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">271 µs<small>2.44× time</small></div>
+		</div><div class="row " style="--heat:50.6">
+			<div class="name">13. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:87.71103523322601%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">297 µs<small>2.67× time</small></div>
+		</div><div class="row " style="--heat:48.3">
+			<div class="name">14. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:88.83731716417628%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">301 µs<small>2.71× time</small></div>
 		</div><div class="row " style="--heat:25.0">
-			<div class="name">15. ts-order comparator</div>
+			<div class="name">15. Effect Order</div>
 			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±14%; not a confidence interval">358 µs<small>3.09× time</small></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">338 µs<small>3.05× time</small></div>
 		</div></div>
 				</figure>
 <figure data-runtime="total/shuffled/10000" hidden>
-					<figcaption><strong>Native cached keys has the lowest observed time.</strong><br>Fastest library: Radashi sort, 1.85 ms. Native baselines remain in the comparison.</figcaption>
+					<figcaption><strong>Native handwritten has the lowest observed time.</strong><br>Fastest library: Radashi sort, 1.8 ms. Native baselines remain in the comparison.</figcaption>
 					<div class="bars" style="--rows:15" role="group" aria-label="Stored order total, ascending; 10000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
-			<div class="name">1. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:34.78992799485436%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">1.65 ms<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:157.2">
-			<div class="name">2. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:38.44476174210801%"></i></div>
-			<div class="value" title="Round variation ±8%; not a confidence interval">1.82 ms<small>1.11× time</small></div>
-		</div><div class="row " style="--heat:155.8">
+			<div class="name">1. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:34.737071688593765%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">1.66 ms<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:164.4">
+			<div class="name">2. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:35.01217579391206%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">1.67 ms<small>1.01× time</small></div>
+		</div><div class="row " style="--heat:158.5">
 			<div class="name">3. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:39.083004828789015%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">1.85 ms<small>1.12× time</small></div>
-		</div><div class="row " style="--heat:154.8">
+			<div class="track" aria-hidden="true"><i style="width:37.77002020811762%"></i></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">1.8 ms<small>1.09× time</small></div>
+		</div><div class="row " style="--heat:155.7">
 			<div class="name">4. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:39.55326174325689%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">1.87 ms<small>1.14× time</small></div>
-		</div><div class="row " style="--heat:152.9">
+			<div class="track" aria-hidden="true"><i style="width:39.08120412075678%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">1.87 ms<small>1.13× time</small></div>
+		</div><div class="row " style="--heat:154.2">
 			<div class="name">5. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:40.43697102656674%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">1.92 ms<small>1.16× time</small></div>
-		</div><div class="row " style="--heat:104.2">
+			<div class="track" aria-hidden="true"><i style="width:39.79267120889981%"></i></div>
+			<div class="value" title="Round variation ±7%; not a confidence interval">1.9 ms<small>1.15× time</small></div>
+		</div><div class="row " style="--heat:107.7">
 			<div class="name">6. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:63.08889677896552%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">2.99 ms<small>1.81× time</small></div>
-		</div><div class="row " style="--heat:98.2">
+			<div class="track" aria-hidden="true"><i style="width:61.43585965667111%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">2.93 ms<small>1.77× time</small></div>
+		</div><div class="row " style="--heat:103.6">
 			<div class="name">7. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:65.90616201741001%"></i></div>
-			<div class="value" title="Round variation ±8%; not a confidence interval">3.12 ms<small>1.89× time</small></div>
-		</div><div class="row " style="--heat:86.5">
-			<div class="name">8. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:71.36284053072228%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">3.38 ms<small>2.05× time</small></div>
-		</div><div class="row " style="--heat:84.0">
-			<div class="name">9. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:72.53662775829278%"></i></div>
-			<div class="value" title="Round variation ±7%; not a confidence interval">3.44 ms<small>2.08× time</small></div>
-		</div><div class="row " style="--heat:70.1">
-			<div class="name">10. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:78.98637640851345%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">3.74 ms<small>2.27× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:63.34088196742719%"></i></div>
+			<div class="value" title="Round variation ±7%; not a confidence interval">3.03 ms<small>1.82× time</small></div>
+		</div><div class="row " style="--heat:96.2">
+			<div class="name">8. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:66.79365873098642%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">3.19 ms<small>1.92× time</small></div>
+		</div><div class="row " style="--heat:84.5">
+			<div class="name">9. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:72.28416516893155%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">3.45 ms<small>2.08× time</small></div>
 		</div><div class="row " style="--heat:69.4">
+			<div class="name">10. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:79.28860938109045%"></i></div>
+			<div class="value" title="Round variation ±8%; not a confidence interval">3.79 ms<small>2.28× time</small></div>
+		</div><div class="row " style="--heat:67.8">
 			<div class="name">11. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:79.311428602442%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">3.76 ms<small>2.28× time</small></div>
-		</div><div class="row " style="--heat:66.0">
-			<div class="name">12. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:80.91944557634721%"></i></div>
-			<div class="value" title="Round variation ±7%; not a confidence interval">3.83 ms<small>2.33× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:80.04173160098912%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">3.82 ms<small>2.30× time</small></div>
+		</div><div class="row " style="--heat:64.5">
+			<div class="name">12. Lodash (lodash-es)</div>
+			<div class="track" aria-hidden="true"><i style="width:81.57808969667674%"></i></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">3.9 ms<small>2.35× time</small></div>
 		</div><div class="row " style="--heat:57.8">
-			<div class="name">13. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:84.73552864167083%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">4.01 ms<small>2.44× time</small></div>
-		</div><div class="row " style="--heat:35.7">
+			<div class="name">13. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:84.72418754177252%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">4.05 ms<small>2.44× time</small></div>
+		</div><div class="row " style="--heat:30.2">
 			<div class="name">14. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:95.03852085453038%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">4.5 ms<small>2.73× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:97.5588310478401%"></i></div>
+			<div class="value" title="Round variation ±12%; not a confidence interval">4.66 ms<small>2.81× time</small></div>
 		</div><div class="row " style="--heat:25.0">
 			<div class="name">15. Effect Order</div>
 			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">4.74 ms<small>2.87× time</small></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">4.78 ms<small>2.88× time</small></div>
 		</div></div>
 				</figure>
 <figure data-runtime="total/shuffled/100000" >
-					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 25.3 ms. Native baselines remain in the comparison.</figcaption>
+					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 25.1 ms. Native baselines remain in the comparison.</figcaption>
 					<div class="bars" style="--rows:15" role="group" aria-label="Stored order total, ascending; 100000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
 			<div class="name">1. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:27.43672820280249%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">25.3 ms<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:155.6">
-			<div class="name">2. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:32.28424397785397%"></i></div>
-			<div class="value" title="Round variation ±22%; not a confidence interval">29.7 ms<small>1.18× time · noisy †</small></div>
-		</div><div class="row " style="--heat:136.0">
-			<div class="name">3. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:42.445049985585975%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">39.1 ms<small>1.55× time</small></div>
-		</div><div class="row " style="--heat:132.4">
-			<div class="name">4. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:44.34759465661634%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">40.9 ms<small>1.62× time</small></div>
-		</div><div class="row " style="--heat:131.1">
-			<div class="name">5. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:45.018077173146764%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">41.5 ms<small>1.64× time</small></div>
-		</div><div class="row " style="--heat:122.8">
-			<div class="name">6. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:49.28701101039533%"></i></div>
-			<div class="value" title="Round variation ±9%; not a confidence interval">45.4 ms<small>1.80× time</small></div>
-		</div><div class="row " style="--heat:121.0">
+			<div class="track" aria-hidden="true"><i style="width:31.48163408514601%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">25.1 ms<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:148.3">
+			<div class="name">2. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:39.65066723687099%"></i></div>
+			<div class="value" title="Round variation ±21%; not a confidence interval">31.6 ms<small>1.26× time · noisy †</small></div>
+		</div><div class="row " style="--heat:147.6">
+			<div class="name">3. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:39.984961395413194%"></i></div>
+			<div class="value" title="Round variation ±12%; not a confidence interval">31.8 ms<small>1.27× time</small></div>
+		</div><div class="row " style="--heat:140.8">
+			<div class="name">4. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:43.336763345903016%"></i></div>
+			<div class="value" title="Round variation ±17%; not a confidence interval">34.5 ms<small>1.38× time</small></div>
+		</div><div class="row " style="--heat:139.6">
+			<div class="name">5. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:43.90058130648688%"></i></div>
+			<div class="value" title="Round variation ±21%; not a confidence interval">34.9 ms<small>1.39× time · noisy †</small></div>
+		</div><div class="row " style="--heat:124.3">
+			<div class="name">6. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:51.38541994720548%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">40.9 ms<small>1.63× time</small></div>
+		</div><div class="row " style="--heat:113.4">
 			<div class="name">7. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:50.236384132640374%"></i></div>
-			<div class="value" title="Round variation ±11%; not a confidence interval">46.3 ms<small>1.83× time</small></div>
-		</div><div class="row " style="--heat:88.0">
-			<div class="name">8. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:67.34292960459078%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">62.1 ms<small>2.45× time</small></div>
-		</div><div class="row " style="--heat:87.8">
-			<div class="name">9. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:67.46753915777049%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">62.2 ms<small>2.46× time</small></div>
-		</div><div class="row " style="--heat:86.6">
+			<div class="track" aria-hidden="true"><i style="width:56.73090181106222%"></i></div>
+			<div class="value" title="Round variation ±11%; not a confidence interval">45.2 ms<small>1.80× time</small></div>
+		</div><div class="row " style="--heat:89.1">
+			<div class="name">8. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:68.62202697216463%"></i></div>
+			<div class="value" title="Round variation ±10%; not a confidence interval">54.6 ms<small>2.18× time</small></div>
+		</div><div class="row " style="--heat:68.8">
+			<div class="name">9. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:78.54734624110682%"></i></div>
+			<div class="value" title="Round variation ±10%; not a confidence interval">62.5 ms<small>2.50× time</small></div>
+		</div><div class="row " style="--heat:64.8">
 			<div class="name">10. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:68.05790055889769%"></i></div>
-			<div class="value" title="Round variation ±8%; not a confidence interval">62.7 ms<small>2.48× time</small></div>
-		</div><div class="row " style="--heat:71.4">
-			<div class="name">11. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:75.94668985043378%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">70 ms<small>2.77× time</small></div>
-		</div><div class="row " style="--heat:58.1">
-			<div class="name">12. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:82.83271696416824%"></i></div>
-			<div class="value" title="Round variation ±10%; not a confidence interval">76.3 ms<small>3.02× time</small></div>
-		</div><div class="row " style="--heat:51.1">
-			<div class="name">13. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:86.4967367238297%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">79.7 ms<small>3.15× time</small></div>
-		</div><div class="row " style="--heat:40.5">
-			<div class="name">14. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:91.9667722834836%"></i></div>
-			<div class="value" title="Round variation ±8%; not a confidence interval">84.7 ms<small>3.35× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:80.5094356250251%"></i></div>
+			<div class="value" title="Round variation ±10%; not a confidence interval">64.1 ms<small>2.56× time</small></div>
+		</div><div class="row " style="--heat:59.8">
+			<div class="name">11. Lodash (lodash-es)</div>
+			<div class="track" aria-hidden="true"><i style="width:82.97520777233215%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">66 ms<small>2.64× time</small></div>
+		</div><div class="row " style="--heat:50.0">
+			<div class="name">12. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:87.76818619236205%"></i></div>
+			<div class="value" title="Round variation ±24%; not a confidence interval">69.9 ms<small>2.79× time · noisy †</small></div>
+		</div><div class="row " style="--heat:47.1">
+			<div class="name">13. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:89.17033932534893%"></i></div>
+			<div class="value" title="Round variation ±14%; not a confidence interval">71 ms<small>2.83× time</small></div>
+		</div><div class="row " style="--heat:39.1">
+			<div class="name">14. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:93.09012968212042%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">74.1 ms<small>2.96× time</small></div>
 		</div><div class="row " style="--heat:25.0">
 			<div class="name">15. Effect Order</div>
 			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">92.1 ms<small>3.64× time</small></div>
+			<div class="value" title="Round variation ±10%; not a confidence interval">79.6 ms<small>3.18× time</small></div>
 		</div></div>
 				</figure>
 <figure data-runtime="fulfillment/shuffled/10" hidden>
-					<figcaption><strong>ts-order compiled compare has the lowest observed time.</strong><br>Fastest library: ts-order compiled compare, 0.318 µs. Native baselines remain in the comparison.</figcaption>
-					<div class="bars" style="--rows:13" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 10 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
+					<figcaption><strong>ts-order compiled compare has the lowest observed time.</strong><br>Fastest library: ts-order compiled compare, 0.319 µs. Native baselines remain in the comparison.</figcaption>
+					<div class="bars" style="--rows:15" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 10 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
 			<div class="name">1. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:16.28433197656494%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">0.318 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:165.0">
+			<div class="track" aria-hidden="true"><i style="width:16.055786895855334%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">0.319 µs<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:164.0">
 			<div class="name">2. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:16.29039012917991%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">0.318 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:158.6">
-			<div class="name">3. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:20.0876670042848%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">0.392 µs<small>1.23× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:16.635095061947933%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">0.331 µs<small>1.04× time</small></div>
 		</div><div class="row " style="--heat:157.7">
+			<div class="name">3. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:20.46156028243747%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">0.407 µs<small>1.27× time</small></div>
+		</div><div class="row " style="--heat:155.9">
 			<div class="name">4. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:20.673016757416374%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">0.404 µs<small>1.27× time</small></div>
-		</div><div class="row " style="--heat:123.5">
-			<div class="name">5. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:41.076121164199655%"></i></div>
-			<div class="value" title="Round variation ±9%; not a confidence interval">0.802 µs<small>2.52× time</small></div>
-		</div><div class="row " style="--heat:111.5">
-			<div class="name">6. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:48.265643856690374%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">0.942 µs<small>2.96× time</small></div>
-		</div><div class="row " style="--heat:105.6">
-			<div class="name">7. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:51.81404028003759%"></i></div>
-			<div class="value" title="Round variation ±7%; not a confidence interval">1.01 µs<small>3.18× time</small></div>
-		</div><div class="row " style="--heat:102.9">
-			<div class="name">8. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:53.393087565890404%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">1.04 µs<small>3.28× time</small></div>
-		</div><div class="row " style="--heat:96.4">
-			<div class="name">9. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:57.27666187134823%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">1.12 µs<small>3.52× time</small></div>
-		</div><div class="row " style="--heat:79.1">
-			<div class="name">10. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:67.63275209613127%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">1.32 µs<small>4.15× time</small></div>
-		</div><div class="row " style="--heat:73.4">
-			<div class="name">11. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:71.07825478965265%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">1.39 µs<small>4.36× time</small></div>
-		</div><div class="row " style="--heat:29.6">
-			<div class="name">12. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:97.22547119498859%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">1.9 µs<small>5.97× time</small></div>
-		</div><div class="row " style="--heat:25.0">
-			<div class="name">13. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">1.95 µs<small>6.14× time</small></div>
-		</div></div>
-				</figure>
-<figure data-runtime="fulfillment/shuffled/100" hidden>
-					<figcaption><strong>ts-order compiled compare has the lowest observed time.</strong><br>Fastest library: ts-order compiled compare, 5.92 µs. Native baselines remain in the comparison.</figcaption>
-					<div class="bars" style="--rows:13" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 100 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
-			<div class="name">1. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:14.525763170835598%"></i></div>
-			<div class="value" title="Round variation ±12%; not a confidence interval">5.92 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:164.7">
-			<div class="name">2. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:14.703184695103246%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">5.99 µs<small>1.01× time</small></div>
-		</div><div class="row " style="--heat:159.7">
-			<div class="name">3. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:17.73538495612248%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">7.23 µs<small>1.22× time</small></div>
-		</div><div class="row " style="--heat:158.8">
-			<div class="name">4. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:18.329894589316094%"></i></div>
-			<div class="value" title="Round variation ±5%; not a confidence interval">7.47 µs<small>1.26× time</small></div>
-		</div><div class="row " style="--heat:111.9">
-			<div class="name">5. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:46.92982688668716%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">19.1 µs<small>3.23× time</small></div>
-		</div><div class="row " style="--heat:101.5">
-			<div class="name">6. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:53.31209329093169%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">21.7 µs<small>3.67× time</small></div>
-		</div><div class="row " style="--heat:98.5">
-			<div class="name">7. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:55.098053064837075%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">22.5 µs<small>3.79× time</small></div>
-		</div><div class="row " style="--heat:83.7">
-			<div class="name">8. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:64.16870584978281%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">26.2 µs<small>4.42× time</small></div>
-		</div><div class="row " style="--heat:75.3">
-			<div class="name">9. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:69.26519211468663%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">28.2 µs<small>4.77× time</small></div>
-		</div><div class="row " style="--heat:69.3">
-			<div class="name">10. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:72.94847972988224%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">29.7 µs<small>5.02× time</small></div>
-		</div><div class="row " style="--heat:62.1">
-			<div class="name">11. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:77.34866044208499%"></i></div>
-			<div class="value" title="Round variation ±13%; not a confidence interval">31.5 µs<small>5.32× time</small></div>
-		</div><div class="row " style="--heat:27.2">
-			<div class="name">12. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:98.64594393361388%"></i></div>
-			<div class="value" title="Round variation ±10%; not a confidence interval">40.2 µs<small>6.79× time</small></div>
-		</div><div class="row " style="--heat:25.0">
-			<div class="name">13. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±7%; not a confidence interval">40.8 µs<small>6.88× time</small></div>
-		</div></div>
-				</figure>
-<figure data-runtime="fulfillment/shuffled/1000" hidden>
-					<figcaption><strong>ts-order compiled compare has the lowest observed time.</strong><br>Fastest library: ts-order compiled compare, 155 µs. Native baselines remain in the comparison.</figcaption>
-					<div class="bars" style="--rows:13" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 1000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
-			<div class="name">1. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:22.345155146907135%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">155 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:164.8">
-			<div class="name">2. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:22.471563081476713%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">156 µs<small>1.01× time</small></div>
-		</div><div class="row " style="--heat:164.4">
-			<div class="name">3. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:22.68534464884113%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">158 µs<small>1.02× time</small></div>
-		</div><div class="row " style="--heat:162.1">
-			<div class="name">4. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:23.95683507898626%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">167 µs<small>1.07× time</small></div>
-		</div><div class="row " style="--heat:121.2">
-			<div class="name">5. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:46.66212778636834%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">325 µs<small>2.09× time</small></div>
-		</div><div class="row " style="--heat:110.4">
-			<div class="name">6. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:52.63951879409553%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">366 µs<small>2.36× time</small></div>
-		</div><div class="row " style="--heat:104.0">
-			<div class="name">7. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:56.17441997228031%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">391 µs<small>2.51× time</small></div>
-		</div><div class="row " style="--heat:97.1">
-			<div class="name">8. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:60.00405221607446%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">417 µs<small>2.69× time</small></div>
-		</div><div class="row " style="--heat:84.4">
-			<div class="name">9. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:67.03041795587096%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">466 µs<small>3.00× time</small></div>
-		</div><div class="row " style="--heat:78.5">
-			<div class="name">10. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:70.33449128801445%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">489 µs<small>3.15× time</small></div>
-		</div><div class="row " style="--heat:68.6">
-			<div class="name">11. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:75.8272054459022%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">527 µs<small>3.39× time</small></div>
-		</div><div class="row " style="--heat:33.4">
-			<div class="name">12. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:95.35571791938195%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">663 µs<small>4.27× time</small></div>
-		</div><div class="row " style="--heat:25.0">
-			<div class="name">13. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">696 µs<small>4.48× time</small></div>
-		</div></div>
-				</figure>
-<figure data-runtime="fulfillment/shuffled/10000" hidden>
-					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 2.46 ms. Native baselines remain in the comparison.</figcaption>
-					<div class="bars" style="--rows:13" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 10000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
-			<div class="name">1. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:22.39115781472756%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">2.46 ms<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:162.7">
-			<div class="name">2. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:23.64293821293665%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">2.59 ms<small>1.06× time</small></div>
-		</div><div class="row " style="--heat:160.4">
-			<div class="name">3. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:24.932856914973335%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">2.73 ms<small>1.11× time</small></div>
-		</div><div class="row " style="--heat:158.5">
-			<div class="name">4. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:25.981702565312816%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">2.85 ms<small>1.16× time</small></div>
-		</div><div class="row " style="--heat:124.9">
-			<div class="name">5. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:44.60485191929997%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">4.89 ms<small>1.99× time</small></div>
-		</div><div class="row " style="--heat:110.4">
-			<div class="name">6. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:52.658215080679874%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">5.78 ms<small>2.35× time</small></div>
-		</div><div class="row " style="--heat:96.6">
-			<div class="name">7. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:60.307899272997744%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">6.61 ms<small>2.69× time</small></div>
-		</div><div class="row " style="--heat:95.5">
-			<div class="name">8. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:60.91816436981057%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">6.68 ms<small>2.72× time</small></div>
-		</div><div class="row " style="--heat:80.5">
-			<div class="name">9. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:69.23179531028784%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">7.59 ms<small>3.09× time</small></div>
-		</div><div class="row " style="--heat:80.1">
-			<div class="name">10. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:69.47619771915524%"></i></div>
-			<div class="value" title="Round variation ±5%; not a confidence interval">7.62 ms<small>3.10× time</small></div>
-		</div><div class="row " style="--heat:69.0">
-			<div class="name">11. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:75.61944508670032%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">8.29 ms<small>3.38× time</small></div>
-		</div><div class="row " style="--heat:28.7">
-			<div class="name">12. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:97.94648452116675%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">10.7 ms<small>4.37× time</small></div>
-		</div><div class="row " style="--heat:25.0">
-			<div class="name">13. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">11 ms<small>4.47× time</small></div>
-		</div></div>
-				</figure>
-<figure data-runtime="fulfillment/shuffled/100000" hidden>
-					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 38 ms. Native baselines remain in the comparison.</figcaption>
-					<div class="bars" style="--rows:13" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 100000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
-			<div class="name">1. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:17.873146042705613%"></i></div>
-			<div class="value" title="Round variation ±12%; not a confidence interval">38 ms<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:159.7">
-			<div class="name">2. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:20.963154813805335%"></i></div>
-			<div class="value" title="Round variation ±5%; not a confidence interval">44.6 ms<small>1.17× time</small></div>
-		</div><div class="row " style="--heat:146.4">
-			<div class="name">3. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:28.75784029441605%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">61.2 ms<small>1.61× time</small></div>
-		</div><div class="row " style="--heat:141.1">
-			<div class="name">4. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:31.908450966792234%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">67.9 ms<small>1.79× time</small></div>
-		</div><div class="row " style="--heat:114.7">
-			<div class="name">5. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:47.40658610809598%"></i></div>
-			<div class="value" title="Round variation ±19%; not a confidence interval">101 ms<small>2.65× time</small></div>
-		</div><div class="row " style="--heat:110.7">
-			<div class="name">6. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:49.707119860785454%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">106 ms<small>2.78× time</small></div>
-		</div><div class="row " style="--heat:88.8">
-			<div class="name">7. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:62.56971852177876%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">133 ms<small>3.50× time</small></div>
-		</div><div class="row " style="--heat:80.1">
-			<div class="name">8. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:67.67026436931587%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">144 ms<small>3.79× time</small></div>
-		</div><div class="row " style="--heat:76.3">
-			<div class="name">9. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:69.92128914565666%"></i></div>
-			<div class="value" title="Round variation ±5%; not a confidence interval">149 ms<small>3.91× time</small></div>
-		</div><div class="row " style="--heat:58.4">
-			<div class="name">10. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:80.43206216854276%"></i></div>
-			<div class="value" title="Round variation ±28%; not a confidence interval">171 ms<small>4.50× time · noisy †</small></div>
-		</div><div class="row " style="--heat:43.6">
-			<div class="name">11. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:89.10020262990112%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">189 ms<small>4.99× time</small></div>
-		</div><div class="row " style="--heat:41.2">
-			<div class="name">12. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:90.47262292265471%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">192 ms<small>5.06× time</small></div>
-		</div><div class="row " style="--heat:25.0">
-			<div class="name">13. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±8%; not a confidence interval">213 ms<small>5.59× time</small></div>
-		</div></div>
-				</figure>
-<figure data-runtime="computed/shuffled/10" hidden>
-					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 0.52 µs. Native baselines remain in the comparison.</figcaption>
-					<div class="bars" style="--rows:15" role="group" aria-label="Computed line-item total after discounts, descending; 10 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
-			<div class="name">1. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:28.58478276275367%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">0.52 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:163.7">
-			<div class="name">2. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:29.223809305546144%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">0.532 µs<small>1.02× time</small></div>
-		</div><div class="row " style="--heat:126.8">
-			<div class="name">3. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:48.09484064324284%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">0.875 µs<small>1.68× time</small></div>
-		</div><div class="row " style="--heat:115.9">
-			<div class="name">4. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:53.64526333981829%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">0.976 µs<small>1.88× time</small></div>
-		</div><div class="row " style="--heat:114.1">
+			<div class="track" aria-hidden="true"><i style="width:21.513155040071723%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">0.428 µs<small>1.34× time</small></div>
+		</div><div class="row " style="--heat:142.8">
 			<div class="name">5. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:54.53048332571395%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">0.993 µs<small>1.91× time</small></div>
-		</div><div class="row " style="--heat:113.9">
-			<div class="name">6. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:54.675989135680794%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">0.995 µs<small>1.91× time</small></div>
-		</div><div class="row " style="--heat:113.8">
-			<div class="name">7. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:54.723040318203644%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">0.996 µs<small>1.91× time</small></div>
-		</div><div class="row " style="--heat:108.3">
-			<div class="name">8. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:57.49117253076514%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">1.05 µs<small>2.01× time</small></div>
-		</div><div class="row " style="--heat:98.3">
-			<div class="name">9. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:62.6288932021256%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">1.14 µs<small>2.19× time</small></div>
-		</div><div class="row " style="--heat:86.4">
-			<div class="name">10. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:68.68685352382211%"></i></div>
-			<div class="value" title="Round variation ±5%; not a confidence interval">1.25 µs<small>2.40× time</small></div>
-		</div><div class="row " style="--heat:84.4">
-			<div class="name">11. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:69.70890540554205%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">1.27 µs<small>2.44× time</small></div>
-		</div><div class="row " style="--heat:68.8">
-			<div class="name">12. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:77.65299707028215%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">1.41 µs<small>2.72× time</small></div>
-		</div><div class="row " style="--heat:67.9">
-			<div class="name">13. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:78.12584714990217%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">1.42 µs<small>2.73× time</small></div>
-		</div><div class="row " style="--heat:64.1">
-			<div class="name">14. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:80.05724051387702%"></i></div>
-			<div class="value" title="Round variation ±5%; not a confidence interval">1.46 µs<small>2.80× time</small></div>
-		</div><div class="row " style="--heat:25.0">
-			<div class="name">15. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±8%; not a confidence interval">1.82 µs<small>3.50× time</small></div>
-		</div></div>
-				</figure>
-<figure data-runtime="computed/shuffled/100" hidden>
-					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 8.23 µs. Native baselines remain in the comparison.</figcaption>
-					<div class="bars" style="--rows:15" role="group" aria-label="Computed line-item total after discounts, descending; 100 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
-			<div class="name">1. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:17.59469134985771%"></i></div>
-			<div class="value" title="Round variation ±0%; not a confidence interval">8.23 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:158.6">
-			<div class="name">2. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:21.380895869471647%"></i></div>
-			<div class="value" title="Round variation ±29%; not a confidence interval">10 µs<small>1.22× time · noisy †</small></div>
-		</div><div class="row " style="--heat:139.1">
-			<div class="name">3. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:32.827188640397445%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">15.4 µs<small>1.87× time</small></div>
-		</div><div class="row " style="--heat:128.3">
-			<div class="name">4. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:39.20420600530156%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">18.3 µs<small>2.23× time</small></div>
-		</div><div class="row " style="--heat:127.7">
-			<div class="name">5. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:39.54766281704008%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">18.5 µs<small>2.25× time</small></div>
-		</div><div class="row " style="--heat:125.1">
-			<div class="name">6. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:41.07905437382891%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">19.2 µs<small>2.33× time</small></div>
-		</div><div class="row " style="--heat:115.2">
-			<div class="name">7. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:46.9080799199259%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">21.9 µs<small>2.67× time</small></div>
-		</div><div class="row " style="--heat:115.2">
-			<div class="name">8. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:46.91785137869844%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">21.9 µs<small>2.67× time</small></div>
-		</div><div class="row " style="--heat:109.8">
-			<div class="name">9. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:50.110100349156525%"></i></div>
-			<div class="value" title="Round variation ±8%; not a confidence interval">23.4 µs<small>2.85× time</small></div>
-		</div><div class="row " style="--heat:88.1">
-			<div class="name">10. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:62.83474696370184%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">29.4 µs<small>3.57× time</small></div>
-		</div><div class="row " style="--heat:74.7">
-			<div class="name">11. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:70.77043953433069%"></i></div>
-			<div class="value" title="Round variation ±11%; not a confidence interval">33.1 µs<small>4.02× time</small></div>
-		</div><div class="row " style="--heat:71.5">
-			<div class="name">12. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:72.65317572870111%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">34 µs<small>4.13× time</small></div>
-		</div><div class="row " style="--heat:68.6">
-			<div class="name">13. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:74.31305279943702%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">34.8 µs<small>4.22× time</small></div>
-		</div><div class="row " style="--heat:41.6">
-			<div class="name">14. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:90.19969144016564%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">42.2 µs<small>5.13× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:29.372487053402924%"></i></div>
+			<div class="value" title="Round variation ±35%; not a confidence interval">0.584 µs<small>1.83× time · noisy †</small></div>
+		</div><div class="row " style="--heat:108.2">
+			<div class="name">6. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:50.127864753245476%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">0.997 µs<small>3.12× time</small></div>
+		</div><div class="row " style="--heat:104.7">
+			<div class="name">7. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:52.19390889941808%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">1.04 µs<small>3.25× time</small></div>
+		</div><div class="row " style="--heat:101.8">
+			<div class="name">8. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:53.97116539511235%"></i></div>
+			<div class="value" title="Round variation ±8%; not a confidence interval">1.07 µs<small>3.36× time</small></div>
+		</div><div class="row " style="--heat:100.6">
+			<div class="name">9. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:54.680332521611284%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">1.09 µs<small>3.41× time</small></div>
+		</div><div class="row " style="--heat:100.3">
+			<div class="name">10. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:54.84811308770681%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">1.09 µs<small>3.42× time</small></div>
+		</div><div class="row " style="--heat:90.0">
+			<div class="name">11. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:61.0404017982532%"></i></div>
+			<div class="value" title="Round variation ±12%; not a confidence interval">1.21 µs<small>3.80× time</small></div>
+		</div><div class="row " style="--heat:80.0">
+			<div class="name">12. Lodash (lodash-es)</div>
+			<div class="track" aria-hidden="true"><i style="width:67.04429561557444%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">1.33 µs<small>4.18× time</small></div>
+		</div><div class="row " style="--heat:58.0">
+			<div class="name">13. Effect Order</div>
+			<div class="track" aria-hidden="true"><i style="width:80.21726527023407%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">1.6 µs<small>5.00× time</small></div>
+		</div><div class="row " style="--heat:25.8">
+			<div class="name">14. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:99.5053631310616%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">1.98 µs<small>6.20× time</small></div>
 		</div><div class="row " style="--heat:25.0">
 			<div class="name">15. fast-sort</div>
 			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±31%; not a confidence interval">46.8 µs<small>5.68× time · noisy †</small></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">1.99 µs<small>6.23× time</small></div>
+		</div></div>
+				</figure>
+<figure data-runtime="fulfillment/shuffled/100" hidden>
+					<figcaption><strong>Native handwritten has the lowest observed time.</strong><br>Fastest library: ts-order compiled compare, 6.7 µs. Native baselines remain in the comparison.</figcaption>
+					<div class="bars" style="--rows:15" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 100 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
+			<div class="name">1. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:15.280829203563972%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">6.01 µs<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:162.1">
+			<div class="name">2. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:17.02194237959196%"></i></div>
+			<div class="value" title="Round variation ±22%; not a confidence interval">6.7 µs<small>1.11× time · noisy †</small></div>
+		</div><div class="row " style="--heat:161.4">
+			<div class="name">3. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:17.48288298118121%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">6.88 µs<small>1.14× time</small></div>
+		</div><div class="row " style="--heat:147.8">
+			<div class="name">4. ts-order compiled sort</div>
+			<div class="track" aria-hidden="true"><i style="width:25.700083871463157%"></i></div>
+			<div class="value" title="Round variation ±31%; not a confidence interval">10.1 µs<small>1.68× time · noisy †</small></div>
+		</div><div class="row " style="--heat:104.6">
+			<div class="name">5. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:51.81207804176613%"></i></div>
+			<div class="value" title="Round variation ±9%; not a confidence interval">20.4 µs<small>3.39× time</small></div>
+		</div><div class="row " style="--heat:92.8">
+			<div class="name">6. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:58.992304491983646%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">23.2 µs<small>3.86× time</small></div>
+		</div><div class="row " style="--heat:91.6">
+			<div class="name">7. Lodash (lodash-es)</div>
+			<div class="track" aria-hidden="true"><i style="width:59.67366476396464%"></i></div>
+			<div class="value" title="Round variation ±6%; not a confidence interval">23.5 µs<small>3.91× time</small></div>
+		</div><div class="row " style="--heat:82.5">
+			<div class="name">8. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:65.20725326190548%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">25.7 µs<small>4.27× time</small></div>
+		</div><div class="row " style="--heat:75.5">
+			<div class="name">9. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:69.43119942478197%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">27.3 µs<small>4.54× time</small></div>
+		</div><div class="row " style="--heat:72.9">
+			<div class="name">10. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:70.99402243795112%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">27.9 µs<small>4.65× time</small></div>
+		</div><div class="row " style="--heat:72.0">
+			<div class="name">11. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:71.57907043690516%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">28.2 µs<small>4.68× time</small></div>
+		</div><div class="row " style="--heat:70.1">
+			<div class="name">12. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:72.69697637763977%"></i></div>
+			<div class="value" title="Round variation ±16%; not a confidence interval">28.6 µs<small>4.76× time</small></div>
+		</div><div class="row " style="--heat:41.2">
+			<div class="name">13. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:90.20780306409219%"></i></div>
+			<div class="value" title="Round variation ±19%; not a confidence interval">35.5 µs<small>5.90× time</small></div>
+		</div><div class="row " style="--heat:32.2">
+			<div class="name">14. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:95.61466003859343%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">37.6 µs<small>6.26× time</small></div>
+		</div><div class="row " style="--heat:25.0">
+			<div class="name">15. Effect Order</div>
+			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">39.3 µs<small>6.54× time</small></div>
+		</div></div>
+				</figure>
+<figure data-runtime="fulfillment/shuffled/1000" hidden>
+					<figcaption><strong>Native handwritten has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 159 µs. Native baselines remain in the comparison.</figcaption>
+					<div class="bars" style="--rows:15" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 1000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
+			<div class="name">1. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:22.52365111844271%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">154 µs<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:163.5">
+			<div class="name">2. ts-order compiled sort</div>
+			<div class="track" aria-hidden="true"><i style="width:23.33909599899689%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">159 µs<small>1.04× time</small></div>
+		</div><div class="row " style="--heat:163.1">
+			<div class="name">3. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:23.556028941662763%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">161 µs<small>1.05× time</small></div>
+		</div><div class="row " style="--heat:141.4">
+			<div class="name">4. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:35.56056139820509%"></i></div>
+			<div class="value" title="Round variation ±36%; not a confidence interval">243 µs<small>1.58× time · noisy †</small></div>
+		</div><div class="row " style="--heat:120.0">
+			<div class="name">5. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:47.43843595160623%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">324 µs<small>2.11× time</small></div>
+		</div><div class="row " style="--heat:109.1">
+			<div class="name">6. Lodash (lodash-es)</div>
+			<div class="track" aria-hidden="true"><i style="width:53.43993246859815%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">365 µs<small>2.37× time</small></div>
+		</div><div class="row " style="--heat:96.2">
+			<div class="name">7. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:60.58937995578505%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">413 µs<small>2.69× time</small></div>
+		</div><div class="row " style="--heat:92.2">
+			<div class="name">8. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:62.83540529341132%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">429 µs<small>2.79× time</small></div>
+		</div><div class="row " style="--heat:91.1">
+			<div class="name">9. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:63.392863036777584%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">433 µs<small>2.81× time</small></div>
+		</div><div class="row " style="--heat:84.0">
+			<div class="name">10. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:67.34006314829455%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">460 µs<small>2.99× time</small></div>
+		</div><div class="row " style="--heat:79.3">
+			<div class="name">11. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:69.94779669636476%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">477 µs<small>3.11× time</small></div>
+		</div><div class="row " style="--heat:75.1">
+			<div class="name">12. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:72.25491442309561%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">493 µs<small>3.21× time</small></div>
+		</div><div class="row " style="--heat:65.5">
+			<div class="name">13. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:77.61041857250738%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">530 µs<small>3.45× time</small></div>
+		</div><div class="row " style="--heat:32.0">
+			<div class="name">14. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:96.13416014945639%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">656 µs<small>4.27× time</small></div>
+		</div><div class="row " style="--heat:25.0">
+			<div class="name">15. Effect Order</div>
+			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">682 µs<small>4.44× time</small></div>
+		</div></div>
+				</figure>
+<figure data-runtime="fulfillment/shuffled/10000" hidden>
+					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 2.43 ms. Native baselines remain in the comparison.</figcaption>
+					<div class="bars" style="--rows:15" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 10000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
+			<div class="name">1. ts-order compiled sort</div>
+			<div class="track" aria-hidden="true"><i style="width:22.757359579516585%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">2.43 ms<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:164.0">
+			<div class="name">2. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:23.30957812901449%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">2.49 ms<small>1.02× time</small></div>
+		</div><div class="row " style="--heat:162.7">
+			<div class="name">3. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:24.012392689854988%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">2.57 ms<small>1.06× time</small></div>
+		</div><div class="row " style="--heat:158.7">
+			<div class="name">4. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:26.211163099575387%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">2.8 ms<small>1.15× time</small></div>
+		</div><div class="row " style="--heat:125.1">
+			<div class="name">5. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:44.756801200151585%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">4.79 ms<small>1.97× time</small></div>
+		</div><div class="row " style="--heat:114.4">
+			<div class="name">6. Lodash (lodash-es)</div>
+			<div class="track" aria-hidden="true"><i style="width:50.694153232933616%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">5.42 ms<small>2.23× time</small></div>
+		</div><div class="row " style="--heat:104.7">
+			<div class="name">7. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:56.0379766811584%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">6 ms<small>2.46× time</small></div>
+		</div><div class="row " style="--heat:102.5">
+			<div class="name">8. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:57.25006732036888%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">6.13 ms<small>2.52× time</small></div>
+		</div><div class="row " style="--heat:92.5">
+			<div class="name">9. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:62.76830779332707%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">6.72 ms<small>2.76× time</small></div>
+		</div><div class="row " style="--heat:83.2">
+			<div class="name">10. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:67.87985214436286%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">7.26 ms<small>2.98× time</small></div>
+		</div><div class="row " style="--heat:74.7">
+			<div class="name">11. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:72.55386836844662%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">7.76 ms<small>3.19× time</small></div>
+		</div><div class="row " style="--heat:69.4">
+			<div class="name">12. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:75.47830881070784%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">8.08 ms<small>3.32× time</small></div>
+		</div><div class="row " style="--heat:65.7">
+			<div class="name">13. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:77.52427676655758%"></i></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">8.29 ms<small>3.41× time</small></div>
+		</div><div class="row " style="--heat:29.2">
+			<div class="name">14. Effect Order</div>
+			<div class="track" aria-hidden="true"><i style="width:97.68056138891042%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">10.5 ms<small>4.29× time</small></div>
+		</div><div class="row " style="--heat:25.0">
+			<div class="name">15. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">10.7 ms<small>4.39× time</small></div>
+		</div></div>
+				</figure>
+<figure data-runtime="fulfillment/shuffled/100000" hidden>
+					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 34.3 ms. Native baselines remain in the comparison.</figcaption>
+					<div class="bars" style="--rows:15" role="group" aria-label="Fulfillment queue: status ↑, newest first, customer surname ↑; 100000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
+			<div class="name">1. ts-order compiled sort</div>
+			<div class="track" aria-hidden="true"><i style="width:17.80160639675776%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">34.3 ms<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:154.7">
+			<div class="name">2. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:23.863145654150912%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">45.9 ms<small>1.34× time</small></div>
+		</div><div class="row " style="--heat:143.1">
+			<div class="name">3. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:30.685070631176387%"></i></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">59.1 ms<small>1.72× time</small></div>
+		</div><div class="row " style="--heat:129.4">
+			<div class="name">4. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:38.690164383106676%"></i></div>
+			<div class="value" title="Round variation ±7%; not a confidence interval">74.5 ms<small>2.17× time</small></div>
+		</div><div class="row " style="--heat:128.7">
+			<div class="name">5. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:39.08837078226736%"></i></div>
+			<div class="value" title="Round variation ±21%; not a confidence interval">75.2 ms<small>2.20× time · noisy †</small></div>
+		</div><div class="row " style="--heat:110.1">
+			<div class="name">6. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:50.017887481231924%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">96.3 ms<small>2.81× time</small></div>
+		</div><div class="row " style="--heat:104.6">
+			<div class="name">7. Lodash (lodash-es)</div>
+			<div class="track" aria-hidden="true"><i style="width:53.27087145351811%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">103 ms<small>2.99× time</small></div>
+		</div><div class="row " style="--heat:92.1">
+			<div class="name">8. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:60.620801557717094%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">117 ms<small>3.41× time</small></div>
+		</div><div class="row " style="--heat:72.4">
+			<div class="name">9. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:72.19666891878572%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">139 ms<small>4.06× time</small></div>
+		</div><div class="row " style="--heat:70.4">
+			<div class="name">10. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:73.33223075776768%"></i></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">141 ms<small>4.12× time</small></div>
+		</div><div class="row " style="--heat:66.2">
+			<div class="name">11. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:75.83401030044396%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">146 ms<small>4.26× time</small></div>
+		</div><div class="row " style="--heat:54.7">
+			<div class="name">12. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:82.56719582285268%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">159 ms<small>4.64× time</small></div>
+		</div><div class="row " style="--heat:54.3">
+			<div class="name">13. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:82.7836527480035%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">159 ms<small>4.65× time</small></div>
+		</div><div class="row " style="--heat:33.1">
+			<div class="name">14. Effect Order</div>
+			<div class="track" aria-hidden="true"><i style="width:95.23989574665283%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">183 ms<small>5.35× time</small></div>
+		</div><div class="row " style="--heat:25.0">
+			<div class="name">15. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">193 ms<small>5.62× time</small></div>
+		</div></div>
+				</figure>
+<figure data-runtime="computed/shuffled/10" hidden>
+					<figcaption><strong>Native cached keys has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 0.531 µs. Native baselines remain in the comparison.</figcaption>
+					<div class="bars" style="--rows:15" role="group" aria-label="Computed line-item total after discounts, descending; 10 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
+			<div class="name">1. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:28.42386620012109%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">0.508 µs<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:162.6">
+			<div class="name">2. ts-order compiled sort</div>
+			<div class="track" aria-hidden="true"><i style="width:29.6579382478957%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">0.531 µs<small>1.04× time</small></div>
+		</div><div class="row " style="--heat:126.3">
+			<div class="name">3. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:48.189697269975625%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">0.862 µs<small>1.70× time</small></div>
+		</div><div class="row " style="--heat:111.0">
+			<div class="name">4. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:56.02396679672472%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">1 µs<small>1.97× time</small></div>
+		</div><div class="row " style="--heat:109.6">
+			<div class="name">5. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:56.75545218143833%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">1.02 µs<small>2.00× time</small></div>
+		</div><div class="row " style="--heat:109.6">
+			<div class="name">6. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:56.75845815252457%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">1.02 µs<small>2.00× time</small></div>
+		</div><div class="row " style="--heat:108.3">
+			<div class="name">7. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:57.42968006320952%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">1.03 µs<small>2.02× time</small></div>
+		</div><div class="row " style="--heat:94.3">
+			<div class="name">8. Lodash (lodash-es)</div>
+			<div class="track" aria-hidden="true"><i style="width:64.55302516224035%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">1.15 µs<small>2.27× time</small></div>
+		</div><div class="row " style="--heat:85.3">
+			<div class="name">9. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:69.17121216317203%"></i></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">1.24 µs<small>2.43× time</small></div>
+		</div><div class="row " style="--heat:69.9">
+			<div class="name">10. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:77.03672423417662%"></i></div>
+			<div class="value" title="Round variation ±26%; not a confidence interval">1.38 µs<small>2.71× time · noisy †</small></div>
+		</div><div class="row " style="--heat:69.3">
+			<div class="name">11. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:77.34861274496929%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">1.38 µs<small>2.72× time</small></div>
+		</div><div class="row " style="--heat:66.4">
+			<div class="name">12. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:78.8527790744942%"></i></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">1.41 µs<small>2.77× time</small></div>
+		</div><div class="row " style="--heat:59.9">
+			<div class="name">13. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:82.15244236710927%"></i></div>
+			<div class="value" title="Round variation ±6%; not a confidence interval">1.47 µs<small>2.89× time</small></div>
+		</div><div class="row " style="--heat:49.1">
+			<div class="name">14. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:87.68145013793588%"></i></div>
+			<div class="value" title="Round variation ±7%; not a confidence interval">1.57 µs<small>3.08× time</small></div>
+		</div><div class="row " style="--heat:25.0">
+			<div class="name">15. Effect Order</div>
+			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">1.79 µs<small>3.52× time</small></div>
+		</div></div>
+				</figure>
+<figure data-runtime="computed/shuffled/100" hidden>
+					<figcaption><strong>Native cached keys has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 7.93 µs. Native baselines remain in the comparison.</figcaption>
+					<div class="bars" style="--rows:15" role="group" aria-label="Computed line-item total after discounts, descending; 100 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
+			<div class="name">1. Native cached keys<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:16.992602899573654%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">7.2 µs<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:162.1">
+			<div class="name">2. ts-order compiled sort</div>
+			<div class="track" aria-hidden="true"><i style="width:18.705318718925426%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">7.93 µs<small>1.10× time</small></div>
+		</div><div class="row " style="--heat:133.6">
+			<div class="name">3. ts-order class</div>
+			<div class="track" aria-hidden="true"><i style="width:35.62143245014934%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">15.1 µs<small>2.10× time</small></div>
+		</div><div class="row " style="--heat:124.0">
+			<div class="name">4. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:41.28198802388408%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">17.5 µs<small>2.43× time</small></div>
+		</div><div class="row " style="--heat:120.9">
+			<div class="name">5. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:43.12042809180788%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">18.3 µs<small>2.54× time</small></div>
+		</div><div class="row " style="--heat:117.8">
+			<div class="name">6. Lodash (lodash-es)</div>
+			<div class="track" aria-hidden="true"><i style="width:44.98952112776449%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">19.1 µs<small>2.65× time</small></div>
+		</div><div class="row " style="--heat:107.3">
+			<div class="name">7. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:51.18263271911425%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">21.7 µs<small>3.01× time</small></div>
+		</div><div class="row " style="--heat:107.3">
+			<div class="name">8. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:51.190622331914504%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">21.7 µs<small>3.01× time</small></div>
+		</div><div class="row " style="--heat:107.1">
+			<div class="name">9. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:51.29881186748349%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">21.7 µs<small>3.02× time</small></div>
+		</div><div class="row " style="--heat:78.3">
+			<div class="name">10. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:68.42104560148243%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">29 µs<small>4.03× time</small></div>
+		</div><div class="row " style="--heat:67.1">
+			<div class="name">11. es-toolkit core</div>
+			<div class="track" aria-hidden="true"><i style="width:75.04955226364685%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">31.8 µs<small>4.42× time</small></div>
+		</div><div class="row " style="--heat:65.2">
+			<div class="name">12. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:76.1487791902918%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">32.3 µs<small>4.48× time</small></div>
+		</div><div class="row " style="--heat:59.4">
+			<div class="name">13. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:79.63119175500846%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">33.7 µs<small>4.69× time</small></div>
+		</div><div class="row " style="--heat:56.6">
+			<div class="name">14. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:81.25155222137217%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">34.4 µs<small>4.78× time</small></div>
+		</div><div class="row " style="--heat:25.0">
+			<div class="name">15. Effect Order</div>
+			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">42.4 µs<small>5.88× time</small></div>
 		</div></div>
 				</figure>
 <figure data-runtime="computed/shuffled/1000" hidden>
 					<figcaption><strong>Native cached keys has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 160 µs. Native baselines remain in the comparison.</figcaption>
 					<div class="bars" style="--rows:15" role="group" aria-label="Computed line-item total after discounts, descending; 1000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
 			<div class="name">1. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:13.789719708919652%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">146 µs<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:162.8">
+			<div class="track" aria-hidden="true"><i style="width:19.004919037975046%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">146 µs<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:161.9">
 			<div class="name">2. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:15.164906183790736%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">160 µs<small>1.10× time</small></div>
-		</div><div class="row " style="--heat:148.1">
+			<div class="track" aria-hidden="true"><i style="width:20.790629154158076%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">160 µs<small>1.09× time</small></div>
+		</div><div class="row " style="--heat:142.4">
 			<div class="name">3. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:24.16762116212746%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">255 µs<small>1.75× time</small></div>
-		</div><div class="row " style="--heat:144.4">
+			<div class="track" aria-hidden="true"><i style="width:32.0656734979602%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">246 µs<small>1.69× time</small></div>
+		</div><div class="row " style="--heat:135.5">
 			<div class="name">4. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:26.44954042128625%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">280 µs<small>1.92× time</small></div>
-		</div><div class="row " style="--heat:142.0">
+			<div class="track" aria-hidden="true"><i style="width:36.06248297003785%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">277 µs<small>1.90× time</small></div>
+		</div><div class="row " style="--heat:131.6">
 			<div class="name">5. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:27.946821114492153%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">295 µs<small>2.03× time</small></div>
-		</div><div class="row " style="--heat:141.2">
+			<div class="track" aria-hidden="true"><i style="width:38.34159020263924%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">294 µs<small>2.02× time</small></div>
+		</div><div class="row " style="--heat:131.2">
 			<div class="name">6. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:28.456867807717256%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">301 µs<small>2.06× time</small></div>
-		</div><div class="row " style="--heat:115.9">
-			<div class="name">7. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:44.03594476408716%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">465 µs<small>3.19× time</small></div>
-		</div><div class="row " style="--heat:115.6">
-			<div class="name">8. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:44.229967993127055%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">467 µs<small>3.21× time</small></div>
-		</div><div class="row " style="--heat:114.5">
-			<div class="name">9. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:44.86195259225768%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">474 µs<small>3.25× time</small></div>
-		</div><div class="row " style="--heat:96.5">
-			<div class="name">10. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:55.96870532863504%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">592 µs<small>4.06× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:38.579004053156766%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">296 µs<small>2.03× time</small></div>
+		</div><div class="row " style="--heat:95.0">
+			<div class="name">7. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:59.50311516771141%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">457 µs<small>3.13× time</small></div>
 		</div><div class="row " style="--heat:94.0">
-			<div class="name">11. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:57.503084853583154%"></i></div>
-			<div class="value" title="Round variation ±2%; not a confidence interval">608 µs<small>4.17× time</small></div>
-		</div><div class="row " style="--heat:87.3">
+			<div class="name">8. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:60.0914616870385%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">461 µs<small>3.16× time</small></div>
+		</div><div class="row " style="--heat:93.0">
+			<div class="name">9. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:60.631868892084725%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">465 µs<small>3.19× time</small></div>
+		</div><div class="row " style="--heat:67.7">
+			<div class="name">10. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:75.3005055882598%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">578 µs<small>3.96× time</small></div>
+		</div><div class="row " style="--heat:57.9">
+			<div class="name">11. fast-sort</div>
+			<div class="track" aria-hidden="true"><i style="width:80.95297273759114%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">621 µs<small>4.26× time</small></div>
+		</div><div class="row " style="--heat:54.8">
 			<div class="name">12. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:61.64498358491943%"></i></div>
+			<div class="track" aria-hidden="true"><i style="width:82.73237872724253%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">635 µs<small>4.35× time</small></div>
+		</div><div class="row " style="--heat:51.7">
+			<div class="name">13. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:84.53531129738745%"></i></div>
+			<div class="value" title="Round variation ±0%; not a confidence interval">649 µs<small>4.45× time</small></div>
+		</div><div class="row " style="--heat:51.1">
+			<div class="name">14. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:84.91716933417423%"></i></div>
 			<div class="value" title="Round variation ±1%; not a confidence interval">652 µs<small>4.47× time</small></div>
-		</div><div class="row " style="--heat:86.1">
-			<div class="name">13. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:62.37100830467721%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">659 µs<small>4.52× time</small></div>
-		</div><div class="row " style="--heat:77.3">
-			<div class="name">14. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:67.77142521869058%"></i></div>
-			<div class="value" title="Round variation ±13%; not a confidence interval">716 µs<small>4.91× time</small></div>
 		</div><div class="row " style="--heat:25.0">
 			<div class="name">15. Effect Order</div>
 			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±28%; not a confidence interval">1,060 µs<small>7.25× time · noisy †</small></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">767 µs<small>5.26× time</small></div>
 		</div></div>
 				</figure>
 <figure data-runtime="computed/shuffled/10000" hidden>
-					<figcaption><strong>Native cached keys has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 2.52 ms. Native baselines remain in the comparison.</figcaption>
+					<figcaption><strong>Native cached keys has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 2.36 ms. Native baselines remain in the comparison.</figcaption>
 					<div class="bars" style="--rows:15" role="group" aria-label="Computed line-item total after discounts, descending; 10000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
 			<div class="name">1. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:18.395017352846427%"></i></div>
-			<div class="value" title="Round variation ±10%; not a confidence interval">2.24 ms<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:161.0">
+			<div class="track" aria-hidden="true"><i style="width:17.997091619330224%"></i></div>
+			<div class="value" title="Round variation ±9%; not a confidence interval">2.21 ms<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:162.8">
 			<div class="name">2. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:20.740575459356275%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">2.52 ms<small>1.13× time</small></div>
-		</div><div class="row " style="--heat:146.7">
+			<div class="track" aria-hidden="true"><i style="width:19.301160777870464%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">2.36 ms<small>1.07× time</small></div>
+		</div><div class="row " style="--heat:147.1">
 			<div class="name">3. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:29.07376702041764%"></i></div>
-			<div class="value" title="Round variation ±5%; not a confidence interval">3.53 ms<small>1.58× time</small></div>
-		</div><div class="row " style="--heat:139.2">
-			<div class="name">4. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:33.42413854510962%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">4.06 ms<small>1.82× time</small></div>
-		</div><div class="row " style="--heat:135.3">
-			<div class="name">5. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:35.68509216098049%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">4.34 ms<small>1.94× time</small></div>
-		</div><div class="row " style="--heat:129.5">
+			<div class="track" aria-hidden="true"><i style="width:28.454994707514913%"></i></div>
+			<div class="value" title="Round variation ±7%; not a confidence interval">3.49 ms<small>1.58× time</small></div>
+		</div><div class="row " style="--heat:137.0">
+			<div class="name">4. es-toolkit compat (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:34.39879514678808%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">4.21 ms<small>1.91× time</small></div>
+		</div><div class="row " style="--heat:136.0">
+			<div class="name">5. Effect Array.sortWith (cached)</div>
+			<div class="track" aria-hidden="true"><i style="width:35.007098401764146%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">4.29 ms<small>1.95× time</small></div>
+		</div><div class="row " style="--heat:132.5">
 			<div class="name">6. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:39.062074617982375%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">4.75 ms<small>2.12× time</small></div>
-		</div><div class="row " style="--heat:82.2">
-			<div class="name">7. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:66.66389582462844%"></i></div>
-			<div class="value" title="Round variation ±9%; not a confidence interval">8.1 ms<small>3.62× time</small></div>
-		</div><div class="row " style="--heat:77.8">
-			<div class="name">8. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:69.21799504977119%"></i></div>
-			<div class="value" title="Round variation ±10%; not a confidence interval">8.41 ms<small>3.76× time</small></div>
-		</div><div class="row " style="--heat:71.7">
-			<div class="name">9. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:72.80036425710037%"></i></div>
-			<div class="value" title="Round variation ±15%; not a confidence interval">8.85 ms<small>3.96× time</small></div>
-		</div><div class="row " style="--heat:58.9">
+			<div class="track" aria-hidden="true"><i style="width:37.02719010719088%"></i></div>
+			<div class="value" title="Round variation ±6%; not a confidence interval">4.54 ms<small>2.06× time</small></div>
+		</div><div class="row " style="--heat:92.7">
+			<div class="name">7. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:60.34566244699499%"></i></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">7.39 ms<small>3.35× time</small></div>
+		</div><div class="row " style="--heat:92.5">
+			<div class="name">8. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:60.43677098958402%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">7.41 ms<small>3.36× time</small></div>
+		</div><div class="row " style="--heat:92.4">
+			<div class="name">9. Native handwritten<small>Native baseline</small></div>
+			<div class="track" aria-hidden="true"><i style="width:60.52124969369551%"></i></div>
+			<div class="value" title="Round variation ±3%; not a confidence interval">7.42 ms<small>3.36× time</small></div>
+		</div><div class="row " style="--heat:62.4">
 			<div class="name">10. thenby</div>
-			<div class="track" aria-hidden="true"><i style="width:80.21711881727079%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">9.75 ms<small>4.36× time</small></div>
-		</div><div class="row " style="--heat:56.5">
+			<div class="track" aria-hidden="true"><i style="width:78.12002195838464%"></i></div>
+			<div class="value" title="Round variation ±7%; not a confidence interval">9.57 ms<small>4.34× time</small></div>
+		</div><div class="row " style="--heat:57.3">
 			<div class="name">11. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:81.61206404604351%"></i></div>
-			<div class="value" title="Round variation ±5%; not a confidence interval">9.92 ms<small>4.44× time</small></div>
-		</div><div class="row " style="--heat:54.1">
+			<div class="track" aria-hidden="true"><i style="width:81.07974987684975%"></i></div>
+			<div class="value" title="Round variation ±5%; not a confidence interval">9.93 ms<small>4.51× time</small></div>
+		</div><div class="row " style="--heat:55.1">
 			<div class="name">12. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:83.02310897789808%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">10.1 ms<small>4.51× time</small></div>
-		</div><div class="row " style="--heat:43.0">
-			<div class="name">13. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:89.5304759429278%"></i></div>
-			<div class="value" title="Round variation ±9%; not a confidence interval">10.9 ms<small>4.87× time</small></div>
-		</div><div class="row " style="--heat:27.1">
-			<div class="name">14. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:98.77729073761188%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">12 ms<small>5.37× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:82.38431599264354%"></i></div>
+			<div class="value" title="Round variation ±1%; not a confidence interval">10.1 ms<small>4.58× time</small></div>
+		</div><div class="row " style="--heat:52.7">
+			<div class="name">13. Remeda</div>
+			<div class="track" aria-hidden="true"><i style="width:83.79059423424253%"></i></div>
+			<div class="value" title="Round variation ±4%; not a confidence interval">10.3 ms<small>4.66× time</small></div>
+		</div><div class="row " style="--heat:45.8">
+			<div class="name">14. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:87.84412284899582%"></i></div>
+			<div class="value" title="Round variation ±8%; not a confidence interval">10.8 ms<small>4.88× time</small></div>
 		</div><div class="row " style="--heat:25.0">
-			<div class="name">15. Remeda</div>
+			<div class="name">15. Effect Order</div>
 			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±12%; not a confidence interval">12.2 ms<small>5.44× time</small></div>
+			<div class="value" title="Round variation ±6%; not a confidence interval">12.3 ms<small>5.56× time</small></div>
 		</div></div>
 				</figure>
 <figure data-runtime="computed/shuffled/100000" hidden>
-					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 53.7 ms. Native baselines remain in the comparison.</figcaption>
+					<figcaption><strong>ts-order compiled sort has the lowest observed time.</strong><br>Fastest library: ts-order compiled sort, 46.9 ms. Native baselines remain in the comparison.</figcaption>
 					<div class="bars" style="--rows:15" role="group" aria-label="Computed line-item total after discounts, descending; 100000 records; shuffled; fastest to slowest"><div class="row fastest" style="--heat:165.0">
 			<div class="name">1. ts-order compiled sort</div>
-			<div class="track" aria-hidden="true"><i style="width:17.2485002612633%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">53.7 ms<small>1.00× time</small></div>
-		</div><div class="row " style="--heat:164.0">
+			<div class="track" aria-hidden="true"><i style="width:15.923752221050885%"></i></div>
+			<div class="value" title="Round variation ±12%; not a confidence interval">46.9 ms<small>1.00× time</small></div>
+		</div><div class="row " style="--heat:162.1">
 			<div class="name">2. Native cached keys<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:17.817060517287743%"></i></div>
-			<div class="value" title="Round variation ±11%; not a confidence interval">55.5 ms<small>1.03× time</small></div>
-		</div><div class="row " style="--heat:160.0">
+			<div class="track" aria-hidden="true"><i style="width:17.671309985419022%"></i></div>
+			<div class="value" title="Round variation ±25%; not a confidence interval">52 ms<small>1.11× time · noisy †</small></div>
+		</div><div class="row " style="--heat:155.5">
 			<div class="name">3. ts-order class</div>
-			<div class="track" aria-hidden="true"><i style="width:20.201722017863084%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">62.9 ms<small>1.17× time</small></div>
-		</div><div class="row " style="--heat:149.1">
+			<div class="track" aria-hidden="true"><i style="width:21.65880513723831%"></i></div>
+			<div class="value" title="Round variation ±16%; not a confidence interval">63.8 ms<small>1.36× time</small></div>
+		</div><div class="row " style="--heat:149.7">
 			<div class="name">4. Effect Array.sortWith (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:26.661474530370572%"></i></div>
-			<div class="value" title="Round variation ±9%; not a confidence interval">83.1 ms<small>1.55× time</small></div>
-		</div><div class="row " style="--heat:147.2">
+			<div class="track" aria-hidden="true"><i style="width:25.125521435222293%"></i></div>
+			<div class="value" title="Round variation ±12%; not a confidence interval">74 ms<small>1.58× time</small></div>
+		</div><div class="row " style="--heat:142.0">
 			<div class="name">5. es-toolkit compat (cached)</div>
-			<div class="track" aria-hidden="true"><i style="width:27.759382935242378%"></i></div>
-			<div class="value" title="Round variation ±12%; not a confidence interval">86.5 ms<small>1.61× time</small></div>
-		</div><div class="row " style="--heat:143.6">
+			<div class="track" aria-hidden="true"><i style="width:29.72945676459303%"></i></div>
+			<div class="value" title="Round variation ±9%; not a confidence interval">87.5 ms<small>1.87× time</small></div>
+		</div><div class="row " style="--heat:138.8">
 			<div class="name">6. Lodash (lodash-es)</div>
-			<div class="track" aria-hidden="true"><i style="width:29.87286582016917%"></i></div>
-			<div class="value" title="Round variation ±1%; not a confidence interval">93.1 ms<small>1.73× time</small></div>
-		</div><div class="row " style="--heat:67.8">
+			<div class="track" aria-hidden="true"><i style="width:31.679050745459758%"></i></div>
+			<div class="value" title="Round variation ±11%; not a confidence interval">93.2 ms<small>1.99× time</small></div>
+		</div><div class="row " style="--heat:75.6">
 			<div class="name">7. Native handwritten<small>Native baseline</small></div>
-			<div class="track" aria-hidden="true"><i style="width:74.71434072460333%"></i></div>
-			<div class="value" title="Round variation ±11%; not a confidence interval">233 ms<small>4.33× time</small></div>
-		</div><div class="row " style="--heat:58.1">
-			<div class="name">8. Radashi sort</div>
-			<div class="track" aria-hidden="true"><i style="width:80.4514944110721%"></i></div>
-			<div class="value" title="Round variation ±4%; not a confidence interval">251 ms<small>4.66× time</small></div>
-		</div><div class="row " style="--heat:58.0">
-			<div class="name">9. ts-order compiled compare</div>
-			<div class="track" aria-hidden="true"><i style="width:80.48623153038986%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">251 ms<small>4.67× time</small></div>
-		</div><div class="row " style="--heat:46.2">
-			<div class="name">10. Remeda</div>
-			<div class="track" aria-hidden="true"><i style="width:87.46211792344802%"></i></div>
-			<div class="value" title="Round variation ±12%; not a confidence interval">273 ms<small>5.07× time</small></div>
-		</div><div class="row " style="--heat:42.6">
+			<div class="track" aria-hidden="true"><i style="width:69.61796051785726%"></i></div>
+			<div class="value" title="Round variation ±19%; not a confidence interval">205 ms<small>4.37× time</small></div>
+		</div><div class="row " style="--heat:74.2">
+			<div class="name">8. ts-order compiled compare</div>
+			<div class="track" aria-hidden="true"><i style="width:70.45179607014953%"></i></div>
+			<div class="value" title="Round variation ±13%; not a confidence interval">207 ms<small>4.42× time</small></div>
+		</div><div class="row " style="--heat:72.5">
+			<div class="name">9. Radashi sort</div>
+			<div class="track" aria-hidden="true"><i style="width:71.49374550149437%"></i></div>
+			<div class="value" title="Round variation ±20%; not a confidence interval">210 ms<small>4.49× time</small></div>
+		</div><div class="row " style="--heat:56.8">
+			<div class="name">10. thenby</div>
+			<div class="track" aria-hidden="true"><i style="width:80.88233803328608%"></i></div>
+			<div class="value" title="Round variation ±19%; not a confidence interval">238 ms<small>5.08× time</small></div>
+		</div><div class="row " style="--heat:55.4">
 			<div class="name">11. es-toolkit core</div>
-			<div class="track" aria-hidden="true"><i style="width:89.59564617149921%"></i></div>
-			<div class="value" title="Round variation ±8%; not a confidence interval">279 ms<small>5.19× time</small></div>
-		</div><div class="row " style="--heat:36.9">
-			<div class="name">12. Effect Order</div>
-			<div class="track" aria-hidden="true"><i style="width:92.97061941991205%"></i></div>
-			<div class="value" title="Round variation ±6%; not a confidence interval">290 ms<small>5.39× time</small></div>
-		</div><div class="row " style="--heat:33.0">
+			<div class="track" aria-hidden="true"><i style="width:81.76575233842925%"></i></div>
+			<div class="value" title="Round variation ±18%; not a confidence interval">241 ms<small>5.13× time</small></div>
+		</div><div class="row " style="--heat:46.6">
+			<div class="name">12. ts-order comparator</div>
+			<div class="track" aria-hidden="true"><i style="width:87.03719761698638%"></i></div>
+			<div class="value" title="Round variation ±19%; not a confidence interval">256 ms<small>5.47× time</small></div>
+		</div><div class="row " style="--heat:41.8">
 			<div class="name">13. fast-sort</div>
-			<div class="track" aria-hidden="true"><i style="width:95.28417546504129%"></i></div>
-			<div class="value" title="Round variation ±7%; not a confidence interval">297 ms<small>5.52× time</small></div>
+			<div class="track" aria-hidden="true"><i style="width:89.88217487907106%"></i></div>
+			<div class="value" title="Round variation ±23%; not a confidence interval">265 ms<small>5.64× time · noisy †</small></div>
+		</div><div class="row " style="--heat:34.6">
+			<div class="name">14. Effect Order</div>
+			<div class="track" aria-hidden="true"><i style="width:94.21441722043008%"></i></div>
+			<div class="value" title="Round variation ±18%; not a confidence interval">277 ms<small>5.92× time</small></div>
 		</div><div class="row " style="--heat:25.0">
-			<div class="name">14. ts-order comparator</div>
-			<div class="track" aria-hidden="true"><i style="width:99.98575605818274%"></i></div>
-			<div class="value" title="Round variation ±3%; not a confidence interval">312 ms<small>5.80× time</small></div>
-		</div><div class="row " style="--heat:25.0">
-			<div class="name">15. thenby</div>
+			<div class="name">15. Remeda</div>
 			<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
-			<div class="value" title="Round variation ±17%; not a confidence interval">312 ms<small>5.80× time</small></div>
+			<div class="value" title="Round variation ±2%; not a confidence interval">294 ms<small>6.28× time</small></div>
 		</div></div>
 				</figure>
 <h2>Smaller bundles are better</h2>
@@ -959,18 +999,18 @@ code{font-family:var(--font-mono,ui-monospace,monospace);font-size:.94em}
 				<div class="name">4. Radashi sort</div>
 				<div class="track" aria-hidden="true"><i style="width:5.0602042371589695%"></i></div>
 				<div class="value">332 B<small>+224 B vs native</small></div>
-			</div><div class="row " style="--heat:160.0">
-				<div class="name">5. Remeda</div>
-				<div class="track" aria-hidden="true"><i style="width:5.182136869379668%"></i></div>
-				<div class="value">340 B<small>+232 B vs native</small></div>
 			</div><div class="row " style="--heat:159.4">
-				<div class="name">6. ts-order comparator</div>
+				<div class="name">5. ts-order comparator</div>
 				<div class="track" aria-hidden="true"><i style="width:5.608901082152111%"></i></div>
 				<div class="value">368 B<small>+260 B vs native</small></div>
 			</div><div class="row " style="--heat:158.9">
-				<div class="name">7. thenby</div>
+				<div class="name">6. thenby</div>
 				<div class="track" aria-hidden="true"><i style="width:5.944215820759031%"></i></div>
 				<div class="value">390 B<small>+282 B vs native</small></div>
+			</div><div class="row " style="--heat:158.8">
+				<div class="name">7. Remeda</div>
+				<div class="track" aria-hidden="true"><i style="width:6.020423715896968%"></i></div>
+				<div class="value">395 B<small>+287 B vs native</small></div>
 			</div><div class="row " style="--heat:158.4">
 				<div class="name">8. Effect Order</div>
 				<div class="track" aria-hidden="true"><i style="width:6.264288980338363%"></i></div>
@@ -991,14 +1031,14 @@ code{font-family:var(--font-mono,ui-monospace,monospace);font-size:.94em}
 				<div class="name">12. es-toolkit compat (cached)</div>
 				<div class="track" aria-hidden="true"><i style="width:19.814052735863434%"></i></div>
 				<div class="value">1.27 KiB<small>+1.16 KiB vs native</small></div>
-			</div><div class="row " style="--heat:130.6">
+			</div><div class="row " style="--heat:130.3">
 				<div class="name">13. ts-order compiled sort</div>
-				<div class="track" aria-hidden="true"><i style="width:25.834476451760402%"></i></div>
-				<div class="value">1.66 KiB<small>+1.55 KiB vs native</small></div>
-			</div><div class="row " style="--heat:130.5">
+				<div class="track" aria-hidden="true"><i style="width:26.047858558146626%"></i></div>
+				<div class="value">1.67 KiB<small>+1.56 KiB vs native</small></div>
+			</div><div class="row " style="--heat:130.3">
 				<div class="name">14. ts-order compiled compare</div>
-				<div class="track" aria-hidden="true"><i style="width:25.880201188843166%"></i></div>
-				<div class="value">1.66 KiB<small>+1.55 KiB vs native</small></div>
+				<div class="track" aria-hidden="true"><i style="width:26.047858558146626%"></i></div>
+				<div class="value">1.67 KiB<small>+1.56 KiB vs native</small></div>
 			</div><div class="row " style="--heat:25.0">
 				<div class="name">15. Lodash (lodash-es)</div>
 				<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
@@ -1007,7 +1047,7 @@ code{font-family:var(--font-mono,ui-monospace,monospace);font-size:.94em}
 		</figure>
 <figure data-bundle="fulfillment" hidden>
 			<figcaption><strong>Bundle cost for the same workload.</strong><br>Complete working example, minified and gzipped. Smaller is better; native shows the no-library cost.</figcaption>
-			<div class="bars bundle-bars" style="--rows:13" role="group" aria-label="Gzip bytes, smallest to largest"><div class="row fastest" style="--heat:165.0">
+			<div class="bars bundle-bars" style="--rows:15" role="group" aria-label="Gzip bytes, smallest to largest"><div class="row fastest" style="--heat:165.0">
 				<div class="name">1. Native handwritten</div>
 				<div class="track" aria-hidden="true"><i style="width:2.2920461445051608%"></i></div>
 				<div class="value">151 B<small>+0 B vs native</small></div>
@@ -1019,44 +1059,52 @@ code{font-family:var(--font-mono,ui-monospace,monospace);font-size:.94em}
 				<div class="name">3. es-toolkit core</div>
 				<div class="track" aria-hidden="true"><i style="width:5.312689738919247%"></i></div>
 				<div class="value">350 B<small>+199 B vs native</small></div>
-			</div><div class="row " style="--heat:160.3">
-				<div class="name">4. Remeda</div>
-				<div class="track" aria-hidden="true"><i style="width:5.540376442015786%"></i></div>
-				<div class="value">365 B<small>+214 B vs native</small></div>
 			</div><div class="row " style="--heat:159.2">
-				<div class="name">5. thenby</div>
+				<div class="name">4. thenby</div>
 				<div class="track" aria-hidden="true"><i style="width:6.314511232544019%"></i></div>
 				<div class="value">416 B<small>+265 B vs native</small></div>
+			</div><div class="row " style="--heat:159.2">
+				<div class="name">5. Remeda</div>
+				<div class="track" aria-hidden="true"><i style="width:6.3600485731633265%"></i></div>
+				<div class="value">419 B<small>+268 B vs native</small></div>
+			</div><div class="row " style="--heat:159.0">
+				<div class="name">6. Radashi sort</div>
+				<div class="track" aria-hidden="true"><i style="width:6.49666059502125%"></i></div>
+				<div class="value">428 B<small>+277 B vs native</small></div>
 			</div><div class="row " style="--heat:158.7">
-				<div class="name">6. ts-order comparator</div>
+				<div class="name">7. ts-order comparator</div>
 				<div class="track" aria-hidden="true"><i style="width:6.709168184578021%"></i></div>
 				<div class="value">442 B<small>+291 B vs native</small></div>
 			</div><div class="row " style="--heat:157.3">
-				<div class="name">7. Effect Order</div>
+				<div class="name">8. Effect Order</div>
 				<div class="track" aria-hidden="true"><i style="width:7.665452337583485%"></i></div>
 				<div class="value">505 B<small>+354 B vs native</small></div>
+			</div><div class="row " style="--heat:156.5">
+				<div class="name">9. Effect Array.sortWith (cached)</div>
+				<div class="track" aria-hidden="true"><i style="width:8.22707953855495%"></i></div>
+				<div class="value">542 B<small>+391 B vs native</small></div>
 			</div><div class="row " style="--heat:150.9">
-				<div class="name">8. fast-sort</div>
+				<div class="name">10. fast-sort</div>
 				<div class="track" aria-hidden="true"><i style="width:12.143290831815422%"></i></div>
 				<div class="value">800 B<small>+649 B vs native</small></div>
 			</div><div class="row " style="--heat:145.9">
-				<div class="name">9. ts-order class</div>
+				<div class="name">11. ts-order class</div>
 				<div class="track" aria-hidden="true"><i style="width:15.649666059502126%"></i></div>
 				<div class="value">1.01 KiB<small>+880 B vs native</small></div>
 			</div><div class="row " style="--heat:139.5">
-				<div class="name">10. es-toolkit compat (cached)</div>
+				<div class="name">12. es-toolkit compat (cached)</div>
 				<div class="track" aria-hidden="true"><i style="width:20.097146326654524%"></i></div>
 				<div class="value">1.29 KiB<small>+1.15 KiB vs native</small></div>
-			</div><div class="row " style="--heat:130.8">
-				<div class="name">11. ts-order compiled sort</div>
-				<div class="track" aria-hidden="true"><i style="width:26.138433515482696%"></i></div>
-				<div class="value">1.68 KiB<small>+1.53 KiB vs native</small></div>
-			</div><div class="row " style="--heat:130.8">
-				<div class="name">12. ts-order compiled compare</div>
-				<div class="track" aria-hidden="true"><i style="width:26.183970856102%"></i></div>
-				<div class="value">1.68 KiB<small>+1.54 KiB vs native</small></div>
+			</div><div class="row " style="--heat:130.7">
+				<div class="name">13. ts-order compiled sort</div>
+				<div class="track" aria-hidden="true"><i style="width:26.259866423800847%"></i></div>
+				<div class="value">1.69 KiB<small>+1.54 KiB vs native</small></div>
+			</div><div class="row " style="--heat:130.7">
+				<div class="name">14. ts-order compiled compare</div>
+				<div class="track" aria-hidden="true"><i style="width:26.259866423800847%"></i></div>
+				<div class="value">1.69 KiB<small>+1.54 KiB vs native</small></div>
 			</div><div class="row " style="--heat:25.0">
-				<div class="name">13. Lodash (lodash-es)</div>
+				<div class="name">15. Lodash (lodash-es)</div>
 				<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
 				<div class="value">6.43 KiB<small>+6.29 KiB vs native</small></div>
 			</div></div>
@@ -1079,18 +1127,18 @@ code{font-family:var(--font-mono,ui-monospace,monospace);font-size:.94em}
 				<div class="name">4. Radashi sort</div>
 				<div class="track" aria-hidden="true"><i style="width:6.041383476816191%"></i></div>
 				<div class="value">400 B<small>+230 B vs native</small></div>
-			</div><div class="row " style="--heat:159.9">
-				<div class="name">5. Remeda</div>
-				<div class="track" aria-hidden="true"><i style="width:6.1471076876604736%"></i></div>
-				<div class="value">407 B<small>+237 B vs native</small></div>
 			</div><div class="row " style="--heat:159.2">
-				<div class="name">6. ts-order comparator</div>
+				<div class="name">5. ts-order comparator</div>
 				<div class="track" aria-hidden="true"><i style="width:6.585107989729648%"></i></div>
 				<div class="value">436 B<small>+266 B vs native</small></div>
 			</div><div class="row " style="--heat:158.7">
-				<div class="name">7. thenby</div>
+				<div class="name">6. thenby</div>
 				<div class="track" aria-hidden="true"><i style="width:6.932487539646578%"></i></div>
 				<div class="value">459 B<small>+289 B vs native</small></div>
+			</div><div class="row " style="--heat:158.6">
+				<div class="name">7. Remeda</div>
+				<div class="track" aria-hidden="true"><i style="width:6.992901374414741%"></i></div>
+				<div class="value">463 B<small>+293 B vs native</small></div>
 			</div><div class="row " style="--heat:158.2">
 				<div class="name">8. Effect Order</div>
 				<div class="track" aria-hidden="true"><i style="width:7.279867089563511%"></i></div>
@@ -1101,8 +1149,8 @@ code{font-family:var(--font-mono,ui-monospace,monospace);font-size:.94em}
 				<div class="value">516 B<small>+346 B vs native</small></div>
 			</div><div class="row " style="--heat:150.6">
 				<div class="name">10. fast-sort</div>
-				<div class="track" aria-hidden="true"><i style="width:12.581181090469718%"></i></div>
-				<div class="value">833 B<small>+663 B vs native</small></div>
+				<div class="track" aria-hidden="true"><i style="width:12.566077631777677%"></i></div>
+				<div class="value">832 B<small>+662 B vs native</small></div>
 			</div><div class="row " style="--heat:145.4">
 				<div class="name">11. ts-order class</div>
 				<div class="track" aria-hidden="true"><i style="width:16.206011176559432%"></i></div>
@@ -1111,14 +1159,14 @@ code{font-family:var(--font-mono,ui-monospace,monospace);font-size:.94em}
 				<div class="name">12. es-toolkit compat (cached)</div>
 				<div class="track" aria-hidden="true"><i style="width:20.51049690379097%"></i></div>
 				<div class="value">1.33 KiB<small>+1.16 KiB vs native</small></div>
-			</div><div class="row " style="--heat:130.3">
+			</div><div class="row " style="--heat:130.1">
 				<div class="name">13. ts-order compiled sort</div>
-				<div class="track" aria-hidden="true"><i style="width:26.733121884911643%"></i></div>
-				<div class="value">1.73 KiB<small>+1.56 KiB vs native</small></div>
-			</div><div class="row " style="--heat:130.2">
+				<div class="track" aria-hidden="true"><i style="width:26.83884609575593%"></i></div>
+				<div class="value">1.74 KiB<small>+1.57 KiB vs native</small></div>
+			</div><div class="row " style="--heat:130.1">
 				<div class="name">14. ts-order compiled compare</div>
-				<div class="track" aria-hidden="true"><i style="width:26.778432260987767%"></i></div>
-				<div class="value">1.73 KiB<small>+1.57 KiB vs native</small></div>
+				<div class="track" aria-hidden="true"><i style="width:26.88415647183205%"></i></div>
+				<div class="value">1.74 KiB<small>+1.57 KiB vs native</small></div>
 			</div><div class="row " style="--heat:25.0">
 				<div class="name">15. Lodash (lodash-es)</div>
 				<div class="track" aria-hidden="true"><i style="width:100%"></i></div>
@@ -1181,7 +1229,7 @@ export function computed(): Sorter {
 }</code></pre>
 		</figure>
 </details>
-<p class="footer muted">Measured 2026-11-20T05:41:04.996Z. Raw JSON records the round means, sample counts and timing uncertainty. This chart uses the same medians as the Markdown report. Browser bundle size is measured, but browser execution and peak memory are not. Radashi’s built-in numeric sort and the Effect Array.sortWith variant are omitted from multi-key results. The es-toolkit core and cached compatibility APIs remain separate rows.</p>
+<p class="footer muted">Measured 2026-11-20T12:33:02.618Z. Raw JSON records the round means, sample counts and timing uncertainty. This chart uses the same medians as the Markdown report. Browser bundle size is measured, but browser execution and peak memory are not. Radashi’s built-in numeric sort and the Effect Array.sortWith variant are omitted from multi-key results. The es-toolkit core and cached compatibility APIs remain separate rows.</p>
 <script>
 const scenario = document.getElementById('scenario');
 const size = document.getElementById('size');

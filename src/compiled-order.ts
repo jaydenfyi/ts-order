@@ -23,7 +23,8 @@ import { Order } from './order.js';
  * import { compile, Order } from 'ts-order';
  *
  * const byStatusThenNewest = compile(
- * 	Order.by((u: User) => u.status).by((u) => u.createdAt, { direction: 'desc' }),
+ * 	Order.by((u: User) => u.status)
+ * 		.by((u) => u.createdAt, { direction: 'desc' }),
  * );
  *
  * users.sort(byStatusThenNewest.compare);

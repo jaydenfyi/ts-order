@@ -88,10 +88,9 @@ Adds a sort step. Without options, it sorts ascending with `<` and `>`. Object k
 ```ts
 const collator = new Intl.Collator('en');
 
-const byNameAndAge = Order.by((u: User) => u.lastName, {
-	direction: 'desc',
-	compare: collator.compare,
-}).by((u) => u.age, { nulls: 'first' });
+const byNameAndAge = new Order<User>()
+	.by((u) => u.lastName, { direction: 'desc', compare: collator.compare })
+	.by((u) => u.age, { nulls: 'first' });
 
 // Object keys need a custom compare
 const byAddress = Order.by((c: Customer) => c.address, {
@@ -99,9 +98,9 @@ const byAddress = Order.by((c: Customer) => c.address, {
 });
 
 // Predicate: users with an age first (youngest first), then the rest by name
-const byAgeThenName = Order.by((u: User) => u.age, {
-	predicate: (u) => u.age != null,
-}).by((u) => u.lastName);
+const byAgeThenName = new Order<User>()
+	.by((u) => u.age, { predicate: (u) => u.age != null })
+	.by((u) => u.lastName);
 ```
 
 #### `reverse()`
@@ -113,7 +112,8 @@ reverse(): Order<T>
 Flips the direction of every step. Nulls and predicate matches keep their place.
 
 ```ts
-const newestFirst = Order.by((u: User) => u.createdAt).reverse();
+const newestFirst = Order.by((u: User) => u.createdAt)
+	.reverse();
 ```
 
 #### `map(outer, subOrder)`
@@ -125,7 +125,8 @@ map<K>(outer: (value: T) => K, subOrder: Order<K>): Order<T>
 Applies an `Order<K>` to a nested value extracted by `outer`.
 
 ```ts
-const byAddress = Order.by((a: Address) => a.city).by((a) => a.postcode);
+const byAddress = Order.by((a: Address) => a.city)
+	.by((a) => a.postcode);
 
 const byIdThenAddress = new Order<Customer>()
 	.by((c) => c.id)
@@ -174,10 +175,8 @@ Returns a new sorted array without mutating the input. `sort()` calls each selec
 ```ts
 const byName = <T extends { name: string }>() => Order.by((x: T) => x.name);
 
-const activeByName = Order.by((s: Staff) => s.team).when(
-	(s) => s.isActive,
-	byName(),
-);
+const activeByName = Order.by((s: Staff) => s.team)
+	.when((s) => s.isActive, byName());
 ```
 
 </details>
@@ -196,9 +195,8 @@ Immediately generates and caches straight-line code for both `compare` and `sort
 import { compile, Order } from "ts-order";
 
 const byStatusThenNewest = compile(
-	Order.by((u: User) => u.status).by((u) => u.createdAt, {
-		direction: "desc",
-	}),
+	Order.by((u: User) => u.status)
+		.by((u) => u.createdAt, { direction: "desc" }),
 );
 
 users.sort(byStatusThenNewest.compare);

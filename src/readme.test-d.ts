@@ -71,20 +71,21 @@ describe('README examples', () => {
 	it('order.by', () => {
 		Order.by((u: User) => u.age);
 		const collator = new Intl.Collator('en');
-		Order.by((u: User) => u.lastName, {
-			direction: 'desc',
-			compare: collator.compare,
-		});
+		new Order<User>()
+			.by((u) => u.lastName, {
+				direction: 'desc',
+				compare: collator.compare,
+			})
+			.by((u) => u.age, { nulls: 'first' });
 		Order.by((i: Item) => i.expiresAt, {
 			compare: (a, b) => a.getTime() - b.getTime(),
 		});
-		Order.by((u: User) => u.age, { nulls: 'first' });
 		Order.by((c: Customer) => c.address, {
 			compare: (a, b) => a.city.localeCompare(b.city),
 		});
-		Order.by((u: User) => u.age, { predicate: (u) => u.age != null }).by(
-			(u) => u.lastName,
-		);
+		new Order<User>()
+			.by((u) => u.age, { predicate: (u) => u.age != null })
+			.by((u) => u.lastName);
 		new Order<User>().by((u) => u.createdAt).by((u) => u.id);
 	});
 

@@ -18,9 +18,8 @@ In a library, compile each order instead so you do not affect the host applicati
 import { compile, Order } from 'ts-order';
 
 const byStatusThenNewest = compile(
-	Order.by((u: User) => u.status).by((u) => u.createdAt, {
-		direction: 'desc',
-	}),
+	Order.by((u: User) => u.status)
+		.by((u) => u.createdAt, { direction: 'desc' }),
 );
 ```
 
@@ -72,7 +71,8 @@ Sort results change only in cases A through E, where 0.0.x often depended on inp
 
 ```ts
 // A. Nulls sort last
-Order.by((x: { v?: number }) => x.v).sort([{ v: 3 }, {}, { v: 1 }]);
+Order.by((x: { v?: number }) => x.v)
+	.sort([{ v: 3 }, {}, { v: 1 }]);
 // 0.0.x: [{ v: 3 }, {}, { v: 1 }] (depended on input order)
 // 0.1.0: [{ v: 1 }, { v: 3 }, {}]
 

@@ -196,7 +196,8 @@ export class Order<T> {
 	 *
 	 * @example
 	 * ```ts
-	 * const newestFirst = Order.by((u: User) => u.createdAt).reverse();
+	 * const newestFirst = Order.by((u: User) => u.createdAt)
+	 * 	.reverse();
 	 * ```
 	 */
 	reverse(): Order<T> {
@@ -223,7 +224,8 @@ export class Order<T> {
 	 * 	id: number;
 	 * 	address: Address;
 	 * }
-	 * const byAddress = Order.by((a: Address) => a.city).by((a) => a.postcode);
+	 * const byAddress = Order.by((a: Address) => a.city)
+	 * 	.by((a) => a.postcode);
 	 * const byCustomerAddress = Order.map((c: Customer) => c.address, byAddress);
 	 * ```
 	 */
@@ -379,7 +381,8 @@ export class Order<T> {
 	 *
 	 * @example
 	 * ```ts
-	 * const sorted = Order.by((u: User) => u.lastName).sort(users);
+	 * const sorted = Order.by((u: User) => u.lastName)
+	 * 	.sort(users);
 	 * ```
 	 */
 	sort<U extends T>(array: readonly U[]): U[] {

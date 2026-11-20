@@ -4,839 +4,2099 @@
     "size": 10,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 0.00048823628551899806
+    "meanMs": 0.0004919189024330106
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 0.001379518416333262
+    "meanMs": 0.0013994848171057324
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 0.0009093510775665662
+    "meanMs": 0.0008835088791898726
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.0005047943685575381
+    "meanMs": 0.0004951026438261131
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.000907590731698497
+    "meanMs": 0.0008978602596562457
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 0.0005067650659801374
+    "meanMs": 0.0004999463259041932
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 0.0016062785916216276
+    "meanMs": 0.0016209450837999355
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 0.0021036629643653563
+    "meanMs": 0.0020951697883930032
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 0.0025591659330524517
+    "meanMs": 0.002604149731784518
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.0016837325902475803
+    "meanMs": 0.001711352329121953
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.0014889354713827458
+    "meanMs": 0.0015051036693664818
   },
   {
     "round": 0,
     "size": 10,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 0.0013400361000191028
+    "meanMs": 0.0013618798550962044
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 0.030479422912857428
+    "meanMs": 0.031154621806851846
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 0.032956012516470845
+    "meanMs": 0.033117766887420824
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.014507937336813652
+    "meanMs": 0.014679125623716245
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.017863072857142462
+    "meanMs": 0.018030593366980107
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 0.010290780613293336
+    "meanMs": 0.01026028970044969
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 0.014431380952380607
+    "meanMs": 0.014249926189796498
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 0.05835789381564
+    "meanMs": 0.06606699867899955
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 0.09638178076923028
+    "meanMs": 0.09461288657845161
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.06403785787451453
+    "meanMs": 0.060210435619732786
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.048507072744907044
+    "meanMs": 0.04544590644868738
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 0.05493213611415646
+    "meanMs": 0.05090772533063466
   },
   {
     "round": 0,
     "size": 100,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 0.051105929519908104
+    "meanMs": 0.04906490980392395
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 0.32209533333333146
+    "meanMs": 0.33229552980134586
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 0.5550494065933832
+    "meanMs": 0.5187173195876281
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 5.134850500000047
+    "meanMs": 0.6582751973684015
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 11.023149999999987
+    "meanMs": 0.3280555228758184
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.5568457999999282
+    "meanMs": 0.35092568531466045
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 0.23943081339712521
+    "meanMs": 0.2409203028846146
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 0.8748598103448111
+    "meanMs": 0.8802324736842133
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 0.9533977547169362
+    "meanMs": 0.9552365094339123
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 1.5106224117646831
+    "meanMs": 1.5008480882353499
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.7613977121212345
+    "meanMs": 0.7670638030302654
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 1.0608429375000223
+    "meanMs": 1.0667543829786832
   },
   {
     "round": 0,
     "size": 1000,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 0.9061770357142871
+    "meanMs": 0.8956985892857251
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 6.316895750000015
+    "meanMs": 6.341552375000049
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 8.959423499999883
+    "meanMs": 8.898048666666758
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 7.276488142857163
+    "meanMs": 7.187958285714298
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 12.35259219999998
+    "meanMs": 12.269166599999972
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 4.972549545454554
+    "meanMs": 5.049720899999966
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 5.659805444444373
+    "meanMs": 5.600842555555472
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 13.026791500000058
+    "meanMs": 14.23985400000015
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 13.951312749999943
+    "meanMs": 12.897697999999991
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 15.997072999999773
+    "meanMs": 15.242124999999987
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 23.514763666666415
+    "meanMs": 22.53625000000011
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 12.19819979999993
+    "meanMs": 12.24674159999995
   },
   {
     "round": 0,
     "size": 10000,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 10.557283200000166
+    "meanMs": 10.183316999999624
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 124.44933299999987
+    "meanMs": 115.96612500000022
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 160.8534026666663
+    "meanMs": 146.51733366666727
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 263.8071110000001
+    "meanMs": 254.10466666666738
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 178.1183750000006
+    "meanMs": 180.6410139999995
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 195.26431933333274
+    "meanMs": 176.36358333333314
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 150.15676366666594
+    "meanMs": 134.6163609999991
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 186.72025033333435
+    "meanMs": 181.52861100000155
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 245.55158333333142
+    "meanMs": 248.1107920000007
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 408.26658299999934
+    "meanMs": 387.2185833333327
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 312.76619433333326
+    "meanMs": 284.5763746666659
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 242.20695866666696
+    "meanMs": 219.66220800000033
   },
   {
     "round": 0,
     "size": 100000,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 264.7227636666673
+    "meanMs": 242.27491633333315
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.0005825051085194894
+    "meanMs": 0.0005661402998254343
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 0.0011218565370550073
+    "meanMs": 0.0011007158015273466
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 0.0018204900240255993
+    "meanMs": 0.0017694915596159447
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.0010981940039486214
+    "meanMs": 0.0011577943546468494
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 0.0007085618065074684
+    "meanMs": 0.0005349615364002917
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 0.000556956156571433
+    "meanMs": 0.0005253425338294294
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.002042717828250567
+    "meanMs": 0.002072687116566995
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 0.003029548379271927
+    "meanMs": 0.0029951823409583244
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 0.0025954675836892347
+    "meanMs": 0.0026418135996196784
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.0019380815147946814
+    "meanMs": 0.0019229109333533158
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 0.001705500596922797
+    "meanMs": 0.0017137542500767797
   },
   {
     "round": 1,
     "size": 10,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 0.0019487809650056372
+    "meanMs": 0.0019550138410996654
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 0.014284156241104918
+    "meanMs": 0.014305377574341034
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.014175496882066452
+    "meanMs": 0.014285155955451139
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 0.03061095042838162
+    "meanMs": 0.030584206116196246
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.01744776866715429
+    "meanMs": 0.017460886871514203
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 0.03260931421122029
+    "meanMs": 0.03314142213385479
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 0.010079952428946722
+    "meanMs": 0.009809546096507464
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 0.046703742296911765
+    "meanMs": 0.04682718913864276
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.057105595890465176
+    "meanMs": 0.05799009501736676
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 0.05731569988537914
+    "meanMs": 0.05614505948375672
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.04382983961436173
+    "meanMs": 0.04326911332180848
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 0.08601124398635974
+    "meanMs": 0.0842153249158452
   },
   {
     "round": 1,
     "size": 100,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 0.050094290290274554
+    "meanMs": 0.048549392233043644
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 0.6626178421048329
+    "meanMs": 0.6677743999999077
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 0.3462413793102817
+    "meanMs": 0.3496768601399054
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.3253763636363005
+    "meanMs": 0.32442769677417654
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 0.3285449150327408
+    "meanMs": 0.3188314394902609
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 0.5370212872339252
+    "meanMs": 0.5229266041665899
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 0.2423792463768386
+    "meanMs": 0.23847794761890587
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 1.4994056176468908
+    "meanMs": 1.5740208437501906
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 1.0536118749998118
+    "meanMs": 1.0826596170213343
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 0.7792615230771142
+    "meanMs": 0.7685176666667151
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 0.8685531896554212
+    "meanMs": 0.8685567241373064
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 0.9626137884615672
+    "meanMs": 0.9462303584904181
   },
   {
     "round": 1,
     "size": 1000,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 0.8950959999999994
+    "meanMs": 0.9095591090907295
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 6.500515499998983
+    "meanMs": 6.188587888889338
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 9.295430333332357
+    "meanMs": 8.467694166666965
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 6.12173622222205
+    "meanMs": 5.7215694444449685
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 13.592552250000153
+    "meanMs": 12.503593750000618
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 6.124740777777334
+    "meanMs": 5.6403426666681
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 8.379583666666198
+    "meanMs": 7.6603332857141915
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 13.790426999999909
+    "meanMs": 13.741448000000673
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 13.196385749998626
+    "meanMs": 15.515687250000155
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 17.492888999999803
+    "meanMs": 10.98843340000094
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 22.842027666665672
+    "meanMs": 23.579444333333715
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 12.526718749999418
+    "meanMs": 12.210908200000267
   },
   {
     "round": 1,
     "size": 10000,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 15.85170775000006
+    "meanMs": 15.729030999998031
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "triage",
     "implementation": "ts-order-compiled",
-    "meanMs": 133.95448600000236
+    "meanMs": 126.87711099999918
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "triage",
     "implementation": "ts-order-class",
-    "meanMs": 198.862069666667
+    "meanMs": 193.6628750000018
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "triage",
     "implementation": "ts-order-compare",
-    "meanMs": 245.58380533333062
+    "meanMs": 259.61438866666623
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "triage",
     "implementation": "native",
-    "meanMs": 145.03865266666494
+    "meanMs": 162.29780566666645
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "triage",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 169.94441666666776
+    "meanMs": 173.30365266666922
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "triage",
     "implementation": "native-cached",
-    "meanMs": 146.05277766666646
+    "meanMs": 136.20806966666714
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "review",
     "implementation": "ts-order-compiled",
-    "meanMs": 193.5995696666699
+    "meanMs": 174.58130566666418
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "review",
     "implementation": "ts-order-class",
-    "meanMs": 248.2722916666656
+    "meanMs": 226.33877799999996
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "review",
     "implementation": "ts-order-compare",
-    "meanMs": 431.2937363333331
+    "meanMs": 385.94572233333264
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "review",
     "implementation": "native",
-    "meanMs": 257.8421386666644
+    "meanMs": 235.82993033333332
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "review",
     "implementation": "ts-order-compiled-compare",
-    "meanMs": 309.3846389999987
+    "meanMs": 338.3863473333331
   },
   {
     "round": 1,
     "size": 100000,
     "scenario": "review",
     "implementation": "native-cached",
-    "meanMs": 229.92595833333084
+    "meanMs": 211.80213899999944
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.0004900269708749724
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.0009980716809380276
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 0.0005288174741706328
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 0.0016521949244794976
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.0010014748933754201
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 0.0005065655191245057
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.0017391511304308996
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.00155193242906277
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 0.0013698357305359822
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 0.002208514222605996
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.0026065084188933428
+  },
+  {
+    "round": 2,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 0.0015761466443989201
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.014026771107990438
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.032670192684489126
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 0.030205939613516752
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.017397908141989996
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 0.0140655780591508
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 0.009849878077559526
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.058418307242969134
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.08427819696964552
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 0.057201578285794585
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.04471402323509701
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 0.04884260449220077
+  },
+  {
+    "round": 2,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 0.05125621618858312
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 0.5124940612246175
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.6620601842101004
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.3344224399998105
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.31280571875008717
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 0.3137161437501617
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 0.23043662211967716
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 0.949247679244952
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 1.4899986176475495
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 1.0460182083331044
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.7560137611942639
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 0.8717967241377509
+  },
+  {
+    "round": 2,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 0.9086400178569292
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 5.293795700000919
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 13.366093749998981
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 8.665618166668233
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 6.377468624999892
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 8.511840166665934
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 5.694449111111074
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 12.3557747999992
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 21.153930666667293
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 12.722177249997912
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 11.704774799999722
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 15.310177000001204
+  },
+  {
+    "round": 2,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 10.85204159999994
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 251.00509700000111
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 180.37308333333445
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 172.64670866666953
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 121.20908299999913
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 156.66368033333129
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 152.70447233333348
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 426.1927083333333
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 248.41616699999818
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 322.6369723333337
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 194.3574579999986
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 291.6420136666614
+  },
+  {
+    "round": 2,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 235.47854166667094
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.0010430505246590966
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.0010836084996727745
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 0.0017531782959411056
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 0.0005574762180824063
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.0005164383837550456
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 0.0005307509102146065
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.0016518407664197318
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.002832079410935391
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 0.0023253474398828057
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 0.0014453287469223242
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.0018242214965985464
+  },
+  {
+    "round": 3,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 0.001668426173696207
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.03260892698838917
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 0.009912053914758056
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 0.013721354829828744
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.019175472775982135
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.01860656622025521
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 0.03145821698142856
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.08843757597186155
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 0.054440454842188395
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 0.07219684126987293
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.06338482889741763
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.04544377384216086
+  },
+  {
+    "round": 3,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 0.05837354842452369
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.32334687096778414
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.3431395821917
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 0.2439489804881216
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 0.3266476948049892
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.6624183815790609
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 0.5186043917521002
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.7869843281246175
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 1.0880681914893506
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 0.9064701964289269
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 0.8818530526324663
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 1.530973424243381
+  },
+  {
+    "round": 3,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 1.0139616799983195
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 6.387869875001343
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 7.212172857142702
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 6.07424077777897
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 9.408889000000878
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 15.97623950000343
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 11.393041600001743
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 12.749031249997643
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 13.49809374999677
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 11.835408399996231
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 17.207125000000815
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 26.185638999998144
+  },
+  {
+    "round": 3,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 16.497135500001605
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 236.6417220000003
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 165.15355566666403
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 117.35151366666832
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 127.26591666667082
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 177.4583749999923
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 135.15599966666682
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 396.12393066666846
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 304.21962466667173
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 181.7070553333324
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 215.5051806666646
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 245.58386100000158
+  },
+  {
+    "round": 3,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 258.4597920000039
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 0.0005678123623093411
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.0011255473290639698
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 0.0005052753749090587
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.0010321042832136993
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.0005378397676445334
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 0.001739751426593593
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 0.0018916396171456628
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.003316595516030884
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 0.0021598012180693345
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.0020782148379388096
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.0022502961496901654
+  },
+  {
+    "round": 4,
+    "size": 10,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 0.002703625283825243
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.013942057708321987
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 0.00994510560861028
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 0.01394712412827686
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.031911910657546026
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.0171699378647013
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 0.0299546628743344
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.06088280778591323
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 0.052966366525451704
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 0.05016939117356135
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.08705514956521308
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.0463758721037656
+  },
+  {
+    "round": 4,
+    "size": 100,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 0.0591167446813325
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 0.34027442176922135
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.31820878481029696
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 0.33152007946980855
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 0.24028224401865564
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 0.6462954487179581
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 0.5157817835052746
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 1.053482562500297
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 0.7663182121217357
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 0.8647857931034101
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 0.9047068214282001
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 1.5176035151503817
+  },
+  {
+    "round": 4,
+    "size": 1000,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 0.9601414528310755
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 12.165725000001839
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 6.309390874999735
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 8.410673499999879
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 5.406691599996702
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 5.000761545453728
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 7.053687624997111
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 21.22058333332825
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 12.351791800002683
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 13.02965624999706
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 10.929608400003053
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 13.134239499995601
+  },
+  {
+    "round": 4,
+    "size": 10000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 16.70029133333689
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "native-cached",
+    "meanMs": 128.8337080000007
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-compare",
+    "meanMs": 230.10602799999955
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-class",
+    "meanMs": 177.91552799999772
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 156.17984733333773
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "ts-order-compiled",
+    "meanMs": 113.30193033333246
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "triage",
+    "implementation": "native",
+    "meanMs": 135.99443066666814
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "native-cached",
+    "meanMs": 219.2054026666689
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-compare",
+    "meanMs": 414.60724966666504
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-class",
+    "meanMs": 263.4589026666751
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled-compare",
+    "meanMs": 314.4317220000036
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "ts-order-compiled",
+    "meanMs": 185.21561133333307
+  },
+  {
+    "round": 4,
+    "size": 100000,
+    "scenario": "review",
+    "implementation": "native",
+    "meanMs": 239.08501400000145
   }
 ]

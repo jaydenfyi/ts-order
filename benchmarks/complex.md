@@ -2,7 +2,7 @@
 
 [Simple-key benchmarks](../BENCHMARKS.md) compare ts-order with other libraries on one to three plain keys. This page covers what those leave out: conditional rules, custom ranks, missing values, locale collation, reusable nested orders and a computed key. Only native comparators and ts-order are compared. Other libraries express these rules differently or not at all, so a like-for-like row would mostly measure custom glue code.
 
-Shuffled input · 2 rounds · median of round means · 10, 100, 1,000, 10,000, 100,000 shipments. **1.00× = the handwritten native comparator** in that column; lower is faster. Every implementation returns the same array, including the order of tied items, checked before and after timing.
+Shuffled input · 5 rounds · median of round means · 10, 100, 1,000, 10,000, 100,000 shipments. **1.00× = the handwritten native comparator** in that column; lower is faster. Every implementation returns the same array, including the order of tied items, checked before and after timing.
 
 Line counts skip blank lines and comments. Both workloads share these helpers, which are not counted:
 
@@ -57,12 +57,12 @@ Express shipments first, by promised deadline with unknown deadlines last; then 
 
 | Implementation | 10 (µs) | 100 (µs) | 1,000 (µs) | 10,000 (ms) | 100,000 (ms) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ts-order compiled sort | 1 · 1.65× | 17.7 · 1.23× | 5,670 · 17.44× | 5.89 · 0.92× | 129 · 0.84× |
-| Native handwritten, cached keys | 0.523 · 0.86× | 10.2 · 0.71× | 241 · 0.74× | 5.55 · 0.87× | 148 · 0.97× |
-| Native handwritten comparator | 0.608 · 1.00× | 14.4 · 1.00× | 325 · 1.00× | 6.41 · 1.00× | 153 · 1.00× |
-| ts-order compiled compare | 0.544 · 0.89× | 14.3 · 1.00× | 452 · 1.39× | 7.83 · 1.22× | 174 · 1.14× |
-| ts-order `order.sort()` | 1.6 · 2.63× | 30.5 · 2.13× | 546 · 1.68× | 9.13 · 1.42× | 197 · 1.29× |
-| ts-order `toSorted(order.compare)` | 1.02 · 1.67× | 32.8 · 2.28× | 2,900 · 8.91× | 13 · 2.02× | 255 · 1.67× |
+| ts-order compiled sort | 1.03 · 1.93× | 17.5 · 1.24× | 323 · 0.99× | 5.69 · 0.90× | 117 · 0.80× |
+| Native handwritten, cached keys | 0.507 · 0.95× | 9.91 · 0.70× | 240 · 0.74× | 5.29 · 0.83× | 135 · 0.92× |
+| Native handwritten comparator | 0.535 · 1.00× | 14.1 · 1.00× | 327 · 1.00× | 6.34 · 1.00× | 147 · 1.00× |
+| ts-order compiled compare | 0.516 · 0.97× | 14.3 · 1.02× | 343 · 1.05× | 7.66 · 1.21× | 173 · 1.18× |
+| ts-order `order.sort()` | 1.74 · 3.25× | 30.6 · 2.17× | 519 · 1.59× | 8.67 · 1.37× | 178 · 1.21× |
+| ts-order `toSorted(order.compare)` | 1.08 · 2.03× | 32.7 · 2.32× | 662 · 2.03× | 12.5 · 1.97× | 251 · 1.71× |
 
 ### ts-order (8 lines)
 
@@ -136,12 +136,12 @@ The same reusable customer ordering, then never-reviewed shipments first, oldest
 
 | Implementation | 10 (µs) | 100 (µs) | 1,000 (µs) | 10,000 (ms) | 100,000 (ms) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| ts-order compiled sort | 1.71 · 1.13× | 46.2 · 0.94× | 770 · 0.88× | 14 · 1.05× | 190 · 0.76× |
-| ts-order `order.sort()` | 2.35 · 1.54× | 57.8 · 1.18× | 958 · 1.10× | 13.6 · 1.01× | 245 · 0.97× |
-| Native handwritten, cached keys | 1.78 · 1.17× | 52.5 · 1.07× | 901 · 1.03× | 12.4 · 0.92× | 247 · 0.98× |
-| Native handwritten comparator | 1.52 · 1.00× | 48.9 · 1.00× | 872 · 1.00× | 13.4 · 1.00× | 252 · 1.00× |
-| ts-order compiled compare | 1.86 · 1.22× | 60.6 · 1.24× | 1,060 · 1.21× | 15.9 · 1.19× | 311 · 1.24× |
-| ts-order `toSorted(order.compare)` | 2.79 · 1.84× | 91.2 · 1.86× | 1,510 · 1.73× | 23.2 · 1.73× | 420 · 1.67× |
+| ts-order compiled sort | 1.65 · 1.14× | 45.4 · 0.93× | 767 · 0.88× | 10.9 · 0.81× | 182 · 0.73× |
+| Native handwritten, cached keys | 1.67 · 1.15× | 51.3 · 1.04× | 906 · 1.04× | 12.4 · 0.92× | 219 · 0.88× |
+| ts-order `order.sort()` | 2.33 · 1.61× | 58.4 · 1.19× | 955 · 1.10× | 13 · 0.97× | 246 · 0.99× |
+| Native handwritten comparator | 1.45 · 1.00× | 49.1 · 1.00× | 872 · 1.00× | 13.5 · 1.00× | 248 · 1.00× |
+| ts-order compiled compare | 1.82 · 1.26× | 60.2 · 1.23× | 1,070 · 1.22× | 15.7 · 1.17× | 314 · 1.27× |
+| ts-order `toSorted(order.compare)` | 2.83 · 1.96× | 87.1 · 1.77× | 1,520 · 1.74× | 22.5 · 1.67× | 396 · 1.60× |
 
 ### ts-order (3 lines)
 
@@ -198,6 +198,6 @@ function sortReviewCached(input: readonly Shipment[]): Shipment[] {
 
 ## Environment
 
-Measured 2026-11-20T05:43:42.751Z on Node v24.22.3 (V8 13.6.233.17-node.63), darwin 24.5.0 arm64, Apple M1 Pro. Commit `533ee99` with local changes. Tinybench: at least 50 ms and 3 samples per cell after a 20 ms warm-up. One machine and one runtime; repeat on your target before relying on small differences.
+Measured 2026-11-20T06:31:57.791Z on Node v24.22.3 (V8 13.6.233.17-node.63), darwin 24.5.0 arm64, Apple M1 Pro. Commit `9506f67` with local changes. Tinybench: at least 50 ms and 3 samples per cell after a 20 ms warm-up. One machine and one runtime; repeat on your target before relying on small differences.
 
 Reproduce with `bun run bench:complex`.

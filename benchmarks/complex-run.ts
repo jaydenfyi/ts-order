@@ -25,7 +25,7 @@ type Row = {
 	meanMs: number;
 };
 
-const ROUNDS = 2;
+const ROUNDS = 5;
 const SEED = 20261120;
 const rows: Row[] = [];
 

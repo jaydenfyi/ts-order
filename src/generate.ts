@@ -17,12 +17,15 @@ export function generateCompare<T>(steps: readonly OrderStep<T>[]): Comparator<T
 export function generateSort<T>(
 	steps: readonly OrderStep<T>[],
 ): ((array: readonly T[]) => T[]) | undefined {
-	const decorate = steps.map((step, i) =>
-		step.predicate
-			? `var P${i}=new Array(n),K${i}=new Array(n);` +
-				`for(i=0;i<n;i++)if(P${i}[i]=!!p${i}(t=array[i]))K${i}[i]=k${i}(t);`
-			: `var K${i}=new Array(n);for(i=0;i<n;i++)K${i}[i]=k${i}(array[i]);`,
-	);
+	const decorate = steps.map((step, i) => {
+		const j = firstWithPredicate(steps, i);
+		return j < i
+			? `var K${i}=new Array(n);for(i=0;i<n;i++)if(P${j}[i])K${i}[i]=k${i}(array[i]);`
+			: step.predicate
+				? `var P${i}=new Array(n),K${i}=new Array(n);` +
+					`for(i=0;i<n;i++)if(P${i}[i]=!!p${i}(t=array[i]))K${i}[i]=k${i}(t);`
+				: `var K${i}=new Array(n);for(i=0;i<n;i++)K${i}[i]=k${i}(array[i]);`;
+	});
 	return generate(
 		`return function(array){var n=array.length,i,t;if(n<=1)return array.slice();${ 
 			decorate.join('') 
@@ -96,11 +99,26 @@ function compareStepsSource(steps: readonly OrderStep<any>[], sort: boolean): st
 			const keys =
 				(sort ? `x=K${i}[a];y=K${i}[b];` : `x=k${i}(a);y=k${i}(b);`) + compareKeysSource(i, step);
 			// The item that passes comes first. When neither passes, skip the step.
+			// When an earlier step checked the same predicate, both items gave the
+			// same result there, or the comparator would have returned.
+			const j = sort ? firstWithPredicate(steps, i) : i;
 			return !step.predicate
 				? keys
-				: sort
-					? `f=P${i}[a];if(f!==P${i}[b])return f?-1:1;if(f){${keys}}`
-					: `f=!p${i}(a);if(f!==!p${i}(b))return f?1:-1;if(!f){${keys}}`;
+				: j < i
+					? `if(P${j}[a]){${keys}}`
+					: sort
+						? `f=P${i}[a];if(f!==P${i}[b])return f?-1:1;if(f){${keys}}`
+						: `f=!p${i}(a);if(f!==!p${i}(b))return f?1:-1;if(!f){${keys}}`;
 		})
 		.join('');
+}
+
+/**
+ * The first step with step `i`'s predicate, or `i` when it has none or no
+ * earlier step shares it. `when()` gives its guard step and the steps it
+ * appends one predicate, so `sort` calls it once per item, not once per step.
+ */
+function firstWithPredicate(steps: readonly OrderStep<any>[], i: number): number {
+	const p = steps[i]!.predicate;
+	return p ? steps.findIndex((step) => step.predicate === p) : i;
 }

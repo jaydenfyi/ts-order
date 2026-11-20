@@ -52,6 +52,19 @@ describe('compile', () => {
 		generate.mockRestore();
 	});
 
+	it('calls a when() predicate once per item in sort', async () => {
+		const compile = await importCompile();
+		const hasScore = vi.fn((r: Row) => r.score !== null);
+		const order = new Order<Row>()
+			.when(hasScore, Order.by((r: Row) => r.score).by((r) => -r.id))
+			.by((r) => r.id);
+		const plain = order.sort(rows);
+		hasScore.mockClear();
+
+		expect(compile(order).sort(rows)).toEqual(plain);
+		expect(hasScore).toHaveBeenCalledTimes(rows.length);
+	});
+
 	it('sorts an order with 60,000 steps', async () => {
 		const compile = await importCompile();
 		const many = new Order(Array.from({ length: 30_000 }, () => byScoreThenId));

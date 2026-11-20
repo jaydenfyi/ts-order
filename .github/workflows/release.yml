@@ -31,17 +31,18 @@ jobs:
             - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
               with:
                   fetch-depth: 0
+                  persist-credentials: false
             - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
               with:
                   no-cache: true
             - run: bun install --frozen-lockfile
-            - uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+            # v2 understands the .changeset/pre/ folder of Changesets 3 pre mode, and
+            # pushes through the GitHub API with its github-token input.
+            - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
               with:
-                  version: bun run version-packages
-                  title: Version Packages
-                  commit: 'chore: version packages'
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  version-script: bun run version-packages
+                  pr-title: Version Packages
+                  commit-message: 'chore: version packages'
 
     check:
         runs-on: ubuntu-latest
@@ -64,7 +65,11 @@ jobs:
                     *-*) tag=${version#*-}; tag=${tag%%.*} ;;
                     *) tag=latest ;;
                   esac
-                  if npm view "ts-order@$version" version >/dev/null 2>&1; then
+                  # Skip a version that is on npm, or staged: github-release tags each
+                  # version it stages. To stage again after rejecting it on npm, delete
+                  # its tag and GitHub release.
+                  if npm view "ts-order@$version" version >/dev/null 2>&1 ||
+                    git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null; then
                     publish=false
                   else
                     publish=true

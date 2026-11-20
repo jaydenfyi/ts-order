@@ -1,6 +1,18 @@
-# ts-order
+# 🔢 ts-order
 
-[Fast](BENCHMARKS.md), type-safe, declarative multi-key sorting for JavaScript and TypeScript, with zero dependencies.
+A tiny ([under 1 kB](https://bundlejs.com/?q=ts-order) minified and gzipped), [fast](BENCHMARKS.md), type-safe sorting utility for JavaScript/TypeScript that gives you **declarative**, **composable**, and **immutable** multi-key ordering logic.
+
+## Features
+
+- Declarative key-based sorting
+- Composable chaining with `.by()`, `.map()`, `.when()`
+- Immutable API: methods return a new `Order`
+- Type-safe with full inference
+- Consistent results: nulls and predicates follow fixed rules, so the output never depends on the input order
+- DSU-optimized for costly key computations
+- Optional compiled orders for faster sorting: `compile()` for one order, or `import 'ts-order/compile'` for every order
+- Standalone comparator helpers in `ts-order/comparator` for `Array.prototype.sort`
+- Zero dependencies
 
 ## Installation
 

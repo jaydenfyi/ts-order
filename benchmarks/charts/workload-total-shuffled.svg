@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="560" viewBox="0 0 1160 560" role="img" aria-label="Stored order total, ascending, shuffled input">
+<style>
+	.surface { fill: #fcfcfb; }
+	.title { fill: #0b0b0b; font-size: 16px; font-weight: 600; }
+	.subtitle, .value { fill: #52514e; font-size: 12px; }
+	.place { fill: #0b0b0b; font-weight: 600; }
+	.label { fill: #0b0b0b; font-size: 12px; }
+	.group { fill: #52514e; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+	.panel { fill: #0b0b0b; font-size: 13px; font-weight: 600; }
+	.tick, .missing { fill: #898781; font-size: 11px; font-variant-numeric: tabular-nums; }
+	.grid { stroke: #e1e0d9; stroke-width: 1; }
+	.axis { stroke: #c3c2b7; stroke-width: 1; }
+	.ts-order { fill: #2a78d6; }
+	.native { fill: #eb6834; }
+	.other { fill: #898781; }
+	@media (prefers-color-scheme: dark) {
+		.surface { fill: #1a1a19; }
+		.title, .label, .panel { fill: #f0efec; }
+		.subtitle, .value, .group { fill: #c3c2b7; }
+		.place { fill: #f0efec; }
+		.grid { stroke: #2c2c2a; }
+		.axis { stroke: #383835; }
+		.ts-order { fill: #3987e5; }
+		.native { fill: #d95926; }
+	}
+	text { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+</style>
+<rect class="surface" width="1160" height="560" rx="8"/>
+<text class="title" x="16" y="26">Stored order total, ascending, shuffled input</text>
+<text class="subtitle" x="16" y="44">Speed relative to compiled ts-order sort(). Longer bars are faster. 1st, 2nd and 3rd mark the three fastest at each size.</text>
+<rect class="ts-order" x="16" y="52" width="12" height="12" rx="2"/><text class="label" x="34" y="62">ts-order</text>
+<rect class="native" x="112" y="52" width="12" height="12" rx="2"/><text class="label" x="130" y="62">Native Array.prototype.sort</text>
+<rect class="other" x="341" y="52" width="12" height="12" rx="2"/><text class="label" x="359" y="62">Other libraries</text>
+<text class="panel" x="210" y="84">10 records</text>
+<line class="axis" x1="210" x2="210" y1="92" y2="528"/><text class="tick" x="210" y="544" text-anchor="start">0</text>
+<line class="grid" x1="228.56" x2="228.56" y1="92" y2="528"/>
+<line class="grid" x1="247.12" x2="247.12" y1="92" y2="528"/>
+<line class="grid" x1="265.68" x2="265.68" y1="92" y2="528"/><text class="tick" x="265.68" y="544" text-anchor="middle">0.75×</text>
+<line class="grid" x1="284.24" x2="284.24" y1="92" y2="528"/>
+<line class="grid" x1="302.8" x2="302.8" y1="92" y2="528"/>
+<text class="panel" x="400.8" y="84">100 records</text>
+<line class="axis" x1="400.8" x2="400.8" y1="92" y2="528"/><text class="tick" x="400.8" y="544" text-anchor="start">0</text>
+<line class="grid" x1="419.36" x2="419.36" y1="92" y2="528"/>
+<line class="grid" x1="437.92" x2="437.92" y1="92" y2="528"/>
+<line class="grid" x1="456.48" x2="456.48" y1="92" y2="528"/><text class="tick" x="456.48" y="544" text-anchor="middle">0.75×</text>
+<line class="grid" x1="475.04" x2="475.04" y1="92" y2="528"/>
+<line class="grid" x1="493.6" x2="493.6" y1="92" y2="528"/>
+<text class="panel" x="591.6" y="84">1,000 records</text>
+<line class="axis" x1="591.6" x2="591.6" y1="92" y2="528"/><text class="tick" x="591.6" y="544" text-anchor="start">0</text>
+<line class="grid" x1="610.1600000000001" x2="610.1600000000001" y1="92" y2="528"/>
+<line class="grid" x1="628.72" x2="628.72" y1="92" y2="528"/>
+<line class="grid" x1="647.28" x2="647.28" y1="92" y2="528"/><text class="tick" x="647.28" y="544" text-anchor="middle">0.75×</text>
+<line class="grid" x1="665.84" x2="665.84" y1="92" y2="528"/>
+<line class="grid" x1="684.4000000000001" x2="684.4000000000001" y1="92" y2="528"/>
+<text class="panel" x="782.4000000000001" y="84">10,000 records</text>
+<line class="axis" x1="782.4000000000001" x2="782.4000000000001" y1="92" y2="528"/><text class="tick" x="782.4000000000001" y="544" text-anchor="start">0</text>
+<line class="grid" x1="800.96" x2="800.96" y1="92" y2="528"/>
+<line class="grid" x1="819.5200000000001" x2="819.5200000000001" y1="92" y2="528"/>
+<line class="grid" x1="838.0800000000002" x2="838.0800000000002" y1="92" y2="528"/><text class="tick" x="838.0800000000002" y="544" text-anchor="middle">0.75×</text>
+<line class="grid" x1="856.6400000000001" x2="856.6400000000001" y1="92" y2="528"/>
+<line class="grid" x1="875.2" x2="875.2" y1="92" y2="528"/>
+<text class="panel" x="973.2" y="84">100,000 records</text>
+<line class="axis" x1="973.2" x2="973.2" y1="92" y2="528"/><text class="tick" x="973.2" y="544" text-anchor="start">0</text>
+<line class="grid" x1="991.76" x2="991.76" y1="92" y2="528"/>
+<line class="grid" x1="1010.32" x2="1010.32" y1="92" y2="528"/>
+<line class="grid" x1="1028.88" x2="1028.88" y1="92" y2="528"/><text class="tick" x="1028.88" y="544" text-anchor="middle">0.75×</text>
+<line class="grid" x1="1047.44" x2="1047.44" y1="92" y2="528"/>
+<line class="grid" x1="1066" x2="1066" y1="92" y2="528"/>
+<text class="group" x="16" y="110">Native Array.prototype.sort</text>
+<text class="label" x="16" y="133">Cached keys</text>
+<path class="native" d="M210,122h73.33107276878813a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-73.33107276878813z"><title>Cached keys, 10 records: 1.0×</title></path>
+<text class="value" x="293.33107276878815" y="133">1.0×</text>
+<path class="native" d="M400.8,122h68.123402425864a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-68.123402425864z"><title>Cached keys, 100 records: 1.0×</title></path>
+<text class="value" x="478.923402425864" y="133">1.0×</text>
+<path class="native" d="M591.6,122h69.46791588190878a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-69.46791588190878z"><title>Cached keys, 1,000 records: 1.0×</title></path>
+<text class="value" x="671.0679158819088" y="133">1.0×</text>
+<path class="native" d="M782.4000000000001,122h70.89019749770073a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-70.89019749770073z"><title>Cached keys, 10,000 records: 1.0×</title></path>
+<text class="value" x="863.2901974977008" y="133">1.0×</text>
+<path class="native" d="M973.2,122h47.797725326284684a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-47.797725326284684z"><title>Cached keys, 100,000 records: 0.7×</title></path>
+<text class="value place" x="1030.9977253262848" y="133">2nd · 0.7×</text>
+<text class="label" x="16" y="155">Handwritten comparator</text>
+<path class="native" d="M210,144h87.88635552569025a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-87.88635552569025z"><title>Handwritten comparator, 10 records: 1.2×</title></path>
+<text class="value place" x="307.88635552569025" y="155">2nd · 1.2×</text>
+<path class="native" d="M400.8,144h83.58342994889874a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-83.58342994889874z"><title>Handwritten comparator, 100 records: 1.2×</title></path>
+<text class="value place" x="494.38342994889877" y="155">1st · 1.2×</text>
+<path class="native" d="M591.6,144h75.75482811044681a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-75.75482811044681z"><title>Handwritten comparator, 1,000 records: 1.1×</title></path>
+<text class="value place" x="677.3548281104469" y="155">1st · 1.1×</text>
+<path class="native" d="M782.4000000000001,144h72.47787936394381a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-72.47787936394381z"><title>Handwritten comparator, 10,000 records: 1.0×</title></path>
+<text class="value place" x="864.8778793639439" y="155">1st · 1.0×</text>
+<path class="native" d="M973.2,144h39.47716499767876a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-39.47716499767876z"><title>Handwritten comparator, 100,000 records: 0.6×</title></path>
+<text class="value" x="1022.6771649976788" y="155">0.6×</text>
+<text class="group" x="16" y="190">ts-order</text>
+<text class="label" x="16" y="213">compile() + sort()</text>
+<path class="ts-order" d="M210,202h70.24000000000001a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-70.24000000000001z"><title>compile() + sort(), 10 records: 1.0×</title></path>
+<text class="value" x="290.24" y="213">1.0×</text>
+<path class="ts-order" d="M400.8,202h70.24000000000001a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-70.24000000000001z"><title>compile() + sort(), 100 records: 1.0×</title></path>
+<text class="value" x="481.04" y="213">1.0×</text>
+<path class="ts-order" d="M591.6,202h70.24000000000001a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-70.24000000000001z"><title>compile() + sort(), 1,000 records: 1.0×</title></path>
+<text class="value place" x="671.84" y="213">2nd · 1.0×</text>
+<path class="ts-order" d="M782.4000000000001,202h70.24000000000001a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-70.24000000000001z"><title>compile() + sort(), 10,000 records: 1.0×</title></path>
+<text class="value place" x="862.6400000000001" y="213">2nd · 1.0×</text>
+<path class="ts-order" d="M973.2,202h70.24000000000001a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-70.24000000000001z"><title>compile() + sort(), 100,000 records: 1.0×</title></path>
+<text class="value place" x="1053.44" y="213">1st · 1.0×</text>
+<text class="label" x="16" y="235">compile() + compare</text>
+<path class="ts-order" d="M210,224h88.27955096297572a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-88.27955096297572z"><title>compile() + compare, 10 records: 1.2×</title></path>
+<text class="value place" x="308.2795509629757" y="235">1st · 1.2×</text>
+<path class="ts-order" d="M400.8,224h80.24610087023134a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-80.24610087023134z"><title>compile() + compare, 100 records: 1.1×</title></path>
+<text class="value place" x="491.0461008702314" y="235">2nd · 1.1×</text>
+<path class="ts-order" d="M591.6,224h68.67036080864703a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-68.67036080864703z"><title>compile() + compare, 1,000 records: 1.0×</title></path>
+<text class="value" x="670.2703608086471" y="235">1.0×</text>
+<path class="ts-order" d="M782.4000000000001,224h65.11281637703422a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-65.11281637703422z"><title>compile() + compare, 10,000 records: 0.9×</title></path>
+<text class="value" x="857.5128163770344" y="235">0.9×</text>
+<path class="ts-order" d="M973.2,224h40.43882284122703a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-40.43882284122703z"><title>compile() + compare, 100,000 records: 0.6×</title></path>
+<text class="value" x="1023.6388228412271" y="235">0.6×</text>
+<text class="label" x="16" y="257">Order (not compiled)</text>
+<path class="ts-order" d="M210,246h40.45626766603183a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-40.45626766603183z"><title>Order (not compiled), 10 records: 0.6×</title></path>
+<text class="value" x="260.45626766603186" y="257">0.6×</text>
+<path class="ts-order" d="M400.8,246h31.499424457757158a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-31.499424457757158z"><title>Order (not compiled), 100 records: 0.5×</title></path>
+<text class="value" x="442.29942445775714" y="257">0.5×</text>
+<path class="ts-order" d="M591.6,246h36.95671370567568a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-36.95671370567568z"><title>Order (not compiled), 1,000 records: 0.6×</title></path>
+<text class="value" x="638.5567137056757" y="257">0.6×</text>
+<path class="ts-order" d="M782.4000000000001,246h39.037356648562934a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-39.037356648562934z"><title>Order (not compiled), 10,000 records: 0.6×</title></path>
+<text class="value" x="831.4373566485631" y="257">0.6×</text>
+<path class="ts-order" d="M973.2,246h43.07065021626268a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-43.07065021626268z"><title>Order (not compiled), 100,000 records: 0.6×</title></path>
+<text class="value" x="1026.2706502162628" y="257">0.6×</text>
+<text class="label" x="16" y="279">ts-order/comparator</text>
+<path class="ts-order" d="M210,268h41.04346713194977a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-41.04346713194977z"><title>ts-order/comparator, 10 records: 0.6×</title></path>
+<text class="value" x="261.0434671319498" y="279">0.6×</text>
+<path class="ts-order" d="M400.8,268h21.442117770905316a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-21.442117770905316z"><title>ts-order/comparator, 100 records: 0.3×</title></path>
+<text class="value" x="432.24211777090534" y="279">0.3×</text>
+<path class="ts-order" d="M591.6,268h25.887312092888003a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-25.887312092888003z"><title>ts-order/comparator, 1,000 records: 0.4×</title></path>
+<text class="value" x="627.487312092888" y="279">0.4×</text>
+<path class="ts-order" d="M782.4000000000001,268h25.525051462122654a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-25.525051462122654z"><title>ts-order/comparator, 10,000 records: 0.4×</title></path>
+<text class="value" x="817.9250514621227" y="279">0.4×</text>
+<path class="ts-order" d="M973.2,268h18.904383254148033a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-18.904383254148033z"><title>ts-order/comparator, 100,000 records: 0.3×</title></path>
+<text class="value" x="1002.104383254148" y="279">0.3×</text>
+<text class="group" x="16" y="314">Other libraries</text>
+<text class="label" x="16" y="337">Radashi sort</text>
+<path class="other" d="M210,326h81.76118665286992a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-81.76118665286992z"><title>Radashi sort, 10 records: 1.2×</title></path>
+<text class="value place" x="301.7611866528699" y="337">3rd · 1.2×</text>
+<path class="other" d="M400.8,326h76.60234236954379a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-76.60234236954379z"><title>Radashi sort, 100 records: 1.1×</title></path>
+<text class="value place" x="487.4023423695438" y="337">3rd · 1.1×</text>
+<path class="other" d="M591.6,326h70.17855844909292a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-70.17855844909292z"><title>Radashi sort, 1,000 records: 1.0×</title></path>
+<text class="value place" x="671.778558449093" y="337">3rd · 1.0×</text>
+<path class="other" d="M782.4000000000001,326h67.22797134101849a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-67.22797134101849z"><title>Radashi sort, 10,000 records: 1.0×</title></path>
+<text class="value place" x="859.6279713410186" y="337">3rd · 1.0×</text>
+<path class="other" d="M973.2,326h39.89129523212665a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-39.89129523212665z"><title>Radashi sort, 100,000 records: 0.6×</title></path>
+<text class="value place" x="1023.0912952321266" y="337">3rd · 0.6×</text>
+<text class="label" x="16" y="359">Effect Array.sortWith (cached)</text>
+<path class="other" d="M210,348h44.140341836877965a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-44.140341836877965z"><title>Effect Array.sortWith (cached), 10 records: 0.6×</title></path>
+<text class="value" x="264.14034183687795" y="359">0.6×</text>
+<path class="other" d="M400.8,348h32.51601999602759a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-32.51601999602759z"><title>Effect Array.sortWith (cached), 100 records: 0.5×</title></path>
+<text class="value" x="443.3160199960276" y="359">0.5×</text>
+<path class="other" d="M591.6,348h38.60337270726055a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-38.60337270726055z"><title>Effect Array.sortWith (cached), 1,000 records: 0.6×</title></path>
+<text class="value" x="640.2033727072605" y="359">0.6×</text>
+<path class="other" d="M782.4000000000001,348h41.22917176464221a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-41.22917176464221z"><title>Effect Array.sortWith (cached), 10,000 records: 0.6×</title></path>
+<text class="value" x="833.6291717646423" y="359">0.6×</text>
+<path class="other" d="M973.2,348h35.15391863032062a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-35.15391863032062z"><title>Effect Array.sortWith (cached), 100,000 records: 0.5×</title></path>
+<text class="value" x="1018.3539186303207" y="359">0.5×</text>
+<text class="label" x="16" y="381">thenby</text>
+<path class="other" d="M210,370h56.118458956244325a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-56.118458956244325z"><title>thenby, 10 records: 0.8×</title></path>
+<text class="value" x="276.11845895624435" y="381">0.8×</text>
+<path class="other" d="M400.8,370h31.75197614548341a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-31.75197614548341z"><title>thenby, 100 records: 0.5×</title></path>
+<text class="value" x="442.5519761454834" y="381">0.5×</text>
+<path class="other" d="M591.6,370h35.4329482022671a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-35.4329482022671z"><title>thenby, 1,000 records: 0.5×</title></path>
+<text class="value" x="637.0329482022671" y="381">0.5×</text>
+<path class="other" d="M782.4000000000001,370h35.862393039382845a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-35.862393039382845z"><title>thenby, 10,000 records: 0.5×</title></path>
+<text class="value" x="828.2623930393829" y="381">0.5×</text>
+<path class="other" d="M973.2,370h26.439135708376714a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-26.439135708376714z"><title>thenby, 100,000 records: 0.4×</title></path>
+<text class="value" x="1009.6391357083768" y="381">0.4×</text>
+<text class="label" x="16" y="403">fast-sort</text>
+<path class="other" d="M210,392h41.48503549452157a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-41.48503549452157z"><title>fast-sort, 10 records: 0.6×</title></path>
+<text class="value" x="261.4850354945216" y="403">0.6×</text>
+<path class="other" d="M400.8,392h23.93028045864577a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-23.93028045864577z"><title>fast-sort, 100 records: 0.4×</title></path>
+<text class="value" x="434.7302804586458" y="403">0.4×</text>
+<path class="other" d="M591.6,392h29.21187914223397a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-29.21187914223397z"><title>fast-sort, 1,000 records: 0.4×</title></path>
+<text class="value" x="630.811879142234" y="403">0.4×</text>
+<path class="other" d="M782.4000000000001,392h30.64290756840068a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-30.64290756840068z"><title>fast-sort, 10,000 records: 0.5×</title></path>
+<text class="value" x="823.0429075684008" y="403">0.5×</text>
+<path class="other" d="M973.2,392h22.401040517632527a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-22.401040517632527z"><title>fast-sort, 100,000 records: 0.4×</title></path>
+<text class="value" x="1005.6010405176326" y="403">0.4×</text>
+<text class="label" x="16" y="425">es-toolkit compat (cached)</text>
+<path class="other" d="M210,414h28.939802952103555a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-28.939802952103555z"><title>es-toolkit compat (cached), 10 records: 0.4×</title></path>
+<text class="value" x="248.93980295210355" y="425">0.4×</text>
+<path class="other" d="M400.8,414h26.476858150833756a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-26.476858150833756z"><title>es-toolkit compat (cached), 100 records: 0.4×</title></path>
+<text class="value" x="437.2768581508338" y="425">0.4×</text>
+<path class="other" d="M591.6,414h31.151249763640024a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-31.151249763640024z"><title>es-toolkit compat (cached), 1,000 records: 0.5×</title></path>
+<text class="value" x="632.7512497636401" y="425">0.5×</text>
+<path class="other" d="M782.4000000000001,414h32.50050500919165a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-32.50050500919165z"><title>es-toolkit compat (cached), 10,000 records: 0.5×</title></path>
+<text class="value" x="824.9005050091918" y="425">0.5×</text>
+<path class="other" d="M973.2,414h25.525864472750342a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-25.525864472750342z"><title>es-toolkit compat (cached), 100,000 records: 0.4×</title></path>
+<text class="value" x="1008.7258644727503" y="425">0.4×</text>
+<text class="label" x="16" y="447">es-toolkit core</text>
+<path class="other" d="M210,436h42.576045998216635a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-42.576045998216635z"><title>es-toolkit core, 10 records: 0.6×</title></path>
+<text class="value" x="262.5760459982166" y="447">0.6×</text>
+<path class="other" d="M400.8,436h25.994007467485197a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-25.994007467485197z"><title>es-toolkit core, 100 records: 0.4×</title></path>
+<text class="value" x="436.7940074674852" y="447">0.4×</text>
+<path class="other" d="M591.6,436h29.795276208553027a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-29.795276208553027z"><title>es-toolkit core, 1,000 records: 0.5×</title></path>
+<text class="value" x="631.395276208553" y="447">0.5×</text>
+<path class="other" d="M782.4000000000001,436h30.09328168975115a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-30.09328168975115z"><title>es-toolkit core, 10,000 records: 0.5×</title></path>
+<text class="value" x="822.4932816897513" y="447">0.5×</text>
+<path class="other" d="M973.2,436h19.078573346384385a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-19.078573346384385z"><title>es-toolkit core, 100,000 records: 0.3×</title></path>
+<text class="value" x="1002.2785733463844" y="447">0.3×</text>
+<text class="label" x="16" y="469">Remeda</text>
+<path class="other" d="M210,458h43.47609481852918a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-43.47609481852918z"><title>Remeda, 10 records: 0.6×</title></path>
+<text class="value" x="263.4760948185292" y="469">0.6×</text>
+<path class="other" d="M400.8,458h22.001537075037422a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-22.001537075037422z"><title>Remeda, 100 records: 0.4×</title></path>
+<text class="value" x="432.80153707503746" y="469">0.4×</text>
+<path class="other" d="M591.6,458h26.837202080898034a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-26.837202080898034z"><title>Remeda, 1,000 records: 0.4×</title></path>
+<text class="value" x="628.437202080898" y="469">0.4×</text>
+<path class="other" d="M782.4000000000001,458h27.28266375750145a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-27.28266375750145z"><title>Remeda, 10,000 records: 0.4×</title></path>
+<text class="value" x="819.6826637575016" y="469">0.4×</text>
+<path class="other" d="M973.2,458h19.930954607348898a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-19.930954607348898z"><title>Remeda, 100,000 records: 0.3×</title></path>
+<text class="value" x="1003.1309546073489" y="469">0.3×</text>
+<text class="label" x="16" y="491">Lodash (lodash-es)</text>
+<path class="other" d="M210,480h25.80757501481886a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-25.80757501481886z"><title>Lodash (lodash-es), 10 records: 0.4×</title></path>
+<text class="value" x="245.80757501481887" y="491">0.4×</text>
+<path class="other" d="M400.8,480h21.59154390572555a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-21.59154390572555z"><title>Lodash (lodash-es), 100 records: 0.3×</title></path>
+<text class="value" x="432.39154390572554" y="491">0.3×</text>
+<path class="other" d="M591.6,480h28.363147875115736a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-28.363147875115736z"><title>Lodash (lodash-es), 1,000 records: 0.4×</title></path>
+<text class="value" x="629.9631478751157" y="491">0.4×</text>
+<path class="other" d="M782.4000000000001,480h29.81083317805347a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-29.81083317805347z"><title>Lodash (lodash-es), 10,000 records: 0.5×</title></path>
+<text class="value" x="822.2108331780536" y="491">0.5×</text>
+<path class="other" d="M973.2,480h23.98557252558885a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-23.98557252558885z"><title>Lodash (lodash-es), 100,000 records: 0.4×</title></path>
+<text class="value" x="1007.1855725255889" y="491">0.4×</text>
+<text class="label" x="16" y="513">Effect Order</text>
+<path class="other" d="M210,502h32.76901243143084a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-32.76901243143084z"><title>Effect Order, 10 records: 0.5×</title></path>
+<text class="value" x="252.76901243143084" y="513">0.5×</text>
+<path class="other" d="M400.8,502h18.10287798132494a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-18.10287798132494z"><title>Effect Order, 100 records: 0.3×</title></path>
+<text class="value" x="428.90287798132493" y="513">0.3×</text>
+<path class="other" d="M591.6,502h22.08413471036158a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-22.08413471036158z"><title>Effect Order, 1,000 records: 0.4×</title></path>
+<text class="value" x="623.6841347103616" y="513">0.4×</text>
+<path class="other" d="M782.4000000000001,502h23.039594490641463a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-23.039594490641463z"><title>Effect Order, 10,000 records: 0.4×</title></path>
+<text class="value" x="815.4395944906415" y="513">0.4×</text>
+<path class="other" d="M973.2,502h16.47731902897307a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-16.47731902897307z"><title>Effect Order, 100,000 records: 0.3×</title></path>
+<text class="value" x="999.6773190289731" y="513">0.3×</text>
+</svg>

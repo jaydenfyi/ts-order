@@ -5,8 +5,9 @@ import { Order } from './order.js';
 /**
  * Return an order with the same steps as `order`, whose `compare` and `sort`
  * run code generated for those steps. The code is generated with `new Function`
- * immediately, before this function returns. In the package benchmarks it is
- * 1.2 to 2.6 times faster, most for orders with several steps.
+ * immediately, before this function returns. In the package benchmarks, its
+ * `sort` is 1.6 to 2.2 times as fast on 1,000 records, most for orders with
+ * several steps.
  *
  * Where `new Function` is blocked, such as under a Content Security Policy
  * without `'unsafe-eval'`, on Cloudflare Workers or on edge runtimes, the

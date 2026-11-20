@@ -70,6 +70,7 @@ const isNullish = (value: unknown): boolean => value == null;
 
 /**
  * Wraps a comparator so `null` and `undefined` sort before defined values.
+ * It does not move `NaN`: use `nansFirst` for that.
  *
  * @example
  * ```ts
@@ -88,6 +89,7 @@ export function nullsFirst<T>(
 
 /**
  * Wraps a comparator so `null` and `undefined` sort after defined values.
+ * It does not move `NaN`: use `nansLast` for that.
  *
  * @example
  * ```ts
@@ -130,7 +132,7 @@ export function nansLast<T>(compareFn: Comparator<T>): Comparator<T> {
 
 /**
  * Basic three-way comparator using JavaScript relational operators (i.e. `a < b`, `a > b`).
- * Missing values (`null`, `undefined`, `NaN` and invalid dates) sort last.
+ * Nulls (`null`, `undefined`, `NaN` and invalid dates) sort last.
  *
  * @example
  * ```ts

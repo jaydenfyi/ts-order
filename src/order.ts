@@ -18,9 +18,9 @@ export type OrderStep<T> = {
 	compare?: Comparator<unknown> | undefined;
 	predicate?: ((value: T) => boolean) | undefined;
 	/**
-	 * Where missing keys go: 1 after the other keys, -1 before them, in both
+	 * Where nulls go: 1 after the other keys, -1 before them, in both
 	 * directions. Undefined only for a custom comparator with no `nulls` option,
-	 * which then receives missing keys unchanged.
+	 * which then receives nulls unchanged.
 	 */
 	nulls?: DirectionSign | undefined;
 };
@@ -93,8 +93,8 @@ export class Order<T> {
 
 	/**
 	 * Create a new order with a single sort step. Without a `compare` option,
-	 * keys compare with `<` and `>`, and missing keys (`null`, `undefined`, `NaN`
-	 * and invalid dates) sort last.
+	 * keys compare with `<` and `>`, and nulls (`null`, `undefined`, `NaN` and
+	 * invalid dates) sort last.
 	 *
 	 * @example
 	 * ```ts

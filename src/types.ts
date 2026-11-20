@@ -20,7 +20,7 @@ export type Comparator<T> = (a: T, b: T) => number;
 
 /**
  * A key type that the default comparison can order with `<` and `>`. `null`,
- * `undefined`, `NaN` and invalid dates are missing keys (see `nulls`). Any
+ * `undefined`, `NaN` and invalid dates count as nulls (see `nulls`). Any
  * other key type needs a `compare` option.
  *
  * An object whose `valueOf()` returns a number or a bigint is also
@@ -99,12 +99,12 @@ export type KeyOptions<K, T = unknown> = {
 	 */
 	predicate?: ((value: T) => boolean) | undefined;
 	/**
-	 * Where missing keys go: `null`, `undefined`, `NaN` and invalid dates.
-	 * `direction` does not move them. Missing keys tie with each other, so the
-	 * next step decides their order.
+	 * Where nulls go: `null`, `undefined`, `NaN` and invalid dates.
+	 * `direction` does not move them. Nulls tie with each other, so the next
+	 * step decides their order.
 	 *
 	 * With a custom `compare` and no `nulls` option, the comparator receives
-	 * missing keys unchanged.
+	 * nulls unchanged.
 	 *
 	 * @defaultValue "last"
 	 * @example

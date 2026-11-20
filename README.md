@@ -14,6 +14,8 @@ ts-order is ESM-only and requires Node.js 20 or later.
 
 ```ts
 import { Order } from 'ts-order';
+// Compile every Order to optimized code for faster sorting (optional)
+import 'ts-order/compile';
 
 interface User {
 	id: number;
@@ -260,7 +262,7 @@ Each direction and `nulls` setting becomes a constant, and unused predicates or 
 Compiles every `Order` in an application with one side-effect import, including orders created before the import. Unlike `compile(order)`, this mode is lazy: `compare` and `sort` each compile on first use.
 
 ```ts
-import "ts-order/compile";
+import 'ts-order/compile';
 ```
 
 Use this in applications, not libraries, because it affects every `Order` in the same copy of `ts-order`. It does not affect `ts-order/comparator`. If `new Function` fails, it stops trying after the first failure (under CSP, that single check can send a violation report).

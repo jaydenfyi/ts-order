@@ -26,9 +26,10 @@ jobs:
               with:
                   node-version: 24
             - run: bun install --frozen-lockfile
+            # The benchmarks import ts-order from dist, so lint needs the build.
+            - run: bun run build
             - run: bun run lint
             - run: bun run typecheck
-            - run: bun run build
             - run: bun run bench:check
             - run: bun run lint:package
             - run: bun run size

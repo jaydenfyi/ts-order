@@ -1,6 +1,6 @@
 # Upgrading to 0.1.0
 
-Most code needs no changes. 0.1.0 removes and renames no exports.
+Most ESM code needs no changes. 0.1.0 removes the CommonJS build and `require` export conditions; the ESM exports keep their names.
 
 Sort results change only in the cases below. In most of them, 0.0.x gave a result that depended on the input order.
 
@@ -12,6 +12,7 @@ Sort results change only in the cases below. In most of them, 0.0.x gave a resul
 | A key has no `compare` option and its type is a plain object or `unknown`               | It compiled, and all keys tied.                                 | Type error. Add a `compare` option.                                                  |
 | A `compare` option returns `NaN`                                                        | "Less than" in both directions                                  | A tie                                                                                |
 | You run Node.js older than 20                                                           | Supported                                                       | Not supported                                                                        |
+| You load `ts-order` with `require()`                                                     | CommonJS build                                                  | ESM only. Change `require('ts-order')` to `import { Order } from 'ts-order'`, or use `await import('ts-order')` from CommonJS. |
 
 ## Examples
 

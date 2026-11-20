@@ -29,6 +29,8 @@ pnpm add ts-order
 bun add ts-order
 ```
 
+0.1.0 is ESM-only. Use `import` (or dynamic `import()` from CommonJS); `require()` is no longer supported. See [Upgrading to 0.1.0](UPGRADING.md).
+
 ## Quickstart
 
 ```ts
@@ -343,7 +345,7 @@ byStatusThenNewest.sort(users);
 - **Use `sort` for large arrays or costly keys.** `sort` computes each key once per item. `compare` computes keys on every comparison, so it is faster only for cheap keys on arrays of up to about 10,000 items.
 - **Compile last.** Steps added to a compiled order with `.by()`, `.when()` or the other builder methods make a normal order.
 - **No `new Function`, no problem.** Where it is blocked, such as under a Content Security Policy without `'unsafe-eval'`, on Cloudflare Workers or on edge runtimes, the compiled order uses the normal `compare` and `sort`. Results are the same either way. Only the step options are written into the generated code. Your selectors and comparators are passed to it as functions.
-- **Only when used.** Bundlers drop the code generator from apps that import `Order` but not `compile`. `require('ts-order')` from CommonJS always loads it, which adds about 600 B.
+- **Only when used.** Bundlers drop the code generator from apps that import `Order` but not `compile`.
 
 ### `import 'ts-order/compile'`
 
@@ -358,7 +360,7 @@ import 'ts-order/compile';
 - **Import it anywhere.** It also covers orders created before the import.
 - **No need for `compile()`.** You can still call it; the results are the same.
 - **Orders only.** It does not change the comparator functions from `ts-order/comparator`, such as `by()` and `order()`.
-- **One copy of ts-order.** It changes the copy it imports. If an app loads ts-order from both ESM (`import`) and CommonJS (`require`), orders from the other copy are not compiled. Their results are the same; only the speed differs.
+- **One copy of ts-order.** It changes the copy it imports. If an app bundles a second copy of ts-order, orders from that copy are not compiled. Their results are the same; only the speed differs.
 - **Blocked `new Function`.** It uses the normal `compare` and `sort`, and stops trying after the first failure. Under a Content Security Policy, that first attempt can send a violation report.
 - **Bundle size.** Only apps that import it get the code generator: about 700 B gzipped. The main entry does not change.
 

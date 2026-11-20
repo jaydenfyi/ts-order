@@ -13,27 +13,17 @@
 		"url": "git+https://github.com/jaydenfyi/ts-order.git"
 	},
 	"sideEffects": [
-		"./dist/compile.js",
-		"./dist/compile.cjs"
+		"./dist/compile.js"
 	],
 	"exports": {
-		".": {
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs"
-		},
-		"./comparator": {
-			"import": "./dist/comparator/index.js",
-			"require": "./dist/comparator/index.cjs"
-		},
-		"./compile": {
-			"import": "./dist/compile.js",
-			"require": "./dist/compile.cjs"
-		},
+		".": "./dist/index.js",
+		"./comparator": "./dist/comparator/index.js",
+		"./compile": "./dist/compile.js",
 		"./package.json": "./package.json"
 	},
-	"main": "./dist/index.cjs",
+	"main": "./dist/index.js",
 	"module": "./dist/index.js",
-	"types": "./dist/index.d.cts",
+	"types": "./dist/index.d.ts",
 	"typesVersions": {
 		"*": {
 			"comparator": [
@@ -51,7 +41,7 @@
 		"node": ">=20"
 	},
 	"scripts": {
-		"build": "tsdown --format esm --format cjs",
+		"build": "tsdown --format esm",
 		"test": "vitest run",
 		"test:compile": "vitest run --config vitest.compile.config.ts",
 		"test:watch": "vitest",
@@ -69,7 +59,7 @@
 		"lint": "oxlint . --deny-warnings",
 		"lint:fix": "oxlint . --fix --deny-warnings",
 		"typecheck": "tsc -p . --noEmit",
-		"lint:package": "publint && attw --pack .",
+		"lint:package": "publint && attw --pack . --profile esm-only",
 		"changeset": "changeset",
 		"version-packages": "changeset version",
 		"release": "bun run build && changeset publish"

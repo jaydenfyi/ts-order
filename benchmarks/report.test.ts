@@ -17,6 +17,7 @@ import {
 	summarize,
 	timeUnit,
 } from './report.js';
+import { renderBundleSvg, renderRuntimeSvg } from './svg.js';
 import { validateSort } from './validate.js';
 
 function escapeHtml(value: string): string {
@@ -115,11 +116,6 @@ describe('benchmark presentation', () => {
 		expect(ranked.find((item) => !item.baseline)!.id).toBe(
 			'ts-order-class',
 		);
-		expect(
-			summarize(results, 'fulfillment', 'shuffled', 10).some(
-				(item) => item.id === 'radashi',
-			),
-		).toBe(false);
 	});
 
 	it('rejects missing, duplicated or invalid timings instead of inventing a rank', () => {
@@ -144,28 +140,24 @@ describe('benchmark presentation', () => {
 		const results = fixture();
 		results.runtime[0]!.meanMs = 0.004;
 		const markdown = renderReport(results);
-		expect(markdown.indexOf('## Fastest observed')).toBeLessThan(
+		expect(markdown.indexOf('## Summary')).toBeLessThan(
 			markdown.indexOf('## Runtime results'),
 		);
 		expect(markdown.indexOf('## Runtime results')).toBeLessThan(
 			markdown.indexOf('## Reproduce'),
 		);
-		expect(markdown).toContain('10 (µs) | 100,000 (ms)');
-		expect(markdown).toContain('**2.1 · 1.00×**');
+		expect(markdown).toContain('| | 10 | 100,000 |');
+		expect(markdown).toContain('🥇');
+		expect(markdown).toMatch(
+			/\| `compile\(\)` \+ `sort\(\)` \| .*\(1\.0×\)/,
+		);
 		expect(markdown).toContain('†');
 		expect(markdown).toContain(
 			'Round-to-round variation (not confidence intervals)',
 		);
-		expect(markdown).toContain('| Radashi sort | — | — |');
-		expect(markdown).toContain(
-			'| Effect Array.sortWith (cached) | — | — |',
-		);
 		expect(markdown).toContain('es-toolkit compat (cached)');
-		expect(markdown).toContain('ts-order compiled sort');
-		expect(markdown).toContain('ts-order compiled compare');
-		expect(markdown).toContain(
-			'Gzip total | Extra gzip vs native | Minified',
-		);
+		expect(markdown).toContain('`compile()` + `compare`');
+		expect(markdown).toContain('Minified sizes, before gzip');
 		const broken = fixture();
 		broken.bundles.pop();
 		expect(() => renderReport(broken)).toThrow('Incomplete bundle');
@@ -185,7 +177,9 @@ describe('benchmark presentation', () => {
 		}
 		expect(sourceFor('lodash', 'total')).toContain("from 'lodash-es'");
 		expect(sourceFor('native', 'total')).not.toContain('import');
-		expect(() => sourceFor('radashi', 'fulfillment')).toThrow('Missing');
+		expect(() => sourceFor('native', 'unknown' as 'total')).toThrow(
+			'Missing',
+		);
 	});
 
 	it('colours measured values from best to worst, keeping ties equal', () => {
@@ -300,5 +294,23 @@ describe('benchmark presentation', () => {
 		]);
 		expect(bundles.map((figure) => figure.hidden)).toEqual([true, false]);
 		expect(code.map((figure) => figure.hidden)).toEqual([true, false]);
+	});
+	it('draws a labelled bar for every measured entry, with places for the top three', () => {
+		const results = fixture();
+		const svg = renderRuntimeSvg(results, 'shuffled', 10);
+		const bars = SCENARIOS.reduce(
+			(sum, scenario) => sum + adaptersFor(scenario).length,
+			0,
+		);
+		expect(svg.match(/<path /g)).toHaveLength(bars);
+		expect(svg.match(/class="value/g)).toHaveLength(bars);
+		for (const place of ['1st', '2nd', '3rd'])
+			expect(svg.match(new RegExp(`>${place} · `, 'g'))).toHaveLength(
+				SCENARIOS.length,
+			);
+		expect(renderBundleSvg(results)).toContain('KiB');
+		expect(
+			renderReport(results, { runtime: 'a.svg', bundle: 'b.svg' }),
+		).toMatch(/!\[[^\]]+\]\(a\.svg\)[\s\S]*!\[[^\]]+\]\(b\.svg\)/);
 	});
 });

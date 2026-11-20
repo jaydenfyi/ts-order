@@ -23,7 +23,8 @@
 			"files": [
 				"benchmarks/run.ts",
 				"benchmarks/sizes.ts",
-				"benchmarks/complex-run.ts"
+				"benchmarks/complex-run.ts",
+				"benchmarks/render.ts"
 			],
 			"rules": { "no-console": "off" }
 		}

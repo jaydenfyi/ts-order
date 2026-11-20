@@ -128,43 +128,198 @@ function noiseMark(summary: Summary): string {
 	return summary.spreadPercent > 20 ? '†' : '';
 }
 
-function overview(results: Results): string[] {
-	const shape = results.settings.shapes.includes('shuffled')
-		? 'shuffled'
-		: results.settings.shapes[0]!;
-	const lines = [
-		'## Fastest observed at a glance',
-		'',
-		`For **${shape}** input. Each cell names the fastest observed entry and its time per complete sort. “Library” excludes the two native baselines. These are observations, not statistically proven winners.`,
-		'',
-		`| Workload / comparison | ${results.settings.sizes.map((size) => size.toLocaleString('en-US')).join(' | ')} |`,
-		`| --- | ${results.settings.sizes.map(() => '---').join(' | ')} |`,
-	];
-	for (const scenario of SCENARIOS) {
-		const groups = results.settings.sizes.map((size) =>
-			summarize(results, scenario.id, shape, size),
-		);
-		for (const librariesOnly of [false, true]) {
-			const cells = groups.map((group) => {
-				const winner = group.find(
-					(item) => !librariesOnly || !item.baseline,
-				)!;
-				return `${winner.label} — ${formatTime(winner.meanMs)}${noiseMark(winner)}`;
-			});
-			lines.push(
-				`| ${scenario.id} · ${librariesOnly ? 'library' : 'overall'} | ${cells.join(' | ')} |`,
-			);
-		}
+// Summary rows, in groups. Native code comes first as the speed to aim for,
+// then ts-order's own modes so they can be compared, then the other libraries.
+const SUMMARY_GROUPS: { title: string; rows: Record<string, string> }[] = [
+	{
+		title: 'Native `Array.prototype.sort`',
+		rows: {
+			'native-cached': 'Cached keys',
+			native: 'Handwritten comparator',
+		},
+	},
+	{
+		title: 'ts-order',
+		rows: {
+			'ts-order-compiled': '`compile()` + `sort()`',
+			'ts-order-compiled-compare': '`compile()` + `compare`',
+			'ts-order-class': '`Order` (not compiled)',
+			'ts-order-comparator': '`ts-order/comparator`',
+		},
+	},
+	{ title: 'Other libraries', rows: {} },
+];
+export const SUMMARY_BASELINE = 'ts-order-compiled';
+const MEDALS = ['🥇', '🥈', '🥉'];
+
+/** The measured size closest to 1,000 records, a typical list or table. */
+export function headlineSize(sizes: number[]): number {
+	const distance = (size: number) => Math.abs(Math.log10(size) - 3);
+	return sizes.reduce((best, size) =>
+		distance(size) < distance(best) ? size : best,
+	);
+}
+
+/** Who wins a medal: each package once, and native code once. */
+function owner(id: string): string {
+	return LABELS.find((label) => label.id === id)!.package ?? 'native';
+}
+
+/** Medal for each entry: the first three owners, each with its smallest value. */
+export function podium(
+	entries: { id: string; value: number }[],
+): Map<string, string> {
+	const medals = new Map<string, string>();
+	const seen = new Set<string>();
+	for (const entry of [...entries].sort((a, b) => a.value - b.value)) {
+		if (medals.size === MEDALS.length) break;
+		if (seen.has(owner(entry.id))) continue;
+		seen.add(owner(entry.id));
+		medals.set(entry.id, MEDALS[medals.size]!);
 	}
+	return medals;
+}
+
+const NAMED = new Set(
+	SUMMARY_GROUPS.flatMap((group) => Object.keys(group.rows)),
+);
+
+/**
+ * Table rows in summary order: group headings, then their entries. Other
+ * libraries come fastest first, by `rank` (lower is better).
+ */
+export function groupedRows(
+	rank: (id: string) => number | undefined,
+): ({ title: string } | { id: string; name: string })[] {
+	const others = LABELS.filter((label) => !NAMED.has(label.id))
+		.map((label) => ({ label, value: rank(label.id) ?? Infinity }))
+		.sort((a, b) => a.value - b.value)
+		.map(({ label }) => [label.id, label.label] as const);
+	return SUMMARY_GROUPS.flatMap((group) => [
+		{ title: group.title },
+		...(Object.keys(group.rows).length
+			? Object.entries(group.rows)
+			: others
+		).map(([id, name]) => ({ id, name })),
+	]);
+}
+
+export function geometricMean(values: number[]): number | undefined {
+	return values.length
+		? Math.exp(
+				values.reduce((sum, value) => sum + Math.log(value), 0) /
+					values.length,
+			)
+		: undefined;
+}
+
+/**
+ * A runtime table: one column per group of timings. Each cell shows the time
+ * and, in brackets, the time relative to compiled ts-order `sort()`.
+ */
+function runtimeTable(
+	columns: { heading: string; group: Summary[] }[],
+): string[] {
+	const prepared = columns.map(({ heading, group }) => ({
+		heading,
+		group,
+		baseline: group.find((item) => item.id === SUMMARY_BASELINE)!,
+		medals: podium(
+			group.map((item) => ({ id: item.id, value: item.meanMs })),
+		),
+		unit: timeUnit(group[0]!.meanMs),
+	}));
+	const ratio = (id: string, column: (typeof prepared)[number]) => {
+		const item = column.group.find((candidate) => candidate.id === id);
+		return item && item.meanMs / column.baseline.meanMs;
+	};
+	const cell = (id: string, column: (typeof prepared)[number]) => {
+		const item = column.group.find((candidate) => candidate.id === id);
+		if (!item) return '—';
+		const text = `${formatTime(item.meanMs, column.unit)} (${ratio(id, column)!.toFixed(1)}×)${noiseMark(item)}`;
+		const medal = column.medals.get(id);
+		return medal ? `${medal} ${text}` : text;
+	};
+	const rows = groupedRows((id) =>
+		geometricMean(prepared.flatMap((column) => ratio(id, column) ?? [])),
+	);
 	return [
-		...lines,
-		'',
-		'µs = microseconds; **1,000 µs = 1 ms**. Lower is better. **†** marks more than 20% variation between round means; treat that ranking with caution.',
-		'',
+		`| | ${prepared.map((column) => column.heading).join(' | ')} |`,
+		`| --- | ${prepared.map(() => '---:').join(' | ')} |`,
+		...rows.map((row) =>
+			'title' in row
+				? `| **${row.title}** | ${prepared.map(() => '').join(' | ')} |`
+				: `| ${row.name} | ${prepared.map((column) => cell(row.id, column)).join(' | ')} |`,
+		),
 	];
 }
 
-export function renderReport(results: Results): string {
+function summaryTable(results: Results, shape: Shape, size: number): string[] {
+	return runtimeTable(
+		SCENARIOS.map((scenario) => ({
+			heading: scenario.short,
+			group: summarize(results, scenario.id, shape, size),
+		})),
+	);
+}
+
+/** Paths of the SVG charts, relative to the report. */
+export type ChartPaths = { runtime: string; bundle: string };
+
+/** The input shape and size that the summary and its chart show. */
+export function headline(results: Results): { shape: Shape; size: number } {
+	const { sizes, shapes } = results.settings;
+	return {
+		shape: shapes.includes('shuffled') ? 'shuffled' : shapes[0]!,
+		size: headlineSize(sizes),
+	};
+}
+
+function overview(results: Results, charts?: ChartPaths): string[] {
+	const { sizes } = results.settings;
+	const { shape, size } = headline(results);
+	const count = (value: number) => value.toLocaleString('en-US');
+	const lines = [
+		'## Summary',
+		'',
+		`Time to sort **${count(size)} ${shape} records**, a typical list or table. Lower is faster. **(2.0×)** means the sort takes twice as long as compiled ts-order \`sort()\`. 🥇🥈🥉 mark the three fastest in each column. Each library, and native code, wins at most one medal, with its fastest entry.`,
+		'',
+		...(charts
+			? [
+					`![Bar chart of the time to sort ${count(size)} ${shape} records, by library and workload. The table below has every value.](${charts.runtime})`,
+					'',
+				]
+			: []),
+		...summaryTable(results, shape, size),
+		'',
+		...SCENARIOS.map(
+			(scenario) =>
+				`- **${scenario.short}:** ${scenario.title.toLowerCase()}.`,
+		),
+		...(SCENARIOS.every(
+			(scenario) => adaptersFor(scenario).length === LABELS.length,
+		)
+			? []
+			: [
+					'- **—:** the library has no built-in way to sort this workload.',
+				]),
+		'- **†:** more than 20% variation between rounds. Treat close results in that cell with caution.',
+		'',
+	];
+	for (const other of sizes.filter((value) => value !== size))
+		lines.push(
+			'<details>',
+			`<summary>${count(other)} records</summary>`,
+			'',
+			...summaryTable(results, shape, other),
+			'',
+			'</details>',
+			'',
+		);
+	return lines;
+}
+
+export function renderReport(results: Results, charts?: ChartPaths): string {
 	const { metadata: meta, settings } = results;
 	const labels = LABELS;
 	const methodology = [
@@ -199,13 +354,13 @@ export function renderReport(results: Results): string {
 		'- The handwritten native baseline short-circuits directly on the workload fields. A separate native decorate–sort–undecorate baseline computes keys once per item into a flat object with one field per key. This distinguishes library overhead from the benefits and costs of caching.',
 		'- Orders, comparator chains, selectors and rule arrays are prepared once outside timing for **every** implementation that supports reuse. Per-call work imposed by a library API remains timed. This measures repeated sorting with a reused definition, not one-shot construction or module startup.',
 		'- ts-order class means `Order.sort()` (cached keys); compiled sort means `compile(order).sort()` with the same keys. The compiled compare row uses `compile(order).compare`. Code generation is completed outside timing. These are steady-state measurements, not compile-time or break-even measurements. ts-order comparator means `by()` directly for one key, or `order()` for multiple keys. They import separate public entry points. ts-order uses the local production build, not the previously published npm version. The runner requires Node with `new Function` available and stops if code generation is blocked. The library itself falls back to normal ordering in such environments; these compiled timings do not predict that fallback’s performance.',
-		'- Lodash uses the tree-shakable `lodash-es` ESM distribution, rather than charging for the entire CommonJS library. es-toolkit core and compatibility `orderBy` are separate rows; the compatibility variant caches extracted keys. Effect Order uses its public primitive orders and mapped/composed comparators. A separate Effect `Array.sortWith` variant caches single numeric keys. Neither Effect entry needs an Effect runtime. Existing core/comparator rows are retained rather than silently switching algorithms by workload.',
-		'- Radashi uses its built-in numeric `sort` only for the two single-key workloads. The cached Effect variant is also restricted to one numeric key in this suite. Unsupported multi-key cells are **—**, not custom wrappers presented as built-in features. Natural sorting, locale collation, missing keys, heterogeneous values, conditional rules and invalid numbers are outside this comparison; they have different semantics across libraries. [benchmarks/complex.md](benchmarks/complex.md) compares ts-order with native comparators on those.',
+		'- Lodash uses the tree-shakable `lodash-es` ESM distribution, rather than charging for the entire CommonJS library. es-toolkit core and compatibility `orderBy` are separate rows; the compatibility variant caches extracted keys, as Lodash `orderBy` does. es-toolkit core, Remeda, fast-sort, thenby and Radashi call the key functions on every comparison. Effect Order uses its public primitive orders and mapped/composed comparators. A separate Effect `Array.sortWith` variant caches single numeric keys. Neither Effect entry needs an Effect runtime. Existing core/comparator rows are retained rather than silently switching algorithms by workload.',
+		'- Every library runs every workload with its own public API. Radashi `sort` takes one numeric key and Radashi has no way to chain comparators, so its fulfillment queue joins one `castComparator` per key with `||`. Effect `Array.sortWith` computes one key per item; its fulfillment queue makes that key a tuple, compared with `Order.Tuple`. Natural sorting, locale collation, missing keys, heterogeneous values, conditional rules and invalid numbers are outside this comparison; they have different semantics across libraries. [benchmarks/complex.md](benchmarks/complex.md) compares ts-order with native comparators on those.',
 		'- Correctness checks compare every output object against an independent handwritten reference, including exact tie order, before timing and after each warmup/measurement phase. Tests additionally freeze nested data and cover empty, singleton, tied, negative and zero-valued keys.',
 		'',
 		'## Measurement method',
 		'',
-		`Each cell is the **median of ${settings.rounds} round means**, per complete sort. A column uses **µs** if its fastest entry is below 1 ms, otherwise **ms**; all entries within that column use the same unit. Each cell also shows its time divided by the fastest entry’s time: **1.00×** is fastest, **2.00×** takes twice as long. Bold marks the lowest observed time, not a proven statistical win. A † flags over 20% round-to-round variation. Exact variation percentages are in the collapsed tables; they are **not confidence intervals**. Raw JSON also records each round’s sample count, mean, median, p99 and Tinybench relative margin of error.`,
+		`Each cell is the **median of ${settings.rounds} round means**, per complete sort. A column uses **µs** if its fastest entry is below 1 ms, otherwise **ms**; all entries within that column use the same unit. Each cell also shows its time divided by the time of compiled ts-order \`sort()\`: **2.0×** takes twice as long. A medal marks one of the three lowest observed times, not a proven statistical win. A † flags over 20% round-to-round variation. Exact variation percentages are in the collapsed tables; they are **not confidence intervals**. Raw JSON also records each round’s sample count, mean, median, p99 and Tinybench relative margin of error.`,
 		'',
 		`Tinybench runs synchronously and sequentially: at least ${settings.timeMs} ms and ${settings.minimumSamples} samples per implementation per cell, preceded by at least ${settings.warmupMs} ms and three warmup iterations. Implementation order is deterministically shuffled for each group and round. Seeds start at ${settings.seed}. No outliers are removed; no forced garbage collection runs between samples.`,
 		'',
@@ -231,6 +386,7 @@ export function renderReport(results: Results): string {
 	const lines = [
 		'# Sorting benchmarks',
 		'',
+		...overview(results, charts),
 		`[Interactive ranked charts](${settings.quick ? 'BENCHMARKS.html' : 'full.html'}) · ${settings.quick ? '[Historical exhaustive run, before review fixes](benchmarks/full.md)' : 'Exhaustive profile'}`,
 		'',
 		`Measured sizes: **${settings.sizes.map((size) => size.toLocaleString('en-US')).join(', ')}** records · ${settings.rounds} rounds · ${settings.shapes.join(', ')} input.`,
@@ -241,12 +397,11 @@ export function renderReport(results: Results): string {
 					'',
 				]
 			: []),
-		...overview(results),
 		'## Runtime results',
 		'',
 		'The code behind every row is listed under [Sorting code](#sorting-code).',
 		'',
-		'**Time · relative time.** 1.00× is the fastest observed in that column; larger ratios are slower. Rows are ranked by the largest measured array. Native baselines are included. Expand the variation table before interpreting close results.',
+		'Same format as the summary: time per sort, then the time relative to compiled ts-order `sort()`. 🥇🥈🥉 mark the three fastest in each column, one medal per library. Expand the variation table before you trust a close result.',
 		'',
 	];
 	for (const scenario of SCENARIOS) {
@@ -255,33 +410,22 @@ export function renderReport(results: Results): string {
 			const groups = settings.sizes.map((size) =>
 				summarize(results, scenario.id, shape, size),
 			);
-			const ranked = groups.at(-1)!;
-			const header = `| Implementation | ${groups.map((group, i) => `${settings.sizes[i]!.toLocaleString('en-US')} (${timeUnit(group[0]!.meanMs)})`).join(' | ')} |`;
+			lines.push(
+				`#### ${shape}`,
+				'',
+				...runtimeTable(
+					groups.map((group, i) => ({
+						heading: settings.sizes[i]!.toLocaleString('en-US'),
+						group,
+					})),
+				),
+			);
 			const separator = `| --- | ${settings.sizes.map(() => '---:').join(' | ')} |`;
-			lines.push(`#### ${shape}`, '', header, separator);
-			for (const label of ranked) {
-				const cells = groups.map((group) => {
-					const item = group.find(
-						(candidate) => candidate.id === label.id,
-					)!;
-					const unit = timeUnit(group[0]!.meanMs);
-					const time = formatNumber(
-						unit === 'µs' ? item.meanMs * 1_000 : item.meanMs,
-					);
-					const cell = `${time} · ${(item.meanMs / group[0]!.meanMs).toFixed(2)}×${noiseMark(item)}`;
-					return item.meanMs === group[0]!.meanMs
-						? `**${cell}**`
-						: cell;
+			const variation = (id: string) =>
+				groups.map((group) => {
+					const item = group.find((candidate) => candidate.id === id);
+					return item ? `±${item.spreadPercent.toFixed(0)}%` : '—';
 				});
-				lines.push(`| ${label.label} | ${cells.join(' | ')} |`);
-			}
-			for (const unsupported of labels.filter(
-				(label) => !ranked.some((item) => item.id === label.id),
-			)) {
-				lines.push(
-					`| ${unsupported.label} | ${settings.sizes.map(() => '—').join(' | ')} |`,
-				);
-			}
 			lines.push(
 				'',
 				'<details>',
@@ -290,11 +434,24 @@ export function renderReport(results: Results): string {
 				`| Implementation | ${settings.sizes.map((size) => size.toLocaleString('en-US')).join(' | ')} |`,
 				separator,
 			);
-			for (const label of ranked) {
-				lines.push(
-					`| ${label.label} | ${groups.map((group) => `±${group.find((item) => item.id === label.id)!.spreadPercent.toFixed(0)}%`).join(' | ')} |`,
+			const rank = (id: string) =>
+				geometricMean(
+					groups.flatMap((group) => {
+						const item = group.find(
+							(candidate) => candidate.id === id,
+						);
+						const baseline = group.find(
+							(candidate) => candidate.id === SUMMARY_BASELINE,
+						)!;
+						return item ? [item.meanMs / baseline.meanMs] : [];
+					}),
 				);
-			}
+			for (const row of groupedRows(rank))
+				lines.push(
+					'title' in row
+						? `| **${row.title}** | ${settings.sizes.map(() => '').join(' | ')} |`
+						: `| ${row.name} | ${variation(row.id).join(' | ')} |`,
+				);
 			lines.push('', '</details>', '');
 		}
 	}
@@ -305,13 +462,19 @@ export function renderReport(results: Results): string {
 		'',
 		'esbuild bundles for browser ESM / ES2022 with minification, tree shaking and legal comments removed; gzip uses level 9. No source maps, external packages, runtime polyfills, data fixtures or benchmark runner are included. ts-order resolves to its built public exports. Application glue and selector code are included; native rows show the no-library cost. Each example is written for its workload, with the selectors inline, as an application would write it. The code is listed under **Sorting code**.',
 		'',
-		'Each workload is ranked by **gzip total**, smallest first. **Extra gzip** is the difference from the no-library handwritten example. B = bytes; KiB = 1,024 bytes. Deltas are example overhead, not context-independent library sizes: compression and shared application code are non-additive.',
+		...(charts
+			? [
+					`![Bar chart of the gzip size of each complete sorting example, by library and workload. The table below has every value.](${charts.bundle})`,
+					'',
+				]
+			: []),
+		'Each cell is the **gzip size** of the whole example, then in brackets the extra gzip over the no-library handwritten example. 🥇🥈🥉 mark the three smallest in each column, one medal per library. B = bytes; KiB = 1,024 bytes. Deltas are example overhead, not context-independent library sizes: compression and shared application code are non-additive.',
 		'',
 	);
-	for (const scenario of SCENARIOS) {
-		const entries = results.bundles
-			.filter((entry) => entry.scenario === scenario.id)
-			.sort((a, b) => a.gzip - b.gzip);
+	const bundles = SCENARIOS.map((scenario) => {
+		const entries = results.bundles.filter(
+			(entry) => entry.scenario === scenario.id,
+		);
 		const expected = adaptersFor(scenario);
 		if (
 			entries.length !== expected.length ||
@@ -326,23 +489,58 @@ export function renderReport(results: Results): string {
 		const baseline = entries.find(
 			(entry) => entry.implementation === 'native',
 		)!;
-		lines.push(
-			`### ${scenario.title}`,
-			'',
-			'| Implementation | Gzip total | Extra gzip vs native | Minified |',
-			'| --- | ---: | ---: | ---: |',
+		const medals = podium(
+			entries.map((entry) => ({
+				id: entry.implementation,
+				value: entry.gzip,
+			})),
 		);
-		for (const entry of entries) {
-			const label = labels.find(
-				(item) => item.id === entry.implementation,
-			)!;
-			const delta = entry.gzip - baseline.gzip;
-			lines.push(
-				`| ${label.label} | ${formatBytes(entry.gzip)} | ${delta > 0 ? '+' : ''}${formatBytes(delta)} | ${formatBytes(entry.minified)} |`,
-			);
-		}
-		lines.push('');
-	}
+		return { scenario, entries, baseline, medals };
+	});
+	const bundleRows = groupedRows((id) =>
+		geometricMean(
+			bundles.flatMap(({ entries }) =>
+				entries.flatMap((entry) =>
+					entry.implementation === id ? [entry.gzip] : [],
+				),
+			),
+		),
+	);
+	const bundleTable = (
+		cell: (entry: BundleSize, column: (typeof bundles)[number]) => string,
+	) => [
+		`| | ${SCENARIOS.map((scenario) => scenario.short).join(' | ')} |`,
+		`| --- | ${SCENARIOS.map(() => '---:').join(' | ')} |`,
+		...bundleRows.map((row) =>
+			'title' in row
+				? `| **${row.title}** | ${SCENARIOS.map(() => '').join(' | ')} |`
+				: `| ${row.name} | ${bundles
+						.map((column) => {
+							const entry = column.entries.find(
+								(candidate) =>
+									candidate.implementation === row.id,
+							);
+							return entry ? cell(entry, column) : '—';
+						})
+						.join(' | ')} |`,
+		),
+	];
+	lines.push(
+		...bundleTable((entry, column) => {
+			const delta = entry.gzip - column.baseline.gzip;
+			const text = `${formatBytes(entry.gzip)} (${delta > 0 ? '+' : ''}${formatBytes(delta)})`;
+			const medal = column.medals.get(entry.implementation);
+			return medal ? `${medal} ${text}` : text;
+		}),
+		'',
+		'<details>',
+		'<summary>Minified sizes, before gzip</summary>',
+		'',
+		...bundleTable((entry) => formatBytes(entry.minified)),
+		'',
+		'</details>',
+		'',
+	);
 	lines.push(
 		'## Sorting code',
 		'',

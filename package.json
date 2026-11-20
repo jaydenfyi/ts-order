@@ -52,6 +52,7 @@
 		"bench:quick": "bun run bench",
 		"bench:check": "bun run build && tsc -p benchmarks/tsconfig.json && vitest run --config benchmarks/vitest.config.ts",
 		"bench:complex": "bun run build && tsx benchmarks/complex-run.ts",
+		"bench:render": "tsx benchmarks/render.ts",
 		"bench:sizes": "bun run build && tsx benchmarks/sizes.ts",
 		"size": "size-limit",
 		"smoke-test": "sh scripts/smoke-test.sh",

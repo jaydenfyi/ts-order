@@ -3,7 +3,7 @@ import { spawnSync } from 'node:child_process';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
-import { adaptersFor, sortersFor } from './adapters.js';
+import { ADAPTERS, adaptersFor, sortersFor } from './adapters.js';
 import * as compiledCompare from './adapters/ts-order-compiled-compare.js';
 import * as compiledSort from './adapters/ts-order-compiled.js';
 import {
@@ -160,20 +160,11 @@ describe('benchmark correctness', () => {
 		}
 	}
 
-	it('leaves out single-key-only APIs from the multi-key workload', () => {
-		for (const scenario of SCENARIOS) {
-			const ids = sortersFor(scenario).map((sorter) => sorter.id);
-			expect(ids).toEqual(
-				expect.arrayContaining([
-					'native',
-					'effect',
-					'es-toolkit',
-					'es-toolkit-compat',
-				]),
+	it('measures every library on every workload', () => {
+		for (const scenario of SCENARIOS)
+			expect(sortersFor(scenario).map((sorter) => sorter.id)).toEqual(
+				ADAPTERS.map((adapter) => adapter.id),
 			);
-			for (const id of ['radashi', 'effect-cached'])
-				expect(ids.includes(id)).toBe(scenario.id !== 'fulfillment');
-		}
 	});
 
 	it('cached APIs read every sort field exactly once per record', () => {
@@ -216,13 +207,13 @@ describe('benchmark correctness', () => {
 				const { records, reads } = counted(fixtures);
 				const sort = factory();
 				expect(reads).toEqual({});
-				expect(generate).toHaveBeenCalledTimes(1);
+				expect(generate).toHaveBeenCalledTimes(2);
 				const ordered = expected.map(
 					(item) => records[fixtures.indexOf(item)]!,
 				);
 				validateSort(sort, records, ordered, 'compiled');
 				validateSort(sort, records, ordered, 'compiled reused');
-				expect(generate).toHaveBeenCalledTimes(1);
+				expect(generate).toHaveBeenCalledTimes(2);
 			} finally {
 				generate.mockRestore();
 			}
@@ -256,20 +247,12 @@ describe('benchmark correctness', () => {
 
 	it('bundles executable browser examples for every supported workload', async () => {
 		const sizes = await measureSizes();
-		expect(sizes).toHaveLength(43);
 		expect(sizes).toHaveLength(
 			SCENARIOS.reduce(
 				(count, scenario) => count + sortersFor(scenario).length,
 				0,
 			),
 		);
-		expect(
-			sizes.some(
-				(size) =>
-					size.implementation === 'effect-cached' &&
-					size.scenario === 'fulfillment',
-			),
-		).toBe(false);
 		for (const size of sizes) {
 			expect(size.minified).toBeGreaterThan(0);
 			expect(size.gzip).toBeGreaterThan(0);

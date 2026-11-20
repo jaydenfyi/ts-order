@@ -17,8 +17,7 @@ import {
 	shuffle,
 	SIZES,
 } from './cases.js';
-import { renderChart } from './chart.js';
-import { renderReport } from './report.js';
+import { publish } from './publish.js';
 import { measureSizes, ROOT } from './sizes.js';
 import { assertOutput, validateSort } from './validate.js';
 
@@ -193,22 +192,10 @@ for (let round = 0; round < settings.rounds; round++) {
 }
 console.log('Measuring and validating browser bundle sizes…');
 results.bundles = await measureSizes();
-const report = renderReport(results);
-const chart = renderChart(results);
 const jsonPath = resolve(
 	ROOT,
 	quick ? 'benchmarks/results.json' : 'benchmarks/full.json',
 );
-const reportPath = resolve(
-	ROOT,
-	quick ? 'BENCHMARKS.md' : 'benchmarks/full.md',
-);
-const chartPath = resolve(
-	ROOT,
-	quick ? 'BENCHMARKS.html' : 'benchmarks/full.html',
-);
 // Publish only after every implementation, measurement and emitted bundle has passed validation.
 writeFileSync(jsonPath, `${JSON.stringify(results, null, 2)}\n`);
-writeFileSync(reportPath, report);
-writeFileSync(chartPath, chart);
-console.log(`Saved ${reportPath}, ${chartPath} and ${jsonPath}`);
+console.log(`Saved ${jsonPath}, ${publish(results).join(', ')}`);

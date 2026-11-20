@@ -12,6 +12,8 @@ export type ScenarioId = 'total' | 'fulfillment' | 'computed';
 export type Scenario = {
 	id: ScenarioId;
 	title: string;
+	/** Column heading in the summary table. */
+	short: string;
 	/** Independent reference the timed outputs are checked against. */
 	reference: (a: Purchase, b: Purchase) => number;
 };
@@ -43,11 +45,13 @@ export const SCENARIOS: Scenario[] = [
 	{
 		id: 'total',
 		title: 'Stored order total, ascending',
+		short: '1 key',
 		reference: (a, b) => a.totalCents - b.totalCents,
 	},
 	{
 		id: 'fulfillment',
 		title: 'Fulfillment queue: status ↑, newest first, customer surname ↑',
+		short: '3 keys',
 		reference: (a, b) =>
 			a.status - b.status ||
 			b.createdAt - a.createdAt ||
@@ -60,6 +64,7 @@ export const SCENARIOS: Scenario[] = [
 	{
 		id: 'computed',
 		title: 'Computed line-item total after discounts, descending',
+		short: 'Computed key',
 		reference: (a, b) => computedTotal(b) - computedTotal(a),
 	},
 ];

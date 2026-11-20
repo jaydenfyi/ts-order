@@ -23,6 +23,7 @@ jobs:
       - run: bun run lint
       - run: bun run typecheck
       - run: bun run build
+      - run: bun run bench:check
       - run: bun run lint:package
       - run: bun run size
       - run: bun run smoke-test

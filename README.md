@@ -682,6 +682,20 @@ Order.by((c: Customer) => c.address, { compare: byCity }); // OK
 
 **Node.js.** The package now declares `engines.node >=20`.
 
+## Benchmarks
+
+See [BENCHMARKS.md](BENCHMARKS.md) (or the [interactive report](BENCHMARKS.html)) for reproducible runtime and browser bundle-size comparisons against native sorting, Lodash, es-toolkit, fast-sort, Remeda, thenby, Effect and Radashi. The class-based, comparator, compiled-sort and compiled-compare APIs are measured separately. Compiled orders are prepared before timing; compilation cost and environments that block dynamic code generation are not represented by those steady-state timings. Effect Order / cached `Array.sortWith` and es-toolkit core / cached compatibility `orderBy` are also separate entries, so no library silently changes strategy between workloads.
+
+[benchmarks/complex.md](benchmarks/complex.md) covers orderings that plain keys leave out: `when()` rules, custom ranks, missing values, locale collation, a reused nested order and a computed key. It compares ts-order code and timings with handwritten native comparators. Run it with `bun run bench:complex`.
+
+```sh
+bun run bench:check # validate fixtures, adapters and bundled examples
+bun run bench      # shuffled inputs: 10, 100, 1k, 10k and 100k records
+bun run bench:full # exhaustive run: same sizes, all four input shapes
+```
+
+The short run writes `BENCHMARKS.md`, interactive ranked charts in `BENCHMARKS.html`, and raw data in `benchmarks/results.json`. It shows observed winners, readable µs/ms units, and time relative to the fastest entry. Heatmap colours run from teal (best) to orange (worst) within each runtime or bundle-size chart; exact values and rankings remain visible. Code examples are available in the expandable section below the results. Expect roughly one to two minutes with the 100k-record cases. The exhaustive run is kept separately in `benchmarks/full.md`, `full.html` and `full.json`; it can take 10–15 minutes on a laptop. The retained exhaustive artifacts are historical pre-review results until that profile is rerun.
+
 ## License
 
 MIT

@@ -1,4 +1,4 @@
-import type { Shape } from './cases.js';
+import type { ScenarioId, Shape } from './cases.js';
 import type { BundleSize } from './sizes.js';
 import { ADAPTERS, adaptersFor, sourceFor } from './adapters.js';
 import { SCENARIOS } from './cases.js';
@@ -118,6 +118,14 @@ export function formatTime(ms: number, unit: TimeUnit = timeUnit(ms)): string {
 	return `${formatNumber(unit === 'µs' ? ms * 1_000 : ms)} ${unit}`;
 }
 
+/** Sorts per second, in full: whole numbers from 100 up, else 3 significant digits. */
+export function formatOps(ms: number): string {
+	const ops = 1_000 / ms;
+	return ops >= 100
+		? Math.round(ops).toLocaleString('en-US')
+		: formatNumber(ops);
+}
+
 export function formatBytes(bytes: number): string {
 	return Math.abs(bytes) < 1_024
 		? `${bytes} B`
@@ -214,8 +222,8 @@ export function geometricMean(values: number[]): number | undefined {
 }
 
 /**
- * A runtime table: one column per group of timings. Each cell shows the time
- * and, in brackets, the time relative to compiled ts-order `sort()`.
+ * A runtime table: one column per group of timings. Each cell shows sorts per
+ * second and, in brackets, the speed relative to compiled ts-order `sort()`.
  */
 function runtimeTable(
 	columns: { heading: string; group: Summary[] }[],
@@ -227,7 +235,6 @@ function runtimeTable(
 		medals: podium(
 			group.map((item) => ({ id: item.id, value: item.meanMs })),
 		),
-		unit: timeUnit(group[0]!.meanMs),
 	}));
 	const ratio = (id: string, column: (typeof prepared)[number]) => {
 		const item = column.group.find((candidate) => candidate.id === id);
@@ -236,7 +243,9 @@ function runtimeTable(
 	const cell = (id: string, column: (typeof prepared)[number]) => {
 		const item = column.group.find((candidate) => candidate.id === id);
 		if (!item) return '—';
-		const text = `${formatTime(item.meanMs, column.unit)} (${ratio(id, column)!.toFixed(1)}×)${noiseMark(item)}`;
+		// Relative speed: 2.0× sorts twice as many times per second.
+		const speed = 1 / ratio(id, column)!;
+		const text = `${formatOps(item.meanMs)} ops/s (${speed.toFixed(1)}×)${noiseMark(item)}`;
 		const medal = column.medals.get(id);
 		return medal ? `${medal} ${text}` : text;
 	};
@@ -264,7 +273,13 @@ function summaryTable(results: Results, shape: Shape, size: number): string[] {
 }
 
 /** Paths of the SVG charts, relative to the report. */
-export type ChartPaths = { runtime: string; bundle: string };
+export type ChartPaths = {
+	/** Sorts per second at one size, by workload. */
+	runtime: (size: number) => string;
+	/** Relative speed of one workload and input shape, by size. */
+	workload: (scenario: ScenarioId, shape: Shape) => string;
+	bundle: string;
+};
 
 /** The input shape and size that the summary and its chart show. */
 export function headline(results: Results): { shape: Shape; size: number } {
@@ -282,11 +297,11 @@ function overview(results: Results, charts?: ChartPaths): string[] {
 	const lines = [
 		'## Summary',
 		'',
-		`Time to sort **${count(size)} ${shape} records**, a typical list or table. Lower is faster. **(2.0×)** means the sort takes twice as long as compiled ts-order \`sort()\`. 🥇🥈🥉 mark the three fastest in each column. Each library, and native code, wins at most one medal, with its fastest entry.`,
+		`Sorts per second on **${count(size)} ${shape} records**, a typical list or table. Higher is faster. **(2.0×)** means twice as many sorts per second as compiled ts-order \`sort()\`. 🥇🥈🥉 mark the three fastest in each column. Each library, and native code, wins at most one medal, with its fastest entry.`,
 		'',
 		...(charts
 			? [
-					`![Bar chart of the time to sort ${count(size)} ${shape} records, by library and workload. The table below has every value.](${charts.runtime})`,
+					`![Bar chart of sorts per second on ${count(size)} ${shape} records, by library and workload. The table below has every value.](${charts.runtime(size)})`,
 					'',
 				]
 			: []),
@@ -311,6 +326,12 @@ function overview(results: Results, charts?: ChartPaths): string[] {
 			'<details>',
 			`<summary>${count(other)} records</summary>`,
 			'',
+			...(charts
+				? [
+						`![Bar chart of sorts per second on ${count(other)} ${shape} records, by library and workload. The table below has every value.](${charts.runtime(other)})`,
+						'',
+					]
+				: []),
 			...summaryTable(results, shape, other),
 			'',
 			'</details>',
@@ -360,7 +381,7 @@ export function renderReport(results: Results, charts?: ChartPaths): string {
 		'',
 		'## Measurement method',
 		'',
-		`Each cell is the **median of ${settings.rounds} round means**, per complete sort. A column uses **µs** if its fastest entry is below 1 ms, otherwise **ms**; all entries within that column use the same unit. Each cell also shows its time divided by the time of compiled ts-order \`sort()\`: **2.0×** takes twice as long. A medal marks one of the three lowest observed times, not a proven statistical win. A † flags over 20% round-to-round variation. Exact variation percentages are in the collapsed tables; they are **not confidence intervals**. Raw JSON also records each round’s sample count, mean, median, p99 and Tinybench relative margin of error.`,
+		`Each cell is based on the **median of ${settings.rounds} round means**, per complete sort, shown as sorts per second (1 second divided by that time). Each cell also shows its speed relative to compiled ts-order \`sort()\`: **2.0×** sorts twice as many times per second. A medal marks one of the three highest observed speeds, not a proven statistical win. A † flags over 20% round-to-round variation. Exact variation percentages are in the collapsed tables; they are **not confidence intervals**. Raw JSON also records each round’s sample count, mean, median, p99 and Tinybench relative margin of error.`,
 		'',
 		`Tinybench runs synchronously and sequentially: at least ${settings.timeMs} ms and ${settings.minimumSamples} samples per implementation per cell, preceded by at least ${settings.warmupMs} ms and three warmup iterations. Implementation order is deterministically shuffled for each group and round. Seeds start at ${settings.seed}. No outliers are removed; no forced garbage collection runs between samples.`,
 		'',
@@ -401,7 +422,7 @@ export function renderReport(results: Results, charts?: ChartPaths): string {
 		'',
 		'The code behind every row is listed under [Sorting code](#sorting-code).',
 		'',
-		'Same format as the summary: time per sort, then the time relative to compiled ts-order `sort()`. 🥇🥈🥉 mark the three fastest in each column, one medal per library. Expand the variation table before you trust a close result.',
+		'Same format as the summary: sorts per second, then the speed relative to compiled ts-order `sort()`. 🥇🥈🥉 mark the three fastest in each column, one medal per library. Expand the variation table before you trust a close result.',
 		'',
 	];
 	for (const scenario of SCENARIOS) {
@@ -413,6 +434,12 @@ export function renderReport(results: Results, charts?: ChartPaths): string {
 			lines.push(
 				`#### ${shape}`,
 				'',
+				...(charts
+					? [
+							`![Bar chart of the speed of each implementation relative to compiled ts-order sort(), by array size. The table below has every value.](${charts.workload(scenario.id, shape)})`,
+							'',
+						]
+					: []),
 				...runtimeTable(
 					groups.map((group, i) => ({
 						heading: settings.sizes[i]!.toLocaleString('en-US'),

@@ -13,11 +13,12 @@ import { renderChart } from './chart.js';
 import {
 	formatBytes,
 	formatTime,
+	headline,
 	renderReport,
 	summarize,
 	timeUnit,
 } from './report.js';
-import { renderBundleSvg, renderRuntimeSvg } from './svg.js';
+import { renderBundleSvg, renderRuntimeSvg, renderWorkloadSvg } from './svg.js';
 import { validateSort } from './validate.js';
 
 function escapeHtml(value: string): string {
@@ -309,8 +310,34 @@ describe('benchmark presentation', () => {
 				SCENARIOS.length,
 			);
 		expect(renderBundleSvg(results)).toContain('KiB');
-		expect(
-			renderReport(results, { runtime: 'a.svg', bundle: 'b.svg' }),
-		).toMatch(/!\[[^\]]+\]\(a\.svg\)[\s\S]*!\[[^\]]+\]\(b\.svg\)/);
+		const workload = renderWorkloadSvg(results, 'total', 'shuffled');
+		expect(workload.match(/<path /g)).toHaveLength(
+			adaptersFor(SCENARIOS[0]!).length * results.settings.sizes.length,
+		);
+		expect(workload).toContain('1.0×');
+	});
+
+	it('puts a chart above every table', () => {
+		const results = fixture();
+		const markdown = renderReport(results, {
+			runtime: (size) => `runtime-${size}.svg`,
+			workload: (scenario, shape) => `${scenario}-${shape}.svg`,
+			bundle: 'bundle.svg',
+		});
+		const { sizes, shapes } = results.settings;
+		const { size } = headline(results);
+		const images = [...markdown.matchAll(/!\[[^\]]+\]\(([^)]+)\)/g)].map(
+			(match) => match[1],
+		);
+		expect(images).toEqual([
+			// The summary size first, then the other sizes.
+			...[size, ...sizes.filter((other) => other !== size)].map(
+				(value) => `runtime-${value}.svg`,
+			),
+			...SCENARIOS.flatMap((scenario) =>
+				shapes.map((shape) => `${scenario.id}-${shape}.svg`),
+			),
+			'bundle.svg',
+		]);
 	});
 });

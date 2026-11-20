@@ -19,8 +19,8 @@ bun run bench:full  # exhaustive run: same sizes, all four input shapes
 bun run bench:render # rebuild the reports and charts from saved results
 ```
 
-| Command                | Writes                                                                                                                          | Takes                        |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `bun run bench`        | `BENCHMARKS.md`, its charts `benchmarks/runtime.svg` and `bundle.svg`, `BENCHMARKS.html`, raw data in `benchmarks/results.json` | About 1 to 2 minutes         |
-| `bun run bench:full`   | `benchmarks/full.md`, `full-runtime.svg`, `full-bundle.svg`, `full.html` and `full.json`                                        | 10 to 15 minutes on a laptop |
-| `bun run bench:render` | The same files as the last run, from its saved JSON                                                                             | Seconds                      |
+| Command                | Writes                                                                                                        | Takes                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `bun run bench`        | `BENCHMARKS.md`, its charts in `benchmarks/charts/`, `BENCHMARKS.html`, raw data in `benchmarks/results.json` | About 1 to 2 minutes         |
+| `bun run bench:full`   | `benchmarks/full.md`, its charts in `benchmarks/charts/full-*.svg`, `full.html` and `full.json`               | 10 to 15 minutes on a laptop |
+| `bun run bench:render` | The same files as the last run, from its saved JSON                                                           | Seconds                      |

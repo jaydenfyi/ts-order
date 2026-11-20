@@ -1,26 +1,21 @@
-import type { Shape } from './cases.js';
+import type { ScenarioId, Shape } from './cases.js';
 import type { Results } from './report.js';
 import { SCENARIOS } from './cases.js';
 import {
 	formatBytes,
-	formatNumber,
-	formatTime,
+	formatOps,
 	geometricMean,
 	groupedRows,
 	LABELS,
 	podium,
 	summarize,
 	SUMMARY_BASELINE,
-	timeUnit,
 } from './report.js';
 
 // Static SVG charts for the Markdown report. They are images, so they have no
 // hover layer: the tables next to them carry every value.
 
-const WIDTH = 960;
 const LABEL_WIDTH = 210;
-// Space after the longest bar for its value label.
-const VALUE_ROOM = 92;
 const PANEL_GAP = 28;
 const ROW = 22;
 const BAR = 14;
@@ -107,10 +102,18 @@ function barChart(options: {
 	panels: Panel[];
 	/** The number of a tick, in the axis unit. */
 	tickFormat: (value: number) => string;
-	/** The axis unit, printed after the last tick only. */
+	/** The axis unit with any leading space, printed after the last tick only. */
 	unit: string;
+	/** Whether a longer bar is better, as with speed, or worse, as with size. */
+	higherIsBetter: boolean;
+	/** Total width; wider for more panels. */
+	width?: number;
+	/** Space after the longest bar for its value label. */
+	valueRoom?: number;
 }): string {
 	const { rows, panels } = options;
+	const WIDTH = options.width ?? 960;
+	const VALUE_ROOM = options.valueRoom ?? 92;
 	const top = 96;
 	const panelWidth =
 		(WIDTH - LABEL_WIDTH - 24 - PANEL_GAP * (panels.length - 1)) /
@@ -122,7 +125,12 @@ function barChart(options: {
 	const scale = (value: number) =>
 		(value / ticks.at(-1)!) * (panelWidth - VALUE_ROOM);
 	const medals = panels.map((panel) =>
-		podium([...panel.values].map(([id, value]) => ({ id, value }))),
+		podium(
+			[...panel.values].map(([id, value]) => ({
+				id,
+				value: options.higherIsBetter ? -value : value,
+			})),
+		),
 	);
 
 	let y = top;
@@ -161,8 +169,12 @@ function barChart(options: {
 		y += ROW;
 	}
 	const bottom = y + 8;
-	// Label every gridline, or every other one when they sit too close.
-	const every = scale(ticks[1]!) < 48 ? 2 : 1;
+	// Label every nth gridline, so no two labels overlap. About 6.5px per
+	// character at 11px, plus a gap.
+	const widest = Math.max(
+		...ticks.map((tick) => options.tickFormat(tick).length),
+	);
+	const every = Math.ceil((widest * 6.5 + 12) / scale(ticks[1]!));
 	const lastLabelled = ticks.length - 1 - ((ticks.length - 1) % every);
 	const axes = panels.flatMap((panel, i) => {
 		const x = LABEL_WIDTH + i * (panelWidth + PANEL_GAP);
@@ -173,7 +185,7 @@ function barChart(options: {
 				if (t % every) return line;
 				const label =
 					options.tickFormat(tick) +
-					(t === lastLabelled ? ` ${options.unit}` : '');
+					(t === lastLabelled ? options.unit : '');
 				return `${line}<text class="tick" x="${x + scale(tick)}" y="${bottom + 16}" text-anchor="${tick ? 'middle' : 'start'}">${escape(label)}</text>`;
 			}),
 		];
@@ -204,7 +216,7 @@ function barChart(options: {
 	].join('\n');
 }
 
-/** Time per sort at one size, one panel per workload. */
+/** Sorts per second at one size, one panel per workload. */
 export function renderRuntimeSvg(
 	results: Results,
 	shape: Shape,
@@ -224,23 +236,65 @@ export function renderRuntimeSvg(
 			}),
 		),
 	);
-	// The unit of the fastest entry, as in the tables.
-	const unit = timeUnit(
-		Math.min(...groups.flat().map((item) => item.meanMs)),
-	);
 	return barChart({
-		title: `Time to sort ${size.toLocaleString('en-US')} ${shape} records`,
+		title: `Sorts per second on ${size.toLocaleString('en-US')} ${shape} records`,
 		subtitle:
-			'Shorter bars are faster. 1st, 2nd and 3rd mark the three fastest in each workload, one place per library.',
+			'Longer bars are faster. 1st, 2nd and 3rd mark the three fastest in each workload, one place per library.',
 		rows,
 		panels: SCENARIOS.map((scenario, i) => ({
 			title: scenario.short,
-			values: new Map(groups[i]!.map((item) => [item.id, item.meanMs])),
-			format: (value) => formatTime(value, unit),
+			values: new Map(
+				groups[i]!.map((item) => [item.id, 1_000 / item.meanMs]),
+			),
+			format: (ops) => formatOps(1_000 / ops),
 		})),
-		tickFormat: (value) =>
-			formatNumber(unit === 'µs' ? value * 1_000 : value),
-		unit,
+		tickFormat: (ops) => ops.toLocaleString('en-US'),
+		unit: ' ops/s',
+		higherIsBetter: true,
+	});
+}
+
+/**
+ * One workload on one input shape, one panel per size. Sorts per second span
+ * several orders of magnitude across sizes, so the bars show the speed relative
+ * to compiled ts-order `sort()`, which shares one axis across sizes.
+ */
+export function renderWorkloadSvg(
+	results: Results,
+	scenarioId: ScenarioId,
+	shape: Shape,
+): string {
+	const scenario = SCENARIOS.find((item) => item.id === scenarioId)!;
+	const { sizes } = results.settings;
+	const speeds = sizes.map((size) => {
+		const group = summarize(results, scenarioId, shape, size);
+		const baseline = group.find(
+			(item) => item.id === SUMMARY_BASELINE,
+		)!.meanMs;
+		return new Map(group.map((item) => [item.id, baseline / item.meanMs]));
+	});
+	const rows = groupedRows((id) => {
+		const mean = geometricMean(
+			speeds.flatMap((speed) => speed.get(id) ?? []),
+		);
+		// Fastest first: rank by time, the inverse of speed.
+		return mean && 1 / mean;
+	});
+	return barChart({
+		title: `${scenario.title}, ${shape} input`,
+		subtitle:
+			'Speed relative to compiled ts-order sort(). Longer bars are faster. 1st, 2nd and 3rd mark the three fastest at each size.',
+		rows,
+		panels: sizes.map((size, i) => ({
+			title: `${size.toLocaleString('en-US')} records`,
+			values: speeds[i]!,
+			format: (speed) => `${speed.toFixed(1)}×`,
+		})),
+		tickFormat: (speed) => speed.toLocaleString('en-US'),
+		unit: '×',
+		higherIsBetter: true,
+		width: 1160,
+		valueRoom: 70,
 	});
 }
 
@@ -265,6 +319,7 @@ export function renderBundleSvg(results: Results): string {
 		rows,
 		panels,
 		tickFormat: (kib) => kib.toLocaleString('en-US'),
-		unit: 'KiB',
+		unit: ' KiB',
+		higherIsBetter: false,
 	});
 }

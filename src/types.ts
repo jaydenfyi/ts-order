@@ -89,7 +89,9 @@ export type KeyOptions<K, T = unknown> = {
 	 */
 	compare?: Comparator<K> | undefined;
 	/**
-	 * Optional predicate that must be satisfied by both values for this step to run.
+	 * Optional predicate for this step. When only one item passes, it comes
+	 * first. When both pass, the key decides. When neither passes, the step is
+	 * skipped and the next step decides.
 	 * @example
 	 * ```ts
 	 * const comparator = Order.by((item: Item) => item.score, {

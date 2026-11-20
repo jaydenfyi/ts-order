@@ -10,7 +10,7 @@ export function generateCompare<T>(
 	steps: readonly OrderStep<T>[],
 ): Comparator<T> | undefined {
 	return generate(
-		`return function(a,b){var x,y,r,m,f;${compareStepsSource(steps, false)}return 0}`,
+		`return function(a,b){var x,y,r,m,f;${compareStepsSource(steps, undefined)}return 0}`,
 		steps,
 	);
 }
@@ -19,8 +19,9 @@ export function generateCompare<T>(
 export function generateSort<T>(
 	steps: readonly OrderStep<T>[],
 ): ((array: readonly T[]) => T[]) | undefined {
+	const first = firstWithPredicate(steps);
 	const decorate = steps.map((step, i) => {
-		const j = firstWithPredicate(steps, i);
+		const j = first[i]!;
 		return j < i
 			? `var K${i}=new Array(n);for(i=0;i<n;i++)if(P${j}[i])K${i}[i]=k${i}(array[i]);`
 			: step.predicate
@@ -32,7 +33,7 @@ export function generateSort<T>(
 		`return function(array){var n=array.length,i,t;if(n<=1)return array.slice();${decorate.join(
 			'',
 		)}var ix=new Array(n);for(i=0;i<n;i++)ix[i]=i;` +
-			`ix.sort(function(a,b){var x,y,r,m,f;${compareStepsSource(steps, true)}return 0});` +
+			`ix.sort(function(a,b){var x,y,r,m,f;${compareStepsSource(steps, first)}return 0});` +
 			`var out=new Array(n);for(i=0;i<n;i++)out[i]=array[ix[i]];return out}`,
 		steps,
 	);
@@ -93,12 +94,14 @@ function compareKeysSource(i: number, step: OrderStep<any>): string {
 
 /**
  * The steps of a comparator of `a` and `b`. They are items for `compare`, and
- * indexes into the decorated arrays `K<i>` and `P<i>` for `sort`.
+ * indexes into the decorated arrays `K<i>` and `P<i>` for `sort`, which
+ * passes `first` from `firstWithPredicate`.
  */
 function compareStepsSource(
 	steps: readonly OrderStep<any>[],
-	sort: boolean,
+	first: readonly number[] | undefined,
 ): string {
+	const sort = first !== undefined;
 	return steps
 		.map((step, i) => {
 			const keys =
@@ -107,7 +110,7 @@ function compareStepsSource(
 			// The item that passes comes first. When neither passes, skip the step.
 			// When an earlier step checked the same predicate, both items gave the
 			// same result there, or the comparator would have returned.
-			const j = sort ? firstWithPredicate(steps, i) : i;
+			const j = first ? first[i]! : i;
 			return !step.predicate
 				? keys
 				: j < i
@@ -120,14 +123,18 @@ function compareStepsSource(
 }
 
 /**
- * The first step with step `i`'s predicate, or `i` when it has none or no
- * earlier step shares it. `when()` gives its guard step and the steps it
- * appends one predicate, so `sort` calls it once per item, not once per step.
+ * For each step `i`, the first step with its predicate, or `i` when it has
+ * none or no earlier step shares it. `when()` gives its guard step and the
+ * steps it appends one predicate, so `sort` calls it once per item, not once
+ * per step. One pass, so orders with many `when()` branches compile in linear
+ * time.
  */
-function firstWithPredicate(
-	steps: readonly OrderStep<any>[],
-	i: number,
-): number {
-	const p = steps[i]!.predicate;
-	return p ? steps.findIndex((step) => step.predicate === p) : i;
+function firstWithPredicate(steps: readonly OrderStep<any>[]): number[] {
+	const seen = new Map<unknown, number>();
+	return steps.map((step, i) => {
+		const p = step.predicate;
+		if (!p) return i;
+		if (!seen.has(p)) seen.set(p, i);
+		return seen.get(p)!;
+	});
 }

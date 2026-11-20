@@ -90,6 +90,32 @@ describe('compile', () => {
 		expect(hasScore).toHaveBeenCalledTimes(rows.length);
 	});
 
+	it('calls a predicate shared by several when() calls once per item in sort', async () => {
+		const compile = await importCompile();
+		const hasScore = vi.fn((r: Row) => r.score !== null);
+		const isEven = vi.fn((r: Row) => r.id % 2 === 0);
+		const order = new Order<Row>()
+			.when(
+				hasScore,
+				Order.by((r: Row) => r.score),
+			)
+			.when(
+				isEven,
+				Order.by((r: Row) => -r.id),
+			)
+			.when(
+				hasScore,
+				Order.by((r: Row) => r.id),
+			);
+		const plain = order.sort(rows);
+		hasScore.mockClear();
+		isEven.mockClear();
+
+		expect(compile(order).sort(rows)).toEqual(plain);
+		expect(hasScore).toHaveBeenCalledTimes(rows.length);
+		expect(isEven).toHaveBeenCalledTimes(rows.length);
+	});
+
 	it('sorts an order with 60,000 steps', async () => {
 		const compile = await importCompile();
 		const many = new Order(

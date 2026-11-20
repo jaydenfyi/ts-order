@@ -6,28 +6,32 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-permissions:
-    contents: write # push the version commit and create GitHub releases
-    pull-requests: write # open the "Version Packages" pull request
-    id-token: write # npm trusted publishing (OIDC) and provenance
+permissions: {}
 
 jobs:
     release:
         runs-on: ubuntu-latest
+        timeout-minutes: 15
+        permissions:
+            contents: write # push the version commit and create GitHub releases
+            pull-requests: write # open the "Version Packages" pull request
+            id-token: write # npm trusted publishing (OIDC) and provenance
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
               with:
                   fetch-depth: 0
-            - uses: oven-sh/setup-bun@v2
+            - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+              with:
+                  no-cache: true
             # Node 24 ships npm 11, which supports trusted publishing.
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version: 24
                   registry-url: https://registry.npmjs.org
             - run: bun install --frozen-lockfile
             # With pending changesets, open or update the "Version Packages" pull
             # request. When that pull request merges, build and publish to npm.
-            - uses: changesets/action@v1
+            - uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
               with:
                   version: bun run version-packages
                   publish: bun run release

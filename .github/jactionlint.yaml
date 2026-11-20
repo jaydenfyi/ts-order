@@ -1,0 +1,7 @@
+profile: default
+
+ignores:
+    - rule: artipacked
+      file: .github/workflows/release.yml
+      uses: actions/checkout
+      reason: changesets/action pushes the "Version Packages" branch with the checkout credentials

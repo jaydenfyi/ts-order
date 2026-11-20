@@ -62,8 +62,7 @@
 		"typecheck": "tsc -p . --noEmit",
 		"lint:package": "publint && attw --pack . --profile esm-only",
 		"changeset": "changeset",
-		"version-packages": "changeset version",
-		"release": "bun run build && changeset publish"
+		"version-packages": "changeset version"
 	},
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.5",

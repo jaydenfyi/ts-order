@@ -1,0 +1,4 @@
+[install]
+# Skip versions published in the last 3 days: most malicious releases are
+# taken down within that time.
+minimumReleaseAge = 259200

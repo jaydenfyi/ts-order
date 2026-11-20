@@ -15,7 +15,9 @@ type Sort = (array: readonly unknown[]) => unknown[];
 
 const proto = Order.prototype;
 const plainCompare: (this: Order<unknown>) => Comparator<unknown>
+	// oxlint-disable-next-line typescript/unbound-method -- invoked with the order as this below
 	= Object.getOwnPropertyDescriptor(proto, 'compare')!.get!;
+// oxlint-disable-next-line typescript/unbound-method -- invoked with the order as this below
 const plainSort = proto.sort;
 const compares = new WeakMap<Order<unknown>, Comparator<unknown>>();
 const sorts = new WeakMap<Order<unknown>, Sort>();

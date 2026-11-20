@@ -69,8 +69,7 @@ export class Order<T> {
 		sourceOrSources?:
 			| Order<T>
 			| Iterable<Order<T> | null | undefined>
-			| null
-			| undefined,
+			| null,
 	) {
 		if (!sourceOrSources) return;
 		// Not `instanceof`: an order from another copy of this package must work too.

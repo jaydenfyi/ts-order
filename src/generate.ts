@@ -52,7 +52,7 @@ function generate<F>(
 	});
 	const scope = names.length ? `var ${names.join(',')};` : '';
 	try {
-		// eslint-disable-next-line no-new-func -- generating this code is the point
+		// oxlint-disable-next-line typescript/no-implied-eval -- generating this code is the point
 		return new Function('M', 'V', scope + body)(isMissing, values) as F;
 	} catch (error) {
 		// An order with about 100,000 steps has more variables than V8 allows in

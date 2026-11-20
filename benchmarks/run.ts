@@ -29,7 +29,7 @@ assert(
 );
 // Reject fallback timings being mislabeled as compiled results.
 try {
-	// eslint-disable-next-line no-new-func -- compiled benchmark rows require dynamic code generation
+	// oxlint-disable-next-line typescript/no-implied-eval -- compiled benchmarks require dynamic code generation
 	new Function('')();
 } catch (error) {
 	throw new Error(

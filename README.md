@@ -266,7 +266,7 @@ Each direction and `nulls` setting becomes a constant, and unused predicates or 
 - Compile last. Chaining `.by()`, `.when()`, or other methods onto a compiled order returns a plain order.
 - When an environment blocks `new Function` (strict CSP, Cloudflare Workers), compiled orders fall back to plain `compare` and `sort` with the same results.
 - Generated source contains only step options. Your selectors and comparators pass in as function arguments.
-- The code generator adds about 0.7 kB minified and gzipped: `Order` alone is under 0.9 kB, and with `compile()` it is about 1.6 kB. Bundlers tree-shake the generator out unless you import `compile` or `ts-order/compile`.
+- The code generator adds about 0.7 kB minified and gzipped: `Order` alone is about 0.9 kB, and with `compile()` it is about 1.6 kB. Bundlers tree-shake the generator out unless you import `compile` or `ts-order/compile`.
 
 ### `import 'ts-order/compile'`
 

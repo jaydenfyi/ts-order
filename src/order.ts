@@ -401,17 +401,28 @@ export class Order<T> {
 		const predicateMatchesPerStep: (boolean[] | undefined)[] = new Array(
 			numberOfSteps,
 		);
+		// `when()` gives its guard and its steps one predicate, so each predicate
+		// runs once per item, as in compiled orders.
+		const matchesByPredicate = new Map<(value: T) => boolean, boolean[]>();
 		for (let j = 0; j < numberOfSteps; j++) {
 			const step = steps[j]!;
 			const keys = new Array(arrayLength);
 			const predicate = step.predicate;
 			if (predicate) {
-				const matches = new Array(arrayLength);
-				for (let i = 0; i < arrayLength; i++) {
-					const item = array[i]!;
-					const match = !!predicate(item);
-					matches[i] = match;
-					if (match) keys[i] = step.key(item);
+				let matches = matchesByPredicate.get(predicate);
+				if (matches) {
+					for (let i = 0; i < arrayLength; i++) {
+						if (matches[i]) keys[i] = step.key(array[i]!);
+					}
+				} else {
+					matches = new Array(arrayLength);
+					for (let i = 0; i < arrayLength; i++) {
+						const item = array[i]!;
+						const match = !!predicate(item);
+						matches[i] = match;
+						if (match) keys[i] = step.key(item);
+					}
+					matchesByPredicate.set(predicate, matches);
 				}
 				predicateMatchesPerStep[j] = matches;
 			} else {

@@ -2,11 +2,29 @@
 	"name": "ts-order",
 	"type": "module",
 	"version": "0.1.0",
-	"description": "Type-safe Order utility for declarative, composable, and immutable multi-key ordering logic",
+	"description": "Type-safe sorting utility for JavaScript/TypeScript with declarative, composable, and immutable multi-key ordering logic",
 	"author": {
 		"name": "jaydenfyi",
 		"url": "https://github.com/jaydenfyi"
 	},
+	"keywords": [
+		"sort",
+		"sorting",
+		"sort-by",
+		"sortby",
+		"orderby",
+		"order-by",
+		"multi-sort",
+		"multisort",
+		"array-sort",
+		"sort-array",
+		"comparator",
+		"compare",
+		"thenby",
+		"toSorted",
+		"typescript",
+		"type-safe"
+	],
 	"license": "MIT",
 	"repository": {
 		"type": "git",

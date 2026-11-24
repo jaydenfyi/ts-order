@@ -1,6 +1,6 @@
 # Benchmarks
 
-[BENCHMARKS.md](../BENCHMARKS.md) and its [interactive report](../BENCHMARKS.html) compare runtime and browser bundle size against native sorting, Lodash, es-toolkit, fast-sort, Remeda, thenby, Effect, and Radashi.
+[BENCHMARKS.md](../BENCHMARKS.md) and its [interactive report](../BENCHMARKS.html) compare runtime and browser bundle size against native sorting, Lodash, es-toolkit, fast-sort, Remeda, thenby, Effect, Radashi, Ramda, Rambda, natural-orderby, sort-on, and sort-es.
 
 - Reports time four APIs separately: class API, comparator API, compiled `sort`, and compiled `compare`.
 - Orders compile before measurement, so timings exclude compile cost.

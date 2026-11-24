@@ -8,8 +8,13 @@ import * as fastSort from './adapters/fast-sort.js';
 import * as lodash from './adapters/lodash.js';
 import * as nativeCached from './adapters/native-cached.js';
 import * as native from './adapters/native.js';
+import * as naturalOrderby from './adapters/natural-orderby.js';
 import * as radashi from './adapters/radashi.js';
+import * as rambda from './adapters/rambda.js';
+import * as ramda from './adapters/ramda.js';
 import * as remeda from './adapters/remeda.js';
+import * as sortEs from './adapters/sort-es.js';
+import * as sortOn from './adapters/sort-on.js';
 import * as thenby from './adapters/thenby.js';
 import * as classSort from './adapters/ts-order-class.js';
 import * as comparatorSort from './adapters/ts-order-comparator.js';
@@ -109,6 +114,26 @@ export const ADAPTERS: Adapter[] = [
 		package: 'radashi',
 		factories: radashi,
 	},
+	{
+		id: 'ramda',
+		label: 'Ramda sortWith',
+		package: 'ramda',
+		factories: ramda,
+	},
+	{
+		id: 'rambda',
+		label: 'Rambda sortWith',
+		package: 'rambda',
+		factories: rambda,
+	},
+	{
+		id: 'natural-orderby',
+		label: 'natural-orderby',
+		package: 'natural-orderby',
+		factories: naturalOrderby,
+	},
+	{ id: 'sort-on', label: 'sort-on', package: 'sort-on', factories: sortOn },
+	{ id: 'sort-es', label: 'sort-es', package: 'sort-es', factories: sortEs },
 ];
 
 export function adaptersFor(scenario: { id: ScenarioId }): Adapter[] {

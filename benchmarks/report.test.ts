@@ -195,7 +195,8 @@ describe('benchmark presentation', () => {
 		expect(hues[0]).toBe(165);
 		expect(hues.at(-1)).toBe(25);
 		expect(hues).toEqual([...hues].sort((a, b) => b - a));
-		expect(hues[7]).toBe(95);
+		// Hues spread evenly from 165 (best) to 25 (worst).
+		expect(hues[7]).toBeCloseTo(165 - (140 * 7) / (hues.length - 1), 1);
 		expect(html).toContain('Colours compare values within each chart');
 		expect(html.indexOf('<h2>Less time')).toBeLessThan(
 			html.indexOf('<details>'),
@@ -217,7 +218,9 @@ describe('benchmark presentation', () => {
 		expect(html).toContain('<option value="100000"');
 		expect(html).toContain('data-runtime="computed/shuffled/10"');
 		expect(html).toContain('&lt;test&gt;');
-		expect(html).toContain('style="--rows:15"');
+		expect(html).toContain(
+			`style="--rows:${adaptersFor(SCENARIOS[0]!).length}"`,
+		);
 		for (const scenario of SCENARIOS) {
 			expect(html).toContain(`data-code="${scenario.id}"`);
 			expect(html).toContain(

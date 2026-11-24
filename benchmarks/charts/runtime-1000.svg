@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560" role="img" aria-label="Sorts per second on 1,000 shuffled records">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="670" viewBox="0 0 960 670" role="img" aria-label="Sorts per second on 1,000 shuffled records">
 <style>
 	.surface { fill: #fcfcfb; }
 	.title { fill: #0b0b0b; font-size: 16px; font-weight: 600; }
@@ -25,139 +25,174 @@
 	}
 	text { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
 </style>
-<rect class="surface" width="960" height="560" rx="8"/>
+<rect class="surface" width="960" height="670" rx="8"/>
 <text class="title" x="16" y="26">Sorts per second on 1,000 shuffled records</text>
 <text class="subtitle" x="16" y="44">Longer bars are faster. 1st, 2nd and 3rd mark the three fastest in each workload, one place per library.</text>
 <rect class="ts-order" x="16" y="52" width="12" height="12" rx="2"/><text class="label" x="34" y="62">ts-order</text>
 <rect class="native" x="112" y="52" width="12" height="12" rx="2"/><text class="label" x="130" y="62">Native Array.prototype.sort</text>
 <rect class="other" x="341" y="52" width="12" height="12" rx="2"/><text class="label" x="359" y="62">Other libraries</text>
 <text class="panel" x="210" y="84">1 key</text>
-<line class="axis" x1="210" x2="210" y1="92" y2="528"/><text class="tick" x="210" y="544" text-anchor="start">0</text>
-<line class="grid" x1="236.26666666666668" x2="236.26666666666668" y1="92" y2="528"/>
-<line class="grid" x1="262.53333333333336" x2="262.53333333333336" y1="92" y2="528"/><text class="tick" x="262.53333333333336" y="544" text-anchor="middle">4,000</text>
-<line class="grid" x1="288.8" x2="288.8" y1="92" y2="528"/>
-<line class="grid" x1="315.06666666666666" x2="315.06666666666666" y1="92" y2="528"/><text class="tick" x="315.06666666666666" y="544" text-anchor="middle">8,000 ops/s</text>
-<line class="grid" x1="341.33333333333337" x2="341.33333333333337" y1="92" y2="528"/>
+<line class="axis" x1="210" x2="210" y1="92" y2="638"/><text class="tick" x="210" y="654" text-anchor="start">0</text>
+<line class="grid" x1="236.26666666666668" x2="236.26666666666668" y1="92" y2="638"/>
+<line class="grid" x1="262.53333333333336" x2="262.53333333333336" y1="92" y2="638"/><text class="tick" x="262.53333333333336" y="654" text-anchor="middle">4,000</text>
+<line class="grid" x1="288.8" x2="288.8" y1="92" y2="638"/>
+<line class="grid" x1="315.06666666666666" x2="315.06666666666666" y1="92" y2="638"/><text class="tick" x="315.06666666666666" y="654" text-anchor="middle">8,000 ops/s</text>
+<line class="grid" x1="341.33333333333337" x2="341.33333333333337" y1="92" y2="638"/>
 <text class="panel" x="461.33333333333337" y="84">3 keys</text>
-<line class="axis" x1="461.33333333333337" x2="461.33333333333337" y1="92" y2="528"/><text class="tick" x="461.33333333333337" y="544" text-anchor="start">0</text>
-<line class="grid" x1="487.6" x2="487.6" y1="92" y2="528"/>
-<line class="grid" x1="513.8666666666667" x2="513.8666666666667" y1="92" y2="528"/><text class="tick" x="513.8666666666667" y="544" text-anchor="middle">4,000</text>
-<line class="grid" x1="540.1333333333333" x2="540.1333333333333" y1="92" y2="528"/>
-<line class="grid" x1="566.4000000000001" x2="566.4000000000001" y1="92" y2="528"/><text class="tick" x="566.4000000000001" y="544" text-anchor="middle">8,000 ops/s</text>
-<line class="grid" x1="592.6666666666667" x2="592.6666666666667" y1="92" y2="528"/>
+<line class="axis" x1="461.33333333333337" x2="461.33333333333337" y1="92" y2="638"/><text class="tick" x="461.33333333333337" y="654" text-anchor="start">0</text>
+<line class="grid" x1="487.6" x2="487.6" y1="92" y2="638"/>
+<line class="grid" x1="513.8666666666667" x2="513.8666666666667" y1="92" y2="638"/><text class="tick" x="513.8666666666667" y="654" text-anchor="middle">4,000</text>
+<line class="grid" x1="540.1333333333333" x2="540.1333333333333" y1="92" y2="638"/>
+<line class="grid" x1="566.4000000000001" x2="566.4000000000001" y1="92" y2="638"/><text class="tick" x="566.4000000000001" y="654" text-anchor="middle">8,000 ops/s</text>
+<line class="grid" x1="592.6666666666667" x2="592.6666666666667" y1="92" y2="638"/>
 <text class="panel" x="712.6666666666667" y="84">Computed key</text>
-<line class="axis" x1="712.6666666666667" x2="712.6666666666667" y1="92" y2="528"/><text class="tick" x="712.6666666666667" y="544" text-anchor="start">0</text>
-<line class="grid" x1="738.9333333333334" x2="738.9333333333334" y1="92" y2="528"/>
-<line class="grid" x1="765.2" x2="765.2" y1="92" y2="528"/><text class="tick" x="765.2" y="544" text-anchor="middle">4,000</text>
-<line class="grid" x1="791.4666666666667" x2="791.4666666666667" y1="92" y2="528"/>
-<line class="grid" x1="817.7333333333335" x2="817.7333333333335" y1="92" y2="528"/><text class="tick" x="817.7333333333335" y="544" text-anchor="middle">8,000 ops/s</text>
-<line class="grid" x1="844.0000000000001" x2="844.0000000000001" y1="92" y2="528"/>
+<line class="axis" x1="712.6666666666667" x2="712.6666666666667" y1="92" y2="638"/><text class="tick" x="712.6666666666667" y="654" text-anchor="start">0</text>
+<line class="grid" x1="738.9333333333334" x2="738.9333333333334" y1="92" y2="638"/>
+<line class="grid" x1="765.2" x2="765.2" y1="92" y2="638"/><text class="tick" x="765.2" y="654" text-anchor="middle">4,000</text>
+<line class="grid" x1="791.4666666666667" x2="791.4666666666667" y1="92" y2="638"/>
+<line class="grid" x1="817.7333333333335" x2="817.7333333333335" y1="92" y2="638"/><text class="tick" x="817.7333333333335" y="654" text-anchor="middle">8,000 ops/s</text>
+<line class="grid" x1="844.0000000000001" x2="844.0000000000001" y1="92" y2="638"/>
 <text class="group" x="16" y="110">Native Array.prototype.sort</text>
 <text class="label" x="16" y="133">Cached keys</text>
-<path class="native" d="M210,122h105.06593923054983a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-105.06593923054983z"><title>Cached keys, 1 key: 8,305</title></path>
-<text class="value" x="325.0659392305498" y="133">8,305</text>
-<path class="native" d="M461.33333333333337,122h73.81651721547279a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-73.81651721547279z"><title>Cached keys, 3 keys: 5,925</title></path>
-<text class="value" x="545.1498505488062" y="133">5,925</text>
-<path class="native" d="M712.6666666666667,122h88.28479480088902a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-88.28479480088902z"><title>Cached keys, Computed key: 7,027</title></path>
-<text class="value place" x="810.9514614675558" y="133">1st · 7,027</text>
+<path class="native" d="M210,122h106.7488265639102a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-106.7488265639102z"><title>Cached keys, 1 key: 8,433</title></path>
+<text class="value place" x="326.7488265639102" y="133">1st · 8,433</text>
+<path class="native" d="M461.33333333333337,122h68.65628285230163a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-68.65628285230163z"><title>Cached keys, 3 keys: 5,532</title></path>
+<text class="value place" x="539.989616185635" y="133">2nd · 5,532</text>
+<path class="native" d="M712.6666666666667,122h72.70218762213688a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-72.70218762213688z"><title>Cached keys, Computed key: 5,840</title></path>
+<text class="value place" x="795.3688542888036" y="133">1st · 5,840</text>
 <text class="label" x="16" y="155">Handwritten comparator</text>
-<path class="native" d="M210,144h114.39910158903696a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-114.39910158903696z"><title>Handwritten comparator, 1 key: 9,015</title></path>
-<text class="value place" x="334.39910158903695" y="155">1st · 9,015</text>
-<path class="native" d="M461.33333333333337,144h80.18318384976406a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-80.18318384976406z"><title>Handwritten comparator, 3 keys: 6,410</title></path>
-<text class="value place" x="551.5165171830974" y="155">2nd · 6,410</text>
-<path class="native" d="M712.6666666666667,144h22.354239330715302a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-22.354239330715302z"><title>Handwritten comparator, Computed key: 2,007</title></path>
-<text class="value" x="745.020905997382" y="155">2,007</text>
+<path class="native" d="M210,144h105.06563678709567a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-105.06563678709567z"><title>Handwritten comparator, 1 key: 8,304</title></path>
+<text class="value" x="325.0656367870957" y="155">8,304</text>
+<path class="native" d="M461.33333333333337,144h63.41221434583575a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-63.41221434583575z"><title>Handwritten comparator, 3 keys: 5,133</title></path>
+<text class="value" x="534.7455476791691" y="155">5,133</text>
+<path class="native" d="M712.6666666666667,144h1a1,1 0 0 1 1,1v12a1,1 0 0 1 -1,1h-1z"><title>Handwritten comparator, Computed key: 113</title></path>
+<text class="value" x="720.6666666666667" y="155">113</text>
 <text class="group" x="16" y="190">ts-order</text>
 <text class="label" x="16" y="213">compile() + sort()</text>
-<path class="ts-order" d="M210,202h106.21212771968521a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-106.21212771968521z"><title>compile() + sort(), 1 key: 8,392</title></path>
-<text class="value place" x="326.2121277196852" y="213">2nd · 8,392</text>
-<path class="ts-order" d="M461.33333333333337,202h87.34394455808656a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-87.34394455808656z"><title>compile() + sort(), 3 keys: 6,955</title></path>
-<text class="value place" x="558.67727789142" y="213">1st · 6,955</text>
-<path class="ts-order" d="M712.6666666666667,202h83.91753109747843a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-83.91753109747843z"><title>compile() + sort(), Computed key: 6,694</title></path>
-<text class="value place" x="806.5841977641452" y="213">2nd · 6,694</text>
+<path class="ts-order" d="M210,202h84.19914638346492a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-84.19914638346492z"><title>compile() + sort(), 1 key: 6,716</title></path>
+<text class="value place" x="304.19914638346495" y="213">2nd · 6,716</text>
+<path class="ts-order" d="M461.33333333333337,202h38.46080144213903a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-38.46080144213903z"><title>compile() + sort(), 3 keys: 3,233</title></path>
+<text class="value" x="509.7941347754724" y="213">3,233</text>
+<path class="ts-order" d="M712.6666666666667,202h32.130160350351694a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-32.130160350351694z"><title>compile() + sort(), Computed key: 2,751</title></path>
+<text class="value" x="754.7968270170185" y="213">2,751</text>
 <text class="label" x="16" y="235">compile() + compare</text>
-<path class="ts-order" d="M210,224h103.88193813144144a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-103.88193813144144z"><title>compile() + compare, 1 key: 8,214</title></path>
-<text class="value" x="323.8819381314414" y="235">8,214</text>
-<path class="ts-order" d="M461.33333333333337,224h80.56945212608422a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-80.56945212608422z"><title>compile() + compare, 3 keys: 6,439</title></path>
-<text class="value" x="551.9027854594176" y="235">6,439</text>
-<path class="ts-order" d="M712.6666666666667,224h23.721679883314767a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-23.721679883314767z"><title>compile() + compare, Computed key: 2,111</title></path>
-<text class="value" x="746.3883465499815" y="235">2,111</text>
+<path class="ts-order" d="M210,224h80.03865143001626a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-80.03865143001626z"><title>compile() + compare, 1 key: 6,399</title></path>
+<text class="value" x="300.0386514300163" y="235">6,399</text>
+<path class="ts-order" d="M461.33333333333337,224h77.77409962848327a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-77.77409962848327z"><title>compile() + compare, 3 keys: 6,226</title></path>
+<text class="value place" x="549.1074329618166" y="235">1st · 6,226</text>
+<path class="ts-order" d="M712.6666666666667,224h2.0686514560316676a2.0686514560316676,2.0686514560316676 0 0 1 2.0686514560316676,2.0686514560316676v9.862697087936665a2.0686514560316676,2.0686514560316676 0 0 1 -2.0686514560316676,2.0686514560316676h-2.0686514560316676z"><title>compile() + compare, Computed key: 315</title></path>
+<text class="value" x="722.8039695787301" y="235">315</text>
 <text class="label" x="16" y="257">Order (not compiled)</text>
-<path class="ts-order" d="M210,246h56.801812525707284a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-56.801812525707284z"><title>Order (not compiled), 1 key: 4,630</title></path>
-<text class="value" x="276.8018125257073" y="257">4,630</text>
-<path class="ts-order" d="M461.33333333333337,246h36.965739132821284a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-36.965739132821284z"><title>Order (not compiled), 3 keys: 3,119</title></path>
-<text class="value" x="508.29907246615466" y="257">3,119</text>
-<path class="ts-order" d="M712.6666666666667,246h49.81519784824911a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-49.81519784824911z"><title>Order (not compiled), Computed key: 4,098</title></path>
-<text class="value" x="772.4818645149159" y="257">4,098</text>
+<path class="ts-order" d="M210,246h53.8753707104542a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-53.8753707104542z"><title>Order (not compiled), 1 key: 4,407</title></path>
+<text class="value" x="273.8753707104542" y="257">4,407</text>
+<path class="ts-order" d="M461.33333333333337,246h17.32923200409577a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-17.32923200409577z"><title>Order (not compiled), 3 keys: 1,624</title></path>
+<text class="value" x="488.66256533742916" y="257">1,624</text>
+<path class="ts-order" d="M712.6666666666667,246h40.84581445597671a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-40.84581445597671z"><title>Order (not compiled), Computed key: 3,415</title></path>
+<text class="value place" x="763.5124811226434" y="257">2nd · 3,415</text>
 <text class="label" x="16" y="279">ts-order/comparator</text>
-<path class="ts-order" d="M210,268h40.36886122817167a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-40.36886122817167z"><title>ts-order/comparator, 1 key: 3,378</title></path>
-<text class="value" x="260.3688612281717" y="279">3,378</text>
-<path class="ts-order" d="M461.33333333333337,268h23.388704415669707a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-23.388704415669707z"><title>ts-order/comparator, 3 keys: 2,085</title></path>
-<text class="value" x="494.7220377490031" y="279">2,085</text>
-<path class="ts-order" d="M712.6666666666667,268h15.945268560788051a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-15.945268560788051z"><title>ts-order/comparator, Computed key: 1,519</title></path>
-<text class="value" x="738.6119352274548" y="279">1,519</text>
+<path class="ts-order" d="M210,268h33.51909546572927a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-33.51909546572927z"><title>ts-order/comparator, 1 key: 2,857</title></path>
+<text class="value" x="253.51909546572927" y="279">2,857</text>
+<path class="ts-order" d="M461.33333333333337,268h17.40106092740739a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-17.40106092740739z"><title>ts-order/comparator, 3 keys: 1,630</title></path>
+<text class="value" x="488.73439426074077" y="279">1,630</text>
+<path class="ts-order" d="M712.6666666666667,268h8.040771637174585a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-8.040771637174585z"><title>ts-order/comparator, Computed key: 917</title></path>
+<text class="value" x="730.7074383038413" y="279">917</text>
 <text class="group" x="16" y="314">Other libraries</text>
 <text class="label" x="16" y="337">Radashi sort</text>
-<path class="other" d="M210,326h106.12091538057062a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-106.12091538057062z"><title>Radashi sort, 1 key: 8,385</title></path>
-<text class="value place" x="326.12091538057064" y="337">3rd · 8,385</text>
-<path class="other" d="M461.33333333333337,326h27.586658918274964a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-27.586658918274964z"><title>Radashi sort, 3 keys: 2,405</title></path>
-<text class="value" x="498.91999225160833" y="337">2,405</text>
-<path class="other" d="M712.6666666666667,326h24.505796945276376a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-24.505796945276376z"><title>Radashi sort, Computed key: 2,170</title></path>
-<text class="value" x="747.1724636119432" y="337">2,170</text>
-<text class="label" x="16" y="359">Effect Array.sortWith (cached)</text>
-<path class="other" d="M210,348h59.24634097658877a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-59.24634097658877z"><title>Effect Array.sortWith (cached), 1 key: 4,816</title></path>
-<text class="value" x="279.2463409765888" y="359">4,816</text>
-<path class="other" d="M461.33333333333337,348h27.846538214229486a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-27.846538214229486z"><title>Effect Array.sortWith (cached), 3 keys: 2,425</title></path>
-<text class="value" x="499.17987154756287" y="359">2,425</text>
-<path class="other" d="M712.6666666666667,348h40.81105914720217a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-40.81105914720217z"><title>Effect Array.sortWith (cached), Computed key: 3,412</title></path>
-<text class="value" x="763.4777258138689" y="359">3,412</text>
-<text class="label" x="16" y="381">es-toolkit compat (cached)</text>
-<path class="other" d="M210,370h48.183378616067465a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-48.183378616067465z"><title>es-toolkit compat (cached), 1 key: 3,973</title></path>
-<text class="value" x="268.18337861606744" y="381">3,973</text>
-<path class="other" d="M461.33333333333337,370h27.810266309706535a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-27.810266309706535z"><title>es-toolkit compat (cached), 3 keys: 2,422</title></path>
-<text class="value" x="499.1435996430399" y="381">2,422</text>
-<path class="other" d="M712.6666666666667,370h43.12466084562049a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-43.12466084562049z"><title>es-toolkit compat (cached), Computed key: 3,588</title></path>
-<text class="value place" x="765.7913275122872" y="381">3rd · 3,588</text>
-<text class="label" x="16" y="403">Lodash (lodash-es)</text>
-<path class="other" d="M210,392h44.04433441572352a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-44.04433441572352z"><title>Lodash (lodash-es), 1 key: 3,658</title></path>
-<text class="value" x="264.04433441572354" y="403">3,658</text>
-<path class="other" d="M461.33333333333337,392h32.31358133249711a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-32.31358133249711z"><title>Lodash (lodash-es), 3 keys: 2,765</title></path>
-<text class="value place" x="503.6469146658305" y="403">3rd · 2,765</text>
-<path class="other" d="M712.6666666666667,392h39.95447907535564a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-39.95447907535564z"><title>Lodash (lodash-es), Computed key: 3,347</title></path>
-<text class="value" x="762.6211457420223" y="403">3,347</text>
+<path class="other" d="M210,326h79.88656958238532a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-79.88656958238532z"><title>Radashi sort, 1 key: 6,387</title></path>
+<text class="value place" x="299.88656958238533" y="337">3rd · 6,387</text>
+<path class="other" d="M461.33333333333337,326h22.751208905467642a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-22.751208905467642z"><title>Radashi sort, 3 keys: 2,037</title></path>
+<text class="value" x="494.084542238801" y="337">2,037</text>
+<path class="other" d="M712.6666666666667,326h22.5223234510308a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-22.5223234510308z"><title>Radashi sort, Computed key: 2,019</title></path>
+<text class="value" x="745.1889901176976" y="337">2,019</text>
+<text class="label" x="16" y="359">Lodash (lodash-es)</text>
+<path class="other" d="M210,348h42.44239545322666a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-42.44239545322666z"><title>Lodash (lodash-es), 1 key: 3,536</title></path>
+<text class="value" x="262.44239545322665" y="359">3,536</text>
+<path class="other" d="M461.33333333333337,348h28.494831054887307a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-28.494831054887307z"><title>Lodash (lodash-es), 3 keys: 2,474</title></path>
+<text class="value" x="499.82816438822067" y="359">2,474</text>
+<path class="other" d="M712.6666666666667,348h32.979919415616536a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-32.979919415616536z"><title>Lodash (lodash-es), Computed key: 2,816</title></path>
+<text class="value" x="755.6465860822833" y="359">2,816</text>
+<text class="label" x="16" y="381">Effect Array.sortWith (cached)</text>
+<path class="other" d="M210,370h43.24600854493251a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-43.24600854493251z"><title>Effect Array.sortWith (cached), 1 key: 3,597</title></path>
+<text class="value" x="263.2460085449325" y="381">3,597</text>
+<path class="other" d="M461.33333333333337,370h24.844812672192262a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-24.844812672192262z"><title>Effect Array.sortWith (cached), 3 keys: 2,196</title></path>
+<text class="value" x="496.1781460055256" y="381">2,196</text>
+<path class="other" d="M712.6666666666667,370h33.613693291738905a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-33.613693291738905z"><title>Effect Array.sortWith (cached), Computed key: 2,864</title></path>
+<text class="value place" x="756.2803599584056" y="381">3rd · 2,864</text>
+<text class="label" x="16" y="403">Rambda sortWith</text>
+<path class="other" d="M210,392h63.49388694312282a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-63.49388694312282z"><title>Rambda sortWith, 1 key: 5,139</title></path>
+<text class="value" x="283.4938869431228" y="403">5,139</text>
+<path class="other" d="M461.33333333333337,392h28.744847672039946a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-28.744847672039946z"><title>Rambda sortWith, 3 keys: 2,493</title></path>
+<text class="value place" x="500.0781810053733" y="403">3rd · 2,493</text>
+<path class="other" d="M712.6666666666667,392h17.35001496667278a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-17.35001496667278z"><title>Rambda sortWith, Computed key: 1,626</title></path>
+<text class="value" x="740.0166816333395" y="403">1,626</text>
 <text class="label" x="16" y="425">thenby</text>
-<path class="other" d="M210,414h54.53972418685335a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-54.53972418685335z"><title>thenby, 1 key: 4,457</title></path>
-<text class="value" x="274.53972418685333" y="425">4,457</text>
-<path class="other" d="M461.33333333333337,414h19.429739156081656a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-19.429739156081656z"><title>thenby, 3 keys: 1,784</title></path>
-<text class="value" x="490.76307248941504" y="425">1,784</text>
-<path class="other" d="M712.6666666666667,414h17.167910720836705a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-17.167910720836705z"><title>thenby, Computed key: 1,612</title></path>
-<text class="value" x="739.8345773875035" y="425">1,612</text>
-<text class="label" x="16" y="447">es-toolkit core</text>
-<path class="other" d="M210,436h46.17038386070965a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-46.17038386070965z"><title>es-toolkit core, 1 key: 3,820</title></path>
-<text class="value" x="266.17038386070965" y="447">3,820</text>
-<path class="other" d="M461.33333333333337,436h24.126239760063925a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-24.126239760063925z"><title>es-toolkit core, 3 keys: 2,142</title></path>
-<text class="value" x="495.4595730933973" y="447">2,142</text>
-<path class="other" d="M712.6666666666667,436h15.830730062995489a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-15.830730062995489z"><title>es-toolkit core, Computed key: 1,510</title></path>
-<text class="value" x="738.4973967296622" y="447">1,510</text>
+<path class="other" d="M210,414h52.27793788361793a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-52.27793788361793z"><title>thenby, 1 key: 4,285</title></path>
+<text class="value" x="272.27793788361794" y="425">4,285</text>
+<path class="other" d="M461.33333333333337,414h20.494759885959304a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-20.494759885959304z"><title>thenby, 3 keys: 1,865</title></path>
+<text class="value" x="491.82809321929267" y="425">1,865</text>
+<path class="other" d="M712.6666666666667,414h16.319586473103357a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-16.319586473103357z"><title>thenby, Computed key: 1,547</title></path>
+<text class="value" x="738.98625313977" y="425">1,547</text>
+<text class="label" x="16" y="447">sort-es</text>
+<path class="other" d="M210,436h47.70393235135527a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-47.70393235135527z"><title>sort-es, 1 key: 3,937</title></path>
+<text class="value" x="267.70393235135526" y="447">3,937</text>
+<path class="other" d="M461.33333333333337,436h19.39958309672556a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-19.39958309672556z"><title>sort-es, 3 keys: 1,782</title></path>
+<text class="value" x="490.73291643005894" y="447">1,782</text>
+<path class="other" d="M712.6666666666667,436h13.959780640243793a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-13.959780640243793z"><title>sort-es, Computed key: 1,367</title></path>
+<text class="value" x="736.6264473069106" y="447">1,367</text>
 <text class="label" x="16" y="469">Remeda</text>
-<path class="other" d="M210,458h41.7790093515312a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-41.7790093515312z"><title>Remeda, 1 key: 3,486</title></path>
-<text class="value" x="261.7790093515312" y="469">3,486</text>
-<path class="other" d="M461.33333333333337,458h22.76884759253102a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-22.76884759253102z"><title>Remeda, 3 keys: 2,038</title></path>
-<text class="value" x="494.1021809258644" y="469">2,038</text>
-<path class="other" d="M712.6666666666667,458h16.054251270429123a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-16.054251270429123z"><title>Remeda, Computed key: 1,527</title></path>
-<text class="value" x="738.7209179370959" y="469">1,527</text>
-<text class="label" x="16" y="491">fast-sort</text>
-<path class="other" d="M210,480h45.30430853764331a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-45.30430853764331z"><title>fast-sort, 1 key: 3,754</title></path>
-<text class="value" x="265.3043085376433" y="491">3,754</text>
-<path class="other" d="M461.33333333333337,480h15.903726755806904a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-15.903726755806904z"><title>fast-sort, 3 keys: 1,516</title></path>
-<text class="value" x="487.2370600891403" y="491">1,516</text>
-<path class="other" d="M712.6666666666667,480h16.6705939322203a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-16.6705939322203z"><title>fast-sort, Computed key: 1,574</title></path>
-<text class="value" x="739.337260598887" y="491">1,574</text>
+<path class="other" d="M210,458h40.01829174314635a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-40.01829174314635z"><title>Remeda, 1 key: 3,352</title></path>
+<text class="value" x="260.01829174314634" y="469">3,352</text>
+<path class="other" d="M461.33333333333337,458h22.27713459967944a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-22.27713459967944z"><title>Remeda, 3 keys: 2,001</title></path>
+<text class="value" x="493.6104679330128" y="469">2,001</text>
+<path class="other" d="M712.6666666666667,458h14.405686151111894a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-14.405686151111894z"><title>Remeda, Computed key: 1,401</title></path>
+<text class="value" x="737.0723528177787" y="469">1,401</text>
+<text class="label" x="16" y="491">es-toolkit core</text>
+<path class="other" d="M210,480h44.04596530570995a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-44.04596530570995z"><title>es-toolkit core, 1 key: 3,658</title></path>
+<text class="value" x="264.04596530570996" y="491">3,658</text>
+<path class="other" d="M461.33333333333337,480h20.141918772578833a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-20.141918772578833z"><title>es-toolkit core, 3 keys: 1,838</title></path>
+<text class="value" x="491.4752521059122" y="491">1,838</text>
+<path class="other" d="M712.6666666666667,480h10.017102841940906a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-10.017102841940906z"><title>es-toolkit core, Computed key: 1,067</title></path>
+<text class="value" x="732.6837695086076" y="491">1,067</text>
 <text class="label" x="16" y="513">Effect Order</text>
-<path class="other" d="M210,502h34.72289852041816a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-34.72289852041816z"><title>Effect Order, 1 key: 2,948</title></path>
-<text class="value" x="254.72289852041817" y="513">2,948</text>
-<path class="other" d="M461.33333333333337,502h15.234783618229933a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-15.234783618229933z"><title>Effect Order, 3 keys: 1,465</title></path>
-<text class="value" x="486.5681169515633" y="513">1,465</text>
-<path class="other" d="M712.6666666666667,502h13.019735281358816a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-13.019735281358816z"><title>Effect Order, Computed key: 1,296</title></path>
-<text class="value" x="735.6864019480256" y="513">1,296</text>
+<path class="other" d="M210,502h32.81598466834254a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-32.81598466834254z"><title>Effect Order, 1 key: 2,803</title></path>
+<text class="value" x="252.81598466834254" y="513">2,803</text>
+<path class="other" d="M461.33333333333337,502h14.534124591711354a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-14.534124591711354z"><title>Effect Order, 3 keys: 1,411</title></path>
+<text class="value" x="485.86745792504473" y="513">1,411</text>
+<path class="other" d="M712.6666666666667,502h9.687367104347734a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-9.687367104347734z"><title>Effect Order, Computed key: 1,042</title></path>
+<text class="value" x="732.3540337710144" y="513">1,042</text>
+<text class="label" x="16" y="535">fast-sort</text>
+<path class="other" d="M210,524h21.668509660199668a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-21.668509660199668z"><title>fast-sort, 1 key: 1,954</title></path>
+<text class="value" x="241.66850966019967" y="535">1,954</text>
+<path class="other" d="M461.33333333333337,524h15.293360534534173a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-15.293360534534173z"><title>fast-sort, 3 keys: 1,469</title></path>
+<text class="value" x="486.6266938678675" y="535">1,469</text>
+<path class="other" d="M712.6666666666667,524h13.590660533048787a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-13.590660533048787z"><title>fast-sort, Computed key: 1,339</title></path>
+<text class="value" x="736.2573271997155" y="535">1,339</text>
+<text class="label" x="16" y="557">es-toolkit compat (cached)</text>
+<path class="other" d="M210,546h45.18314509665915a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-45.18314509665915z"><title>es-toolkit compat (cached), 1 key: 3,745</title></path>
+<text class="value" x="265.18314509665913" y="557">3,745</text>
+<path class="other" d="M461.33333333333337,546h26.346277337817096a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-26.346277337817096z"><title>es-toolkit compat (cached), 3 keys: 2,311</title></path>
+<text class="value" x="497.67961067115044" y="557">2,311</text>
+<path class="other" d="M712.6666666666667,546h2.4750793645540625a2.4750793645540625,2.4750793645540625 0 0 1 2.4750793645540625,2.4750793645540625v9.049841270891875a2.4750793645540625,2.4750793645540625 0 0 1 -2.4750793645540625,2.4750793645540625h-2.4750793645540625z"><title>es-toolkit compat (cached), Computed key: 377</title></path>
+<text class="value" x="723.6168253957749" y="557">377</text>
+<text class="label" x="16" y="579">Ramda sortWith</text>
+<path class="other" d="M210,568h19.026073144910157a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-19.026073144910157z"><title>Ramda sortWith, 1 key: 1,753</title></path>
+<text class="value" x="239.02607314491016" y="579">1,753</text>
+<path class="other" d="M461.33333333333337,568h6.634448968171185a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-6.634448968171185z"><title>Ramda sortWith, 3 keys: 810</title></path>
+<text class="value" x="477.96778230150454" y="579">810</text>
+<path class="other" d="M712.6666666666667,568h9.936118845709032a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-9.936118845709032z"><title>Ramda sortWith, Computed key: 1,061</title></path>
+<text class="value" x="732.6027855123758" y="579">1,061</text>
+<text class="label" x="16" y="601">natural-orderby</text>
+<path class="other" d="M210,590h12.456543418194762a4,4 0 0 1 4,4v6a4,4 0 0 1 -4,4h-12.456543418194762z"><title>natural-orderby, 1 key: 1,253</title></path>
+<text class="value" x="232.45654341819477" y="601">1,253</text>
+<path class="other" d="M461.33333333333337,590h3.2719793535562256a3.2719793535562256,3.2719793535562256 0 0 1 3.2719793535562256,3.2719793535562256v7.456041292887549a3.2719793535562256,3.2719793535562256 0 0 1 -3.2719793535562256,3.2719793535562256h-3.2719793535562256z"><title>natural-orderby, 3 keys: 498</title></path>
+<text class="value" x="473.8772920404458" y="601">498</text>
+<path class="other" d="M712.6666666666667,590h2.4749055697807094a2.4749055697807094,2.4749055697807094 0 0 1 2.4749055697807094,2.4749055697807094v9.050188860438581a2.4749055697807094,2.4749055697807094 0 0 1 -2.4749055697807094,2.4749055697807094h-2.4749055697807094z"><title>natural-orderby, Computed key: 377</title></path>
+<text class="value" x="723.6164778062282" y="601">377</text>
+<text class="label" x="16" y="623">sort-on</text>
+<path class="other" d="M210,612h1.1793970570860222a1.1793970570860222,1.1793970570860222 0 0 1 1.1793970570860222,1.1793970570860222v11.641205885827956a1.1793970570860222,1.1793970570860222 0 0 1 -1.1793970570860222,1.1793970570860222h-1.1793970570860222z"><title>sort-on, 1 key: 180</title></path>
+<text class="value" x="218.35879411417204" y="623">180</text>
+<path class="other" d="M461.33333333333337,612h1a1,1 0 0 1 1,1v12a1,1 0 0 1 -1,1h-1z"><title>sort-on, 3 keys: 150</title></path>
+<text class="value" x="469.33333333333337" y="623">150</text>
+<path class="other" d="M712.6666666666667,612h3.3719133116296693a3.3719133116296693,3.3719133116296693 0 0 1 3.3719133116296693,3.3719133116296693v7.256173376740661a3.3719133116296693,3.3719133116296693 0 0 1 -3.3719133116296693,3.3719133116296693h-3.3719133116296693z"><title>sort-on, Computed key: 513</title></path>
+<text class="value" x="725.4104932899261" y="623">513</text>
 </svg>

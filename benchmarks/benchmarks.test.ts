@@ -24,6 +24,7 @@ const CACHED = new Set([
 	'lodash',
 	'es-toolkit-compat',
 	'effect-cached',
+	'natural-orderby',
 ]);
 
 /** Copies of `input` whose top-level fields count their reads. */

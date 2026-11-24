@@ -12,7 +12,8 @@ A [fast](BENCHMARKS.md), type-safe sorting utility for JavaScript/TypeScript tha
 - DSU-optimized for costly key computations
 - Optional compiled orders for faster sorting: `compile()` for one order, or `import 'ts-order/compile'` for every order
 - Standalone comparator helpers in `ts-order/comparator` for `Array.prototype.sort`
-- Zero dependencies
+- Pattern-matched groups with [ts-pattern](https://github.com/gvergnaud/ts-pattern) in `ts-order/match`
+- Zero dependencies: only `ts-order/match` uses ts-pattern, as an optional peer
 
 ## Installation
 
@@ -343,6 +344,95 @@ import { A_AFTER_B, A_BEFORE_B, EQUAL } from "ts-order/comparator";
 const shortFirst: Comparator<string> = (a, b) =>
 	a.length < b.length ? A_BEFORE_B : a.length > b.length ? A_AFTER_B : EQUAL;
 ```
+
+## `ts-order/match`
+
+Builds an `Order` from [ts-pattern](https://github.com/gvergnaud/ts-pattern) patterns. Each case adds a group. Groups sort in case order, and each case can sort the items in its group.
+
+```bash
+npm install ts-pattern
+```
+
+`ts-order/match` needs ts-pattern 5.5 or later as a peer dependency. The other entries do not use it.
+
+```ts
+import { P } from 'ts-pattern';
+import { Order } from 'ts-order';
+import { match } from 'ts-order/match';
+
+type Shape =
+	| { kind: 'square'; id: number; side: number }
+	| { kind: 'circle'; id: number; radius: number }
+	| { kind: 'triangle'; id: number };
+
+const byRadius = Order.by((c: { radius: number }) => c.radius);
+
+const byShape = match<Shape>()
+	.with({ kind: 'square' }, (o) => o.by((s) => s.side, { direction: 'desc' }))
+	.with({ kind: 'circle', radius: P.number.gt(10) })
+	.with({ kind: 'circle' }, byRadius)
+	.with({ kind: 'triangle' })
+	.exhaustive()
+	.by((s) => s.id);
+```
+
+Squares come first, largest side first. Circles with a radius over 10 come next, then the other circles by radius, then triangles. The last `.by()` sorts ties in every group by `id`.
+
+Each case narrows the item type as ts-pattern does, so `s` in the first case is a square. `.exhaustive()` is a type error until the cases cover every value of `Shape`.
+
+Cases take ts-pattern's own patterns, so everything in its [pattern reference](https://github.com/gvergnaud/ts-pattern#patterns) works. That includes wildcards such as `P.string` and `P.nullish`, `P.union`, `P.not`, `P.when`, `P.array`, `P.instanceOf`, and the string and number predicates.
+
+```ts
+type Task = {
+	id: number;
+	title: string;
+	status: 'open' | 'blocked' | 'failed' | 'done';
+	assignee: { name: string } | null;
+	due: Date | null;
+	tags: string[];
+};
+
+const byTriage = match<Task>()
+	.with({ status: P.union('blocked', 'failed') }, (o) => o.by((t) => t.status))
+	.with(
+		{ tags: P.when((tags) => tags.includes('urgent')), due: P.instanceOf(Date) },
+		(o) => o.by((t) => t.due),
+	)
+	.with({ title: P.string.startsWith('[bug]') })
+	.with({ assignee: P.nullish, status: P.not('done') })
+	.otherwise()
+	.by((t) => t.id);
+```
+
+Blocked and failed tasks come first. Urgent tasks with a due date come next, soonest first. In that case `t.due` is a `Date`, not `Date | null`, because `P.instanceOf(Date)` narrows it. Bug reports follow, then open tasks with no assignee, then the rest.
+
+| Method                                | Group                                                                          |
+| ------------------------------------- | ------------------------------------------------------------------------------ |
+| `.with(pattern, build?)`              | Items that match `pattern`                                                     |
+| `.with(pattern, pattern2, …, build?)` | Items that match any of the patterns                                           |
+| `.with(pattern, guard, build)`        | Items that match `pattern` and pass `guard`. This form needs `build`.          |
+| `.when(predicate, build?)`            | Items that pass `predicate`                                                    |
+| `.otherwise(build?)`                  | Items that no case matched. Returns the `Order`.                               |
+| `.exhaustive()`                       | No group. Returns the `Order`, and fails to type-check if a value has no case. |
+
+`build` sorts the items in a group. It can be:
+
+- an `Order`, also one for a wider type such as `Order<{ radius: number }>`
+- a callback that gets an empty `Order` of the group's type: `(o) => o.by((s) => s.side)`
+- left out, so the group keeps its input order
+
+Pass an order to `match(order)` to sort by its steps before the groups.
+
+- First match wins, as in ts-pattern. An item belongs to the first case it matches, and later cases do not test or sort it.
+- At runtime, items that match no case sort last. `.exhaustive()` checks types only, so an unexpected value from an API does not throw.
+- Steps after `.exhaustive()` or `.otherwise()` sort ties in every group, and among the items that match no case.
+- `reverse()` flips every key but keeps the group order, as it does for `when()`.
+- Patterns that only test a value, such as `P.number.gt(10)` or a `P.when()` without a type guard, do not count toward exhaustiveness, as in ts-pattern.
+- An inline `Order.by()` passed as `build` needs a parameter type: `Order.by((c: Circle) => c.radius)`. The callback form infers it.
+- The result is a plain `Order`, so `compile()` and `ts-order/compile` work on it.
+- In a file that also imports ts-pattern's `match`, rename one: `import { match as matchOrder } from 'ts-order/match'`.
+
+`ts-order/match` adds about 0.75 kB minified and gzipped to `Order`, not counting ts-pattern. Compared with the same groups written as `when()` chains, `sort()` and compiled `sort()` take about as long, `compare` about 1.2 times as long, and compiled `compare` about 3 times.
 
 ## Types
 

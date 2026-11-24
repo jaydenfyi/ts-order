@@ -6,6 +6,7 @@
 	"trailingComma": "all",
 	"sortPackageJson": false,
 	"ignorePatterns": [
+		"src/vendor/**",
 		"BENCHMARKS.md",
 		"BENCHMARKS.html",
 		"benchmarks/results.json",

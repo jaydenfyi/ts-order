@@ -19,7 +19,9 @@ import {
 	reverse,
 	when,
 } from './comparator/index.js';
+import { P } from 'ts-pattern';
 import { Order } from './index.js';
+import { match } from './match.js';
 
 interface User {
 	id: number;
@@ -158,6 +160,71 @@ describe('README examples', () => {
 					? A_AFTER_B
 					: EQUAL;
 		['aa', 'b'].sort(shortFirst);
+	});
+
+	it('ts-order/match', () => {
+		type Circle = { kind: 'circle'; id: number; radius: number };
+		type Shape =
+			| { kind: 'square'; id: number; side: number }
+			| Circle
+			| { kind: 'triangle'; id: number };
+
+		const byRadius = Order.by((c: { radius: number }) => c.radius);
+
+		const byShape = match<Shape>()
+			.with({ kind: 'square' }, (o) =>
+				o.by((s) => s.side, { direction: 'desc' }),
+			)
+			.with({ kind: 'circle', radius: P.number.gt(10) })
+			.with({ kind: 'circle' }, byRadius)
+			.with({ kind: 'triangle' })
+			.exhaustive()
+			.by((s) => s.id);
+		expectTypeOf(byShape).toEqualTypeOf<Order<Shape>>();
+
+		match<Shape>()
+			.with({ kind: 'square' })
+			.with({ kind: 'circle', radius: P.number.gt(10) })
+			// @ts-expect-error a case that only tests a value leaves circles uncovered
+			.exhaustive();
+		match<Shape>()
+			.with(
+				{ kind: 'circle' },
+				Order.by((c: Circle) => c.radius),
+			)
+			.otherwise();
+		type Task = {
+			id: number;
+			title: string;
+			status: 'open' | 'blocked' | 'failed' | 'done';
+			assignee: { name: string } | null;
+			due: Date | null;
+			tags: string[];
+		};
+		const byTriage = match<Task>()
+			.with({ status: P.union('blocked', 'failed') }, (o) =>
+				o.by((t) => t.status),
+			)
+			.with(
+				{
+					tags: P.when((tags) => tags.includes('urgent')),
+					due: P.instanceOf(Date),
+				},
+				(o) =>
+					o.by((t) => {
+						expectTypeOf(t.due).toEqualTypeOf<Date>();
+						return t.due;
+					}),
+			)
+			.with({ title: P.string.startsWith('[bug]') })
+			.with({ assignee: P.nullish, status: P.not('done') })
+			.otherwise()
+			.by((t) => t.id);
+		expectTypeOf(byTriage).toEqualTypeOf<Order<Task>>();
+
+		match(Order.by((s: Shape) => s.kind))
+			.when((s) => s.id > 10)
+			.otherwise();
 	});
 
 	it('migration notes', () => {

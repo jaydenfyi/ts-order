@@ -1,6 +1,6 @@
 {
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
-	"ignorePatterns": [".ignore/**", ".scratch/**"],
+	"ignorePatterns": ["src/vendor/**", ".ignore/**", ".scratch/**"],
 	"plugins": ["unicorn", "typescript", "oxc", "import", "vitest"],
 	"options": { "typeAware": true },
 	"rules": {

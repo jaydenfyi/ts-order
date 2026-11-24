@@ -23,6 +23,8 @@ export type OrderStep<T> = {
 	 * which then receives nulls unchanged.
 	 */
 	nulls?: DirectionSign | undefined;
+	/** `reverse()` leaves the direction alone, as for a predicate. */
+	fixed?: true | undefined;
 };
 
 /**
@@ -204,7 +206,7 @@ export class Order<T> {
 		return Order._from(
 			this._steps.map((s) => ({
 				...s,
-				direction: s.direction === 1 ? -1 : 1,
+				direction: s.fixed ? s.direction : s.direction === 1 ? -1 : 1,
 			})),
 		);
 	}

@@ -17,7 +17,7 @@
 		"path": "dist/index.js",
 		"import": "{ Order, compile }",
 		"gzip": true,
-		"limit": "1.6 kB"
+		"limit": "1.65 kB"
 	},
 	{
 		"name": "ts-order/compile",

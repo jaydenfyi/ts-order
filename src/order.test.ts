@@ -264,6 +264,25 @@ describe('Order.compare', () => {
 		expect(keyed).not.toHaveBeenCalled();
 		expect(fallback).not.toHaveBeenCalled();
 	});
+	it('accepts a direction in place of options', () => {
+		type Item = { value: number | null };
+		const value = (item: Item) => item.value;
+		// eslint-disable-next-line dot-notation -- the steps are private to Order
+		const steps = (order: Order<Item>) => order['_steps'];
+		const items: Item[] = [{ value: 1 }, { value: null }, { value: 3 }];
+
+		const desc = Order.by(value, 'desc');
+
+		// The shorthand stores the same step as the option it stands for.
+		expect(steps(desc)).toEqual(
+			steps(Order.by(value, { direction: 'desc' })),
+		);
+		expect(steps(new Order<Item>().by(value, 'asc'))).toEqual(
+			steps(new Order<Item>().by(value)),
+		);
+		expect(desc.sort(items).map(value)).toEqual([3, 1, null]);
+	});
+
 	it('does not mutate the original order when chaining with by()', () => {
 		type Item = { primary: number; secondary: number };
 		const base = Order.by<Item, number>((item) => item.primary);

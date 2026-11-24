@@ -1,6 +1,7 @@
 import type {
 	Comparable,
 	Comparator,
+	Direction,
 	KeyOptions,
 	KeyOptionsWithCompare,
 } from '../types.js';
@@ -225,19 +226,6 @@ export function date(a: Date, b: Date) {
 }
 
 /**
- * Builds a comparator by projecting values through `key` before comparing.
- *
- * @example
- * ```ts
- * // sorts users by age ascending
- * users.sort(by(user => user.age));
- * ```
- */
-export function by<T, K extends Comparable>(
-	key: (v: T) => K,
-	options?: KeyOptions<K, T>,
-): Comparator<T>;
-/**
  * Builds a comparator for a key of any type. The `compare` option orders the keys.
  *
  * @example
@@ -249,16 +237,36 @@ export function by<T, K>(
 	key: (v: T) => K,
 	options: KeyOptionsWithCompare<K, T>,
 ): Comparator<T>;
+/**
+ * Builds a comparator by projecting values through `key` before comparing.
+ * A direction can replace the options.
+ *
+ * @example
+ * ```ts
+ * // sorts users by age ascending
+ * users.sort(by(user => user.age));
+ * // oldest first
+ * users.sort(by(user => user.age, 'desc'));
+ * ```
+ */
+export function by<T, K extends Comparable>(
+	key: (v: T) => K,
+	options?: Direction | KeyOptions<K, T>,
+): Comparator<T>;
 export function by<T, K>(
 	key: (v: T) => K,
-	options?: KeyOptions<K, T>,
+	argument?: Direction | KeyOptions<K, T>,
 ): Comparator<T> {
+	// A direction has none of the option fields, so they read as undefined.
+	const options = argument as KeyOptions<K, T> | undefined;
 	const custom = options?.compare;
 	// Missing keys are handled below, so the default needs only `<` and `>`.
 	const compareFn: Comparator<K> = custom ?? relational;
 	const predicate = options?.predicate;
 	const compareFnWithDirection =
-		options?.direction === 'desc' ? reverse(compareFn) : compareFn;
+		argument === 'desc' || options?.direction === 'desc'
+			? reverse(compareFn)
+			: compareFn;
 	// Handle missing keys before the direction applies, so `desc` does not move them.
 	// A custom comparator with no `nulls` option receives missing keys unchanged.
 	const nulls =

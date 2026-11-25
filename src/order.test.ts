@@ -759,6 +759,25 @@ describe('Order.when', () => {
 			2, 1,
 		]);
 	});
+
+	it('calls the guard once per item in sort(), for all the steps it guards', () => {
+		type Item = { id: number; region: 'eu' | 'us' };
+		const items: Item[] = [
+			{ id: 2, region: 'eu' },
+			{ id: 1, region: 'us' },
+			{ id: 3, region: 'eu' },
+		];
+		const isEu = vi.fn((item: Item) => item.region === 'eu');
+		const order = Order.when(
+			isEu,
+			Order.by((item: Item) => item.id).by((item) => -item.id),
+		);
+
+		const sorted = order.sort(items);
+
+		expect(sorted.map((item) => item.id)).toEqual([2, 3, 1]);
+		expect(isEu).toHaveBeenCalledTimes(items.length);
+	});
 });
 
 describe('comparators that return NaN', () => {

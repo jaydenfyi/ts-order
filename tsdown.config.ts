@@ -6,5 +6,6 @@ export default defineConfig({
 		index: 'src/index.ts',
 		'comparator/index': 'src/comparator/index.ts',
 		compile: 'src/compile.ts',
+		match: 'src/match.ts',
 	},
 });

@@ -4,7 +4,7 @@
 		"path": "dist/index.js",
 		"import": "{ Order }",
 		"gzip": true,
-		"limit": "900 B"
+		"limit": "930 B"
 	},
 	{
 		"name": "ts-order/comparator",
@@ -17,11 +17,18 @@
 		"path": "dist/index.js",
 		"import": "{ Order, compile }",
 		"gzip": true,
-		"limit": "1.6 kB"
+		"limit": "1.65 kB"
 	},
 	{
 		"name": "ts-order/compile",
 		"path": "dist/compile.js",
+		"gzip": true,
+		"limit": "1.75 kB"
+	},
+	{
+		"name": "ts-order/match",
+		"path": "dist/match.js",
+		"import": "{ match }",
 		"gzip": true,
 		"limit": "1.7 kB"
 	}

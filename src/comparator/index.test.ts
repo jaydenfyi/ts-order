@@ -225,6 +225,27 @@ describe(by, () => {
 		expect(custom).toHaveBeenCalledWith('hi', 'there');
 	});
 
+	it('accepts a direction in place of options', () => {
+		type Item = { value: number | null };
+		const values = [{ value: 1 }, { value: null }, { value: 3 }];
+		const sortedBy = (comparator: (a: Item, b: Item) => number) =>
+			values
+				.slice()
+				.sort(comparator)
+				.map((item) => item.value);
+
+		expect(sortedBy(by((item: Item) => item.value, 'desc'))).toEqual([
+			3,
+			1,
+			null,
+		]);
+		expect(sortedBy(by((item: Item) => item.value, 'asc'))).toEqual([
+			1,
+			3,
+			null,
+		]);
+	});
+
 	it('puts the value that passes the predicate first, and compares keys only when both pass', () => {
 		type Item = { label: string; active: boolean };
 		const key = vi.fn((item: Item) => item.label);

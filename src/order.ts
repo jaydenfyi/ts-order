@@ -3,6 +3,7 @@
 import type {
 	Comparable,
 	Comparator,
+	Direction,
 	KeyOptions,
 	KeyOptionsWithCompare,
 } from './types.js';
@@ -92,22 +93,6 @@ export class Order<T> {
 	}
 
 	/**
-	 * Create a new order with a single sort step. Without a `compare` option,
-	 * keys compare with `<` and `>`, and nulls (`null`, `undefined`, `NaN` and
-	 * invalid dates) sort last.
-	 *
-	 * @example
-	 * ```ts
-	 * const byCreatedAt = Order.by((u: User) => u.createdAt, {
-	 * 	direction: 'desc',
-	 * });
-	 * ```
-	 */
-	static by<T, K extends Comparable>(
-		selectorFn: (item: T) => K,
-		options?: KeyOptions<K, T>,
-	): Order<T>;
-	/**
 	 * Create a new order with a single sort step, for a key of any type. The
 	 * `compare` option orders the keys.
 	 *
@@ -122,9 +107,26 @@ export class Order<T> {
 		selectorFn: (item: T) => K,
 		options: KeyOptionsWithCompare<K, T>,
 	): Order<T>;
+	/**
+	 * Create a new order with a single sort step. Without a `compare` option,
+	 * keys compare with `<` and `>`, and nulls (`null`, `undefined`, `NaN` and
+	 * invalid dates) sort last. A direction can replace the options.
+	 *
+	 * @example
+	 * ```ts
+	 * const newestFirst = Order.by((u: User) => u.createdAt, 'desc');
+	 * const byCreatedAt = Order.by((u: User) => u.createdAt, {
+	 * 	direction: 'desc',
+	 * });
+	 * ```
+	 */
+	static by<T, K extends Comparable>(
+		selectorFn: (item: T) => K,
+		options?: Direction | KeyOptions<K, T>,
+	): Order<T>;
 	static by<T, K>(
 		selectorFn: (item: T) => K,
-		options?: KeyOptions<K, T>,
+		options?: Direction | KeyOptions<K, T>,
 	): Order<T> {
 		return new Order<T>().by(
 			selectorFn,
@@ -132,20 +134,6 @@ export class Order<T> {
 		);
 	}
 
-	/**
-	 * Append a sort step and return a new order instance.
-	 *
-	 * @example
-	 * ```ts
-	 * const byCreatedThenId = new Order<User>()
-	 * 	.by((u) => u.createdAt)
-	 * 	.by((u) => u.id);
-	 * ```
-	 */
-	by<K extends Comparable>(
-		selectorFn: (item: T) => K,
-		options?: KeyOptions<K, T>,
-	): Order<T>;
 	/**
 	 * Append a sort step for a key of any type, and return a new order
 	 * instance. The `compare` option orders the keys.
@@ -161,18 +149,42 @@ export class Order<T> {
 		selectorFn: (item: T) => K,
 		options: KeyOptionsWithCompare<K, T>,
 	): Order<T>;
-	by<K>(selectorFn: (item: T) => K, options?: KeyOptions<K, T>): Order<T> {
+	/**
+	 * Append a sort step and return a new order instance. A direction can
+	 * replace the options.
+	 *
+	 * @example
+	 * ```ts
+	 * const byCreatedThenId = new Order<User>()
+	 * 	.by((u) => u.createdAt, 'desc')
+	 * 	.by((u) => u.id);
+	 * ```
+	 */
+	by<K extends Comparable>(
+		selectorFn: (item: T) => K,
+		options?: Direction | KeyOptions<K, T>,
+	): Order<T>;
+	by<K>(
+		selectorFn: (item: T) => K,
+		argument?: Direction | KeyOptions<K, T>,
+	): Order<T> {
+		// A direction has none of the option fields, so they read as undefined.
+		const options = argument as KeyOptions<K, T> | undefined;
+		const custom = options?.compare;
 		return Order._from([
 			...this._steps,
 			{
 				key: selectorFn,
-				direction: options?.direction === 'desc' ? -1 : 1,
-				compare: options?.compare as Comparator<unknown> | undefined,
+				direction:
+					argument === 'desc' || options?.direction === 'desc'
+						? -1
+						: 1,
+				compare: custom as Comparator<unknown> | undefined,
 				predicate: options?.predicate,
 				nulls:
 					options?.nulls === 'first'
 						? -1
-						: options?.nulls || !options?.compare
+						: options?.nulls || !custom
 							? 1
 							: undefined,
 			},

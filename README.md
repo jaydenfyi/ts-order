@@ -42,7 +42,7 @@ const users: User[] = [/* ... */];
 
 // Active users first, then lastName, firstName, and id as tiebreaker
 const byActiveAndName = new Order<User>()
-	.by((u) => u.isActive, { direction: 'desc' })
+	.by((u) => u.isActive, 'desc')
 	.by((u) => u.lastName)
 	.by((u) => u.firstName)
 	.by((u) => u.id);
@@ -61,6 +61,7 @@ These rules apply to `Order` and the comparator builders in `ts-order/comparator
 - `null`, `undefined`, `NaN`, and invalid dates count as nulls. They sort last in both directions and tie with each other, so later steps decide their order. Pass `nulls: 'first'` to put them first. A custom `compare` with no `nulls` option receives nulls unchanged.
 - `direction: 'desc'` reverses key comparisons. It does not move nulls or predicate matches.
 - Default comparison (`<` and `>`) accepts strings, numbers, bigints, booleans, `Date`, or objects whose `valueOf()` returns a number or bigint (such as Luxon dates). Use one value type per key, because mixed types like `string | number` sort unpredictably.
+- Booleans sort `false` before `true`, so `'desc'` puts `true` first: `.by((u) => u.isActive, 'desc')` sorts active users first.
 - A custom `compare` that returns `NaN` counts as a tie (for example, `(a, b) => a - b`, because `Infinity - Infinity` is `NaN`).
 
 ## API
@@ -72,11 +73,11 @@ Every builder method returns a new `Order<T>`. `by`, `reverse`, `map`, `when`, a
 #### `by(selector, options?)`
 
 ```ts
-by<K extends Comparable>(selector: (value: T) => K, options?: KeyOptions<K, T>): Order<T>
 by<K>(selector: (value: T) => K, options: KeyOptions<K, T> & { compare: Comparator<K> }): Order<T>
+by<K extends Comparable>(selector: (value: T) => K, options?: Direction | KeyOptions<K, T>): Order<T>
 ```
 
-Adds a sort step. Without options, it sorts ascending with `<` and `>`. Object keys require a `compare` option.
+Adds a sort step. Without options, it sorts ascending with `<` and `>`. Object keys require a `compare` option. The second argument can also be a direction alone: `'desc'` means `{ direction: 'desc' }`.
 
 | Option      | Default     | Behavior                                                                                                |
 | ----------- | ----------- | ------------------------------------------------------------------------------------------------------- |
@@ -91,6 +92,11 @@ const collator = new Intl.Collator('en');
 const byNameAndAge = new Order<User>()
 	.by((u) => u.lastName, { direction: 'desc', compare: collator.compare })
 	.by((u) => u.age, { nulls: 'first' });
+
+// Shorthand for a direction alone
+const newestThenByName = new Order<User>()
+	.by((u) => u.createdAt, 'desc')
+	.by((u) => u.lastName);
 
 // Object keys need a custom compare
 const byAddress = Order.by((c: Customer) => c.address, {
@@ -314,7 +320,7 @@ files.sort(collator.compare); // ['file1', 'file2', 'file10']
 
 Mirror the `Order` methods, taking and returning plain `Comparator<T>` functions:
 
-- `by(key, options?)`: compares by a key selector, with the same options and rules as [`Order.by`](#byselector-options).
+- `by(key, options?)`: compares by a key selector, with the same options, `'asc'`/`'desc'` shorthand and rules as [`Order.by`](#byselector-options).
 - `order(...comparators)`: chains comparators from most to least significant.
 - `map(mapper, comparator?)`: maps each value, then compares with `comparator` (defaults to `compare`).
 - `reverse(compareFn)`: flips a comparator's direction.

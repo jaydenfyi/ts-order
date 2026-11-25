@@ -1,4 +1,4 @@
-import type { KeyOptions } from './types.js';
+import type { Direction, KeyOptions } from './types.js';
 import { describe, expectTypeOf, it } from 'vitest';
 import { by, compare, map } from './comparator/index.js';
 import { Order } from './order.js';
@@ -18,6 +18,12 @@ describe('default-compare keys', () => {
 		new Order<User>().by((user) => user.address);
 		// @ts-expect-error an object key needs a compare option
 		by((user: User) => user.address);
+		// @ts-expect-error a direction alone cannot order an object key
+		Order.by((user: User) => user.address, 'desc');
+		// @ts-expect-error a direction alone cannot order an object key
+		new Order<User>().by((user) => user.address, 'desc');
+		// @ts-expect-error a direction alone cannot order an object key
+		by((user: User) => user.address, 'desc');
 		// @ts-expect-error an object key needs a comparator
 		map((user: User) => user.address);
 		// @ts-expect-error compare accepts only Comparable values
@@ -37,6 +43,27 @@ describe('default-compare keys', () => {
 			by((user: User) => user.address, { compare: byCity }),
 		).toBeFunction();
 		expectTypeOf(map((user: User) => user.address, byCity)).toBeFunction();
+	});
+
+	it('rejects a comparator in place of options', () => {
+		const byCity = (a: { city: string }, b: { city: string }) =>
+			a.city.localeCompare(b.city);
+		const byName = (a: string, b: string) => a.localeCompare(b);
+		// @ts-expect-error a comparator goes in the compare option
+		Order.by((user: User) => user.address, byCity);
+		// @ts-expect-error a comparator goes in the compare option
+		new Order<User>().by((user) => user.name, byName);
+		// @ts-expect-error a comparator goes in the compare option
+		by((user: User) => user.address, byCity);
+	});
+
+	it('infers an inline compare option when the selector parameter is inferred', () => {
+		new Order<User>().by((user) => user.address, {
+			compare: (a, b) => {
+				expectTypeOf(a).toEqualTypeOf<{ city: string }>();
+				return a.city.localeCompare(b.city);
+			},
+		});
 	});
 
 	it('accepts an object whose valueOf() returns a number or a bigint', () => {
@@ -93,6 +120,20 @@ describe('default-compare keys', () => {
 });
 
 describe('options', () => {
+	it('accepts a direction in place of options', () => {
+		expectTypeOf(Order.by((user: User) => user.age, 'desc')).toEqualTypeOf<
+			Order<User>
+		>();
+		expectTypeOf(
+			new Order<User>().by((user) => user.name, 'asc'),
+		).toEqualTypeOf<Order<User>>();
+		expectTypeOf(by((user: User) => user.age, 'desc')).toBeFunction();
+		const either = 'desc' as Direction | KeyOptions<string, User>;
+		Order.by((user: User) => user.name, either);
+		// @ts-expect-error not a direction
+		Order.by((user: User) => user.age, 'down');
+	});
+
 	it('accepts explicit undefined values under exactOptionalPropertyTypes', () => {
 		const options: KeyOptions<string, User> = {
 			direction: undefined,

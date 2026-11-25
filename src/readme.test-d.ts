@@ -58,7 +58,7 @@ declare const items: Item[];
 describe('README examples', () => {
 	it('quickstart', () => {
 		const byActiveAndName = new Order<User>()
-			.by((u) => u.isActive, { direction: 'desc' })
+			.by((u) => u.isActive, 'desc')
 			.by((u) => u.lastName)
 			.by((u) => u.firstName)
 			.by((u) => u.id);
@@ -80,6 +80,7 @@ describe('README examples', () => {
 		Order.by((i: Item) => i.expiresAt, {
 			compare: (a, b) => a.getTime() - b.getTime(),
 		});
+		new Order<User>().by((u) => u.createdAt, 'desc').by((u) => u.lastName);
 		Order.by((c: Customer) => c.address, {
 			compare: (a, b) => a.city.localeCompare(b.city),
 		});
